@@ -17,6 +17,7 @@ const BEHIND_OUTLINE = { polygonOffset: true, polygonOffsetFactor: 1, polygonOff
 const MAP_NAMES: Record<string, string> = {
   wifi: 'Wi-Fi',
   'dev-server': 'Dev server',
+  ssd: 'SSD',
   cpu: 'CPU',
   gpu: 'GPU',
   'neural-engine': 'Neural Engine',
@@ -34,7 +35,8 @@ const DISPLAY_IDS = ['exit-built-in', 'exit-lg'];
 // These describe the road leaving each block.
 const ROAD_NOTES: Record<string, string> = {
   wifi: 'Dimmed road: unused by local files',
-  'dev-server': 'Lit road: loopback, serves ./shaders',
+  'dev-server': 'Lit road: loopback, serves ./shaders. It is the Node process drawn on the CPU district.',
+  ssd: 'The trip starts here. Lit road: the dev server reads each .glsl file when Chrome asks for it.',
 };
 
 export interface ExitHandle {

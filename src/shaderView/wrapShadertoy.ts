@@ -1,7 +1,8 @@
 // Turns Shadertoy-style pass code into complete WebGL2 fragment shaders.
 // The wrapper is ours, not Shadertoy's, and it is part of what gets compiled (backlog D3).
 
-const HEADER = `#version 300 es
+// Everything in front of the user's code except the output. The experiments page's counting copy reuses it.
+export const SHADERTOY_PRELUDE = `#version 300 es
 precision highp float;
 precision highp int;
 precision highp sampler3D;
@@ -11,7 +12,9 @@ uniform int iFrame;
 uniform vec4 iMouse;
 uniform sampler3D iChannel0;
 uniform float uSlice;
-out vec4 outColor;
+`;
+
+const HEADER = `${SHADERTOY_PRELUDE}out vec4 outColor;
 `;
 
 const IMAGE_MAIN = `

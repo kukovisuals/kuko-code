@@ -8,6 +8,12 @@ export interface MapClaim {
 
 export const MAP_CLAIMS: MapClaim[] = [
   {
+    blockId: 'ssd',
+    text: 'Shader here: 2 text files in ./shaders',
+    tag: 'this-machine',
+    source: "The repo's ./shaders folder on this Mac. After the first read, macOS can answer from its file cache in memory, so a read may not touch the SSD",
+  },
+  {
     blockId: 'wifi',
     text: 'off-chip',
     tag: 'community',

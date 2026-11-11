@@ -9,6 +9,12 @@
       "numbers": []
     },
     {
+      "id": "ssd",
+      "label": "SSD, internal storage",
+      "offChip": true,
+      "numbers": []
+    },
+    {
       "id": "dev-server",
       "label": "Vite dev server (this Mac)",
       "offChip": true,

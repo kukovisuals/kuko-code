@@ -2,6 +2,8 @@
 // text can hold device identifiers, such as a MAC address in netstat, and must never be forwarded.
 import type { GpuStats } from '../src/shared/liveEvents';
 
+export type ProcessKind = 'chrome-renderer' | 'chrome-gpu';
+
 function numberAfter(text: string, key: string): number | null {
   const match = new RegExp(`"${key}"=(\\d+)`).exec(text);
   return match ? Number(match[1]) : null;
@@ -51,5 +53,34 @@ export function parseLoopbackFlows(text: string, serverPort: number): FlowTotal[
   return text.split('\n').flatMap((line) => {
     const match = pattern.exec(line);
     return match ? [{ clientPort: Number(match[1]), inBytes: Number(match[2]), outBytes: Number(match[3]) }] : [];
+  });
+}
+
+export interface ProcessTime {
+  // Only used on the server, to match a process with itself in the next sample. It is never forwarded.
+  pid: number;
+  kind: ProcessKind;
+  cpuSeconds: number;
+}
+
+const CHROME_KINDS: Record<string, ProcessKind> = { renderer: 'chrome-renderer', 'gpu-process': 'chrome-gpu' };
+
+// ps prints CPU time as minutes:seconds.hundredths, with hours and days in front on long-lived processes.
+function cpuTimeSeconds(text: string): number {
+  const [days, clock] = text.includes('-') ? (text.split('-') as [string, string]) : ['0', text];
+  return clock.split(':').reduce((total, part) => total * 60 + Number(part), 0) + Number(days) * 86400;
+}
+
+// From: ps -axo pid=,time=,command=. The command line holds paths and flags, so only Chrome's own
+// process type is read from it. Other Electron apps use the same --type flags and are skipped.
+export function parseProcessTimes(text: string): ProcessTime[] {
+  return text.split('\n').flatMap((line) => {
+    const match = /^\s*(\d+)\s+([\d:.-]+)\s+(.*)$/.exec(line);
+    const type = match && match[3]?.includes('Google Chrome') ? /--type=(renderer|gpu-process)(?:\s|$)/.exec(match[3]) : null;
+    if (!match || !type) {
+      return [];
+    }
+    const cpuSeconds = cpuTimeSeconds(match[2] as string);
+    return Number.isFinite(cpuSeconds) ? [{ pid: Number(match[1]), kind: CHROME_KINDS[type[1] as string] as ProcessKind, cpuSeconds }] : [];
   });
 }

@@ -546,6 +546,13 @@ body:not(.panel-open):not(.zoom-open) #source-panel {
 .live-reading {
   color: #fff;
   font-weight: 600;
+  background: rgba(10, 14, 19, 0.7);
+}
+
+.core-label {
+  color: #fff;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
 }
 
 .name-block {

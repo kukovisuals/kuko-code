@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import hardwareMap from '../data/hardware-map.m2.json';
-import { layoutGpuCores, layoutMap, rectContains, rectsOverlap, siteForStop } from '../src/city/layoutMap';
+import { layoutCpuCores, layoutGpuCores, layoutMap, rectContains, rectsOverlap, siteForStop } from '../src/city/layoutMap';
+import { PROCESS_ZONES } from '../src/city/processZones';
 
 const ids = hardwareMap.blocks.map((block) => block.id);
 const placed = layoutMap(ids);
@@ -58,6 +59,35 @@ describe('layoutMap', () => {
       expect(rectContains(area, core)).toBe(true);
       cores.slice(index + 1).forEach((other) => expect(rectsOverlap(core, other)).toBe(false));
     });
+  });
+
+  it('lays out 4 non-overlapping core tiles inside each CPU cluster', () => {
+    for (const id of ['p-cluster', 'e-cluster']) {
+      const area = byId.get(id)!;
+      const cores = layoutCpuCores(area, 4);
+      expect(cores).toHaveLength(4);
+      cores.forEach((core, index) => {
+        expect(rectContains(area, core)).toBe(true);
+        cores.slice(index + 1).forEach((other) => expect(rectsOverlap(core, other)).toBe(false));
+      });
+    }
+  });
+
+  it('keeps process zones on the CPU district, apart from each other and off the core tiles', () => {
+    PROCESS_ZONES.forEach((zone, index) => {
+      expect(rectContains(byId.get('cpu')!, zone.rect), zone.id).toBe(true);
+      expect(rectsOverlap(zone.rect, byId.get('p-cluster')!), zone.id).toBe(false);
+      expect(rectsOverlap(zone.rect, byId.get('e-cluster')!), zone.id).toBe(false);
+      PROCESS_ZONES.slice(index + 1).forEach((other) => expect(rectsOverlap(zone.rect, other.rect)).toBe(false));
+    });
+  });
+
+  it('groups stops 2 to 5 under the process that runs them', () => {
+    const zoneOf = (stop: number) => PROCESS_ZONES.find((zone) => zone.stops.includes(stop));
+    expect([2, 3, 4, 5].map((stop) => zoneOf(stop)?.id)).toEqual(['renderer', 'renderer', 'gpu-process', 'gpu-process']);
+    for (const stop of [2, 3, 4, 5]) {
+      expect(rectContains(zoneOf(stop)!.rect, siteForStop(stop)), `stop ${stop}`).toBe(true);
+    }
   });
 
   it('puts each stop site on its hardware block', () => {

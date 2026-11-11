@@ -4,8 +4,9 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import type { Plugin } from 'vite';
-import type { FeedEvent, HttpEvent } from '../src/shared/liveEvents';
+import type { FeedEvent, FileReadEvent, HttpEvent } from '../src/shared/liveEvents';
 import { createHardwareSampler } from './hardwareSampler';
+import { serveShaderFile, shaderFileName } from './shaderFiles';
 
 const FEED_PATH = '/__live/events';
 const SAMPLE_INTERVAL_MS = 500;
@@ -21,7 +22,7 @@ export function liveFeedPlugin(): Plugin {
     name: 'live-feed',
     configureServer(server) {
       const clients = new Set<ServerResponse>();
-      const recent: HttpEvent[] = [];
+      const recent: (HttpEvent | FileReadEvent)[] = [];
       let timer: NodeJS.Timeout | null = null;
       // Each sampling loop gets a number, so a loop still waiting on its tools can tell it was replaced.
       let currentLoop = 0;
@@ -71,6 +72,14 @@ export function liveFeedPlugin(): Plugin {
         startSampling();
       };
 
+      const remember = (event: HttpEvent | FileReadEvent) => {
+        recent.push(event);
+        if (recent.length > RECENT_REQUESTS) {
+          recent.shift();
+        }
+        broadcast(event);
+      };
+
       const logRequest = (req: IncomingMessage, res: ServerResponse) => {
         const startedAt = performance.now();
         const { socket } = req;
@@ -88,11 +97,7 @@ export function liveFeedPlugin(): Plugin {
             serverPort: serverPort(),
             clientPort: socket.remotePort ?? 0,
           };
-          recent.push(event);
-          if (recent.length > RECENT_REQUESTS) {
-            recent.shift();
-          }
-          broadcast(event);
+          remember(event);
         });
       };
 
@@ -102,6 +107,15 @@ export function liveFeedPlugin(): Plugin {
           return;
         }
         logRequest(req, res);
+        const shaderFile = req.method === 'GET' ? shaderFileName(req.url) : null;
+        if (shaderFile) {
+          void serveShaderFile(server.config.root, shaderFile, res, remember).then((served) => {
+            if (!served) {
+              next();
+            }
+          });
+          return;
+        }
         next();
       });
 

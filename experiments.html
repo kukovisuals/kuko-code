@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day 442 on the hardware</title>
+    <link rel="stylesheet" href="/src/experiments/experiments.css" />
+  </head>
+  <body>
+    <header>
+      <h1>How Day 442 compiles and runs on the M2</h1>
+      <p class="muted">
+        Readings only. This page never suggests a change. No browser API can time one line of a shader, so no
+        line shows a time. What it can measure: how often each line ran on the GPU, where on screen the GPU time
+        went, and the text the compiler produced. Close the city tab first, so it isn't drawing on the same GPU.
+      </p>
+    </header>
+
+    <main>
+      <section class="code-panel">
+        <h2>Your code, line by line <span class="status status-measured">measured</span></h2>
+        <p class="muted">
+          Source: a counting copy of your shader adds one counter per <code>{ }</code> block and writes the counts
+          instead of a color, and <code>readPixels</code> reads them back. Your if and for statements take the same
+          path, so the counts are exact. Lines in one block share its numbers. <strong>runs / frame</strong>: times
+          the block ran over all 1,024,000 pixels of one frame. <strong>max / pixel</strong>: the most for one
+          pixel. <strong>pixels</strong>: share of pixels where it ran at all.
+          <strong>lanes waiting</strong> <span class="status status-modeled">modeled</span>: a SIMD group of 32
+          pixels goes through a block as many times as its busiest pixel, so this is the share of those lane-slots
+          whose pixel had already finished. 32 is a community figure (metal-benchmarks). The 8 x 4 layout is ours.
+          Click a line to see where its block ran.
+        </p>
+        <div id="source" class="source"></div>
+      </section>
+
+      <aside class="screen-panel">
+        <h2>The picture <span class="status status-measured">measured</span></h2>
+        <p class="muted">The unchanged shader at iTime = 4 s, 1280 x 800. Every reading on this page is of this frame.</p>
+        <canvas id="canvas" width="1280" height="800"></canvas>
+
+        <h2>Where the selected block ran <span class="status status-measured">measured</span> <span class="status status-modeled">groups modeled</span></h2>
+        <p id="block-title" class="muted">Click a line of code.</p>
+        <canvas id="block-map" class="map"></canvas>
+        <div class="legend"><div class="legend-bar"></div><span id="block-legend" class="muted"></span></div>
+        <p id="block-readout" class="muted readout"></p>
+
+        <h2>GPU time by screen tile <span class="status status-partial">partial</span></h2>
+        <p class="muted">
+          Source: <code>TIME_ELAPSED_EXT</code> around one draw of the unchanged shader, limited to one 80 x 80
+          tile by a scissor. A time range, not busy time, and it includes the fixed cost of a draw. An empty
+          one-line shader is timed in the same tiles, so that cost is shown too.
+        </p>
+        <div class="controls">
+          <button id="run" type="button" disabled>Time the tiles</button>
+          <span id="progress" class="muted">Loading…</span>
+        </div>
+        <canvas id="tile-map" class="map"></canvas>
+        <div class="legend"><div class="legend-bar"></div><span id="tile-legend" class="muted"></span></div>
+        <p id="tile-readout" class="muted readout"></p>
+        <p id="tile-summary" class="muted"></p>
+      </aside>
+    </main>
+
+    <section>
+      <h2>The compiler</h2>
+      <p class="muted">
+        Two compilers sit between your GLSL and the GPU. Chrome's ANGLE rewrites it for Metal, then Apple's
+        compiler turns that into GPU code. A page can read the first one's output and nothing after it.
+      </p>
+      <div id="compiler"></div>
+    </section>
+
+    <section>
+      <h2>Checks</h2>
+      <ul id="checks" class="checks"><li class="muted">Loading…</li></ul>
+    </section>
+    <pre id="error" class="error" hidden></pre>
+    <script type="module" src="/src/experiments/main.ts"></script>
+  </body>
+</html>

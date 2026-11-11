@@ -1,0 +1,3573 @@
+{
+  "schema": "day442-hardware/1",
+  "savedAt": "2026-11-11T18:20:35.004Z",
+  "program": "Day 442",
+  "width": 1280,
+  "height": 800,
+  "sceneTimeS": 4,
+  "sources": {
+    "counts": "A counting copy adds one counter per { } block and writes the counts instead of a color; readPixels reads them back. Counted on the GPU.",
+    "simd": "32 threads per SIMD group (community source: metal-benchmarks). Their 8 x 4 layout on screen is our model.",
+    "tiles": "EXT_disjoint_timer_query_webgl2 TIME_ELAPSED_EXT around one scissored draw of the unchanged shader.",
+    "translated": "WEBGL_debug_shaders getTranslatedShaderSource on the unchanged fragment shader."
+  },
+  "counting": {
+    "passes": 1,
+    "outputsPerPass": 8,
+    "blocks": [
+      {
+        "id": "shaders/day442-common.glsl:3:17",
+        "file": "shaders/day442-common.glsl",
+        "kind": "function",
+        "functionName": "r2",
+        "startLine": 3,
+        "endLine": 3,
+        "header": "mat2 r2(float a)",
+        "total": 1165903432,
+        "maxPerPixel": 2112,
+        "pixelsRan": 1024000,
+        "waitingShare": 0.11954719869213137,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-common.glsl:7:1",
+        "file": "shaders/day442-common.glsl",
+        "kind": "function",
+        "functionName": "smin",
+        "startLine": 7,
+        "endLine": 11,
+        "header": "float smin( float a, float b, float k )",
+        "total": 241801070,
+        "maxPerPixel": 528,
+        "pixelsRan": 1024000,
+        "waitingShare": 0.11397832758074034,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-common.glsl:14:1",
+        "file": "shaders/day442-common.glsl",
+        "kind": "function",
+        "functionName": "sdLink",
+        "startLine": 14,
+        "endLine": 17,
+        "header": "float sdLink( vec3 p, float le, float r1, float r2 )",
+        "total": 0,
+        "maxPerPixel": 0,
+        "pixelsRan": 0,
+        "waitingShare": null,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-common.glsl:20:1",
+        "file": "shaders/day442-common.glsl",
+        "kind": "function",
+        "functionName": "sdCapsule",
+        "startLine": 20,
+        "endLine": 24,
+        "header": "float sdCapsule( vec3 p, vec3 a, vec3 b, float r )",
+        "total": 145737929,
+        "maxPerPixel": 264,
+        "pixelsRan": 1024000,
+        "waitingShare": 0.11954719869213137,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-image.glsl:15:1",
+        "file": "shaders/day442-image.glsl",
+        "kind": "function",
+        "functionName": "arrow",
+        "startLine": 15,
+        "endLine": 19,
+        "header": "#define AA 2 #define FAR 30. #define PI 3.14159265 float arrow(vec3 p, vec3 a, vec3 b, float off, int id)",
+        "total": 0,
+        "maxPerPixel": 0,
+        "pixelsRan": 0,
+        "waitingShare": null,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-image.glsl:24:1",
+        "file": "shaders/day442-image.glsl",
+        "kind": "function",
+        "functionName": "shape",
+        "startLine": 24,
+        "endLine": 56,
+        "header": "vec2 shape(vec3 p, vec3 a, vec3 b)",
+        "total": 145737929,
+        "maxPerPixel": 264,
+        "pixelsRan": 1024000,
+        "waitingShare": 0.11954719869213137,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-image.glsl:28:5",
+        "file": "shaders/day442-image.glsl",
+        "kind": "for",
+        "functionName": "shape",
+        "startLine": 28,
+        "endLine": 33,
+        "header": "for(int i=1; i<6; i++)",
+        "total": 728689645,
+        "maxPerPixel": 1320,
+        "pixelsRan": 1024000,
+        "waitingShare": 0.11954719869213137,
+        "maxPerParent": 5,
+        "overBoundPixels": 0
+      },
+      {
+        "id": "shaders/day442-image.glsl:54:16",
+        "file": "shaders/day442-image.glsl",
+        "kind": "if",
+        "functionName": "shape",
+        "startLine": 54,
+        "endLine": 54,
+        "header": "if(d6 > d5)",
+        "total": 96063141,
+        "maxPerPixel": 264,
+        "pixelsRan": 1024000,
+        "waitingShare": 0.11619409038571316,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-image.glsl:59:1",
+        "file": "shaders/day442-image.glsl",
+        "kind": "function",
+        "functionName": "map",
+        "startLine": 59,
+        "endLine": 78,
+        "header": "vec2 map(vec3 p)",
+        "total": 145737929,
+        "maxPerPixel": 264,
+        "pixelsRan": 1024000,
+        "waitingShare": 0.11954719869213137,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-image.glsl:81:1",
+        "file": "shaders/day442-image.glsl",
+        "kind": "function",
+        "functionName": "rayMarch",
+        "startLine": 81,
+        "endLine": 102,
+        "header": "vec2 rayMarch(vec3 ro, vec3 rd)",
+        "total": 4096000,
+        "maxPerPixel": 4,
+        "pixelsRan": 1024000,
+        "waitingShare": 0,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-image.glsl:85:5",
+        "file": "shaders/day442-image.glsl",
+        "kind": "for",
+        "functionName": "rayMarch",
+        "startLine": 85,
+        "endLine": 99,
+        "header": "for(int i=0; i<60; i++)",
+        "total": 132147965,
+        "maxPerPixel": 240,
+        "pixelsRan": 1024000,
+        "waitingShare": 0.12824238794466858,
+        "maxPerParent": 60,
+        "overBoundPixels": 0
+      },
+      {
+        "id": "shaders/day442-image.glsl:105:1",
+        "file": "shaders/day442-image.glsl",
+        "kind": "function",
+        "functionName": "calcNormal",
+        "startLine": 105,
+        "endLine": 112,
+        "header": "vec3 calcNormal(vec3 p)",
+        "total": 2264994,
+        "maxPerPixel": 4,
+        "pixelsRan": 568609,
+        "waitingShare": 0.03676955894560652,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-image.glsl:116:1",
+        "file": "shaders/day442-image.glsl",
+        "kind": "function",
+        "functionName": "setCamera",
+        "startLine": 116,
+        "endLine": 122,
+        "header": "mat3 setCamera( in vec3 ro, in vec3 ta, float cr )",
+        "total": 1024000,
+        "maxPerPixel": 1,
+        "pixelsRan": 1024000,
+        "waitingShare": 0,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-image.glsl:126:1",
+        "file": "shaders/day442-image.glsl",
+        "kind": "function",
+        "functionName": "render",
+        "startLine": 126,
+        "endLine": 172,
+        "header": "vec3 render(vec3 ro, vec3 rd)",
+        "total": 4096000,
+        "maxPerPixel": 4,
+        "pixelsRan": 1024000,
+        "waitingShare": 0,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-image.glsl:133:5",
+        "file": "shaders/day442-image.glsl",
+        "kind": "if",
+        "functionName": "render",
+        "startLine": 133,
+        "endLine": 164,
+        "header": "if(dt.x < 30.)",
+        "total": 2264994,
+        "maxPerPixel": 4,
+        "pixelsRan": 568609,
+        "waitingShare": 0.03676955894560652,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-image.glsl:149:9",
+        "file": "shaders/day442-image.glsl",
+        "kind": "if",
+        "functionName": "render",
+        "startLine": 149,
+        "endLine": 153,
+        "header": "if (dt.y > 3.)",
+        "total": 624511,
+        "maxPerPixel": 4,
+        "pixelsRan": 170882,
+        "waitingShare": 0.40028367187019853,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-image.glsl:155:9",
+        "file": "shaders/day442-image.glsl",
+        "kind": "else",
+        "functionName": "render",
+        "startLine": 155,
+        "endLine": 159,
+        "header": "else",
+        "total": 1640483,
+        "maxPerPixel": 4,
+        "pixelsRan": 421713,
+        "waitingShare": 0.1431683617188414,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-image.glsl:184:1",
+        "file": "shaders/day442-image.glsl",
+        "kind": "function",
+        "functionName": "mainImage",
+        "startLine": 184,
+        "endLine": 213,
+        "header": "void mainImage(out vec4 O, in vec2 I)",
+        "total": 1024000,
+        "maxPerPixel": 1,
+        "pixelsRan": 1024000,
+        "waitingShare": 0,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day442-image.glsl:199:34",
+        "file": "shaders/day442-image.glsl",
+        "kind": "for",
+        "functionName": "mainImage",
+        "startLine": 199,
+        "endLine": 208,
+        "header": "for (int m = 0; m < AA; m++) for (int n = 0; n < AA; n++)",
+        "total": 4096000,
+        "maxPerPixel": 4,
+        "pixelsRan": 1024000,
+        "waitingShare": 0,
+        "maxPerParent": 4,
+        "overBoundPixels": 0
+      }
+    ]
+  },
+  "tiles": {
+    "size": 80,
+    "columns": 16,
+    "rows": 10,
+    "warmupRounds": 2,
+    "timedRounds": 12,
+    "seed": 2013524127,
+    "items": [
+      {
+        "column": 0,
+        "row": 0,
+        "x": 0,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.249124999999999,
+          "min": 2.003833,
+          "max": 22.425458,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.2128745,
+          "min": 1.92875,
+          "max": 22.407375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 0,
+        "x": 80,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.960687,
+          "min": 2.515333,
+          "max": 23.455416,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.884958,
+          "min": 2.513583,
+          "max": 23.413916,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 0,
+        "x": 160,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.8228955,
+          "min": 3.087833,
+          "max": 6.828541,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.771208,
+          "min": 3.054874,
+          "max": 6.767125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 0,
+        "x": 240,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.501229,
+          "min": 4.658,
+          "max": 24.122624,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.479187,
+          "min": 4.666374,
+          "max": 24.106499,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 0,
+        "x": 320,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.225416,
+          "min": 5.57975,
+          "max": 21.122791,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.1921870000000006,
+          "min": 5.568708,
+          "max": 21.003749,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 0,
+        "x": 400,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.0689575,
+          "min": 0.838958,
+          "max": 23.193999,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.0012075,
+          "min": 0.776499,
+          "max": 23.175958,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 0,
+        "x": 480,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.4886455000000005,
+          "min": 5.361791,
+          "max": 24.377375,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.4337915,
+          "min": 5.360624,
+          "max": 24.253624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 0,
+        "x": 560,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.340479,
+          "min": 0.795125,
+          "max": 22.586375,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.288062,
+          "min": 0.759,
+          "max": 22.54575,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 0,
+        "x": 640,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.295707500000001,
+          "min": 1.766666,
+          "max": 18.541291,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.2219785000000005,
+          "min": 1.724499,
+          "max": 18.411958,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 0,
+        "x": 720,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.211791,
+          "min": 5.796083,
+          "max": 21.102916,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.1873535,
+          "min": 5.755749,
+          "max": 20.986624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 0,
+        "x": 800,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.999333,
+          "min": 5.212749,
+          "max": 6.464499,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.9531244999999995,
+          "min": 5.155874,
+          "max": 6.462374,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 0,
+        "x": 880,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1569579999999995,
+          "min": 5.323958,
+          "max": 7.021291,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.13075,
+          "min": 5.275833,
+          "max": 6.958,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 0,
+        "x": 960,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.2142705,
+          "min": 5.388916,
+          "max": 7.09525,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.160791,
+          "min": 5.286374,
+          "max": 6.988,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 0,
+        "x": 1040,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.298812,
+          "min": 0.656833,
+          "max": 22.295708,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.2202079999999995,
+          "min": 0.537625,
+          "max": 22.278625,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 0,
+        "x": 1120,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.2076245,
+          "min": 0.471291,
+          "max": 22.304125,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.1725825,
+          "min": 0.420875,
+          "max": 22.06375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 0,
+        "x": 1200,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1345205,
+          "min": 0.401666,
+          "max": 22.169958,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.118812,
+          "min": 0.414458,
+          "max": 22.105125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 1,
+        "x": 0,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.9779990000000005,
+          "min": 2.511375,
+          "max": 23.048458,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.9326035,
+          "min": 2.491458,
+          "max": 23.388249,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 1,
+        "x": 80,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1841665,
+          "min": 2.423708,
+          "max": 22.569083,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.13627,
+          "min": 2.219874,
+          "max": 22.541125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 1,
+        "x": 160,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.0413745,
+          "min": 1.810749,
+          "max": 21.542208,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.8938955,
+          "min": 1.701375,
+          "max": 6.44825,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 1,
+        "x": 240,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.554708,
+          "min": 0.753208,
+          "max": 7.114624,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.462833,
+          "min": 0.330458,
+          "max": 7.0005,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 1,
+        "x": 320,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.282083,
+          "min": 5.798124,
+          "max": 21.715458,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.282958000000001,
+          "min": 5.793166,
+          "max": 21.447041,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 1,
+        "x": 400,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.985666,
+          "min": 5.49725,
+          "max": 23.129166,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.929187000000001,
+          "min": 5.427374,
+          "max": 23.07825,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 1,
+        "x": 480,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.160603500000001,
+          "min": 4.850291,
+          "max": 21.824375,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.0762075,
+          "min": 4.803833,
+          "max": 21.821916,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 1,
+        "x": 560,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.122687,
+          "min": 5.51475,
+          "max": 22.453624,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.0261455,
+          "min": 5.50925,
+          "max": 22.526249,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 1,
+        "x": 640,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.213875,
+          "min": 5.464375,
+          "max": 22.271208,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.201958,
+          "min": 5.417416,
+          "max": 22.268833,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 1,
+        "x": 720,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.231562,
+          "min": 5.408124,
+          "max": 21.555791,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.1942705,
+          "min": 5.345124,
+          "max": 21.556749,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 1,
+        "x": 800,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.946895,
+          "min": 2.279666,
+          "max": 21.185374,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.881833,
+          "min": 2.305999,
+          "max": 21.120124,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 1,
+        "x": 880,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.420624500000001,
+          "min": 4.924499,
+          "max": 22.329124,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.3774370000000005,
+          "min": 4.665791,
+          "max": 22.27825,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 1,
+        "x": 960,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.44527,
+          "min": 5.554958,
+          "max": 7.709291,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.400437,
+          "min": 5.4935,
+          "max": 7.657833,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 1,
+        "x": 1040,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.825833,
+          "min": 5.462,
+          "max": 6.814124,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.7535205000000005,
+          "min": 5.433458,
+          "max": 6.724125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 1,
+        "x": 1120,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.0602705,
+          "min": 4.180124,
+          "max": 6.860999,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.9450614999999996,
+          "min": 4.172625,
+          "max": 6.820291,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 1,
+        "x": 1200,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.2912289999999995,
+          "min": 3.297375,
+          "max": 18.661916,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.252478999999999,
+          "min": 3.29825,
+          "max": 18.588458,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 2,
+        "x": 0,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.8965625,
+          "min": 5.575374,
+          "max": 21.756249,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.875562,
+          "min": 5.502416,
+          "max": 21.699958,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 2,
+        "x": 80,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.973312,
+          "min": 2.056041,
+          "max": 6.570749,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.940708,
+          "min": 2.0485,
+          "max": 6.530333,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 2,
+        "x": 160,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1304365,
+          "min": 0.5665,
+          "max": 23.722999,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.1029785,
+          "min": 0.568541,
+          "max": 23.677458,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 2,
+        "x": 240,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.098541,
+          "min": 5.7395,
+          "max": 22.49825,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.0402495,
+          "min": 5.684874,
+          "max": 22.502041,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 2,
+        "x": 320,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.3635415,
+          "min": 1.857791,
+          "max": 24.317916,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.3307285,
+          "min": 1.726124,
+          "max": 24.336374,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 2,
+        "x": 400,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.3067915,
+          "min": 5.785374,
+          "max": 21.966875,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.278874500000001,
+          "min": 5.731374,
+          "max": 21.964041,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 2,
+        "x": 480,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.164979,
+          "min": 1.729625,
+          "max": 6.488916,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.042020000000001,
+          "min": 1.651208,
+          "max": 6.424166,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 2,
+        "x": 560,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.284478999999999,
+          "min": 2.474999,
+          "max": 23.0415,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.2516455,
+          "min": 2.44325,
+          "max": 23.041499,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 2,
+        "x": 640,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1247495,
+          "min": 4.102624,
+          "max": 23.436,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.067228500000001,
+          "min": 4.001833,
+          "max": 23.433875,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 2,
+        "x": 720,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.8952915,
+          "min": 4.731124,
+          "max": 22.19325,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.874416,
+          "min": 4.730375,
+          "max": 22.144624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 2,
+        "x": 800,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1502495,
+          "min": 5.4295,
+          "max": 23.009624,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.1218330000000005,
+          "min": 5.318291,
+          "max": 23.004125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 2,
+        "x": 880,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.334208,
+          "min": 5.252999,
+          "max": 6.7795,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.233978499999999,
+          "min": 5.084999,
+          "max": 6.69325,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 2,
+        "x": 960,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1204575000000006,
+          "min": 1.98775,
+          "max": 23.115458,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.077645499999999,
+          "min": 1.866291,
+          "max": 23.039124,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 2,
+        "x": 1040,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.18002,
+          "min": 5.067583,
+          "max": 22.51475,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.1210415000000005,
+          "min": 4.881999,
+          "max": 22.483499,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 2,
+        "x": 1120,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.03825,
+          "min": 1.47325,
+          "max": 20.73225,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.963687,
+          "min": 1.372124,
+          "max": 20.754916,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 2,
+        "x": 1200,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.957083000000001,
+          "min": 5.400124,
+          "max": 18.266458,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.957603499999999,
+          "min": 5.339124,
+          "max": 18.314458,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 3,
+        "x": 0,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.0695415,
+          "min": 5.536749,
+          "max": 6.543249,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.9491245,
+          "min": 5.529041,
+          "max": 6.534624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 3,
+        "x": 80,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1994995,
+          "min": 5.418875,
+          "max": 18.722125,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.174104,
+          "min": 5.360249,
+          "max": 18.731541,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 3,
+        "x": 160,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 14.5413955,
+          "min": 0.590875,
+          "max": 23.906833,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 14.5098745,
+          "min": 0.502875,
+          "max": 23.934625,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 3,
+        "x": 240,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.4114375,
+          "min": 0.719083,
+          "max": 22.558791,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.3363119999999995,
+          "min": 0.735083,
+          "max": 22.556791,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 3,
+        "x": 320,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.190916,
+          "min": 4.136499,
+          "max": 21.445083,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.0975205,
+          "min": 4.084874,
+          "max": 21.345749,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 3,
+        "x": 400,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.0220614999999995,
+          "min": 3.849624,
+          "max": 22.911374,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.960416,
+          "min": 3.612,
+          "max": 23.132166,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 3,
+        "x": 480,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.610374500000001,
+          "min": 1.829374,
+          "max": 22.177624,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.5595205,
+          "min": 1.734999,
+          "max": 22.325666,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 3,
+        "x": 560,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.001478499999999,
+          "min": 5.696458,
+          "max": 21.535208,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.8089995000000005,
+          "min": 5.587916,
+          "max": 21.2285,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 3,
+        "x": 640,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.3738125,
+          "min": 0.778958,
+          "max": 21.2735,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.269708,
+          "min": 0.773708,
+          "max": 21.229374,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 3,
+        "x": 720,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.0415,
+          "min": 1.416249,
+          "max": 22.201708,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.003708,
+          "min": 1.267791,
+          "max": 22.039875,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 3,
+        "x": 800,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.215707999999999,
+          "min": 2.206833,
+          "max": 21.75125,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.1510415,
+          "min": 2.046208,
+          "max": 21.743624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 3,
+        "x": 880,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.575165999999999,
+          "min": 3.687124,
+          "max": 23.699416,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.5694165,
+          "min": 3.575125,
+          "max": 23.667458,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 3,
+        "x": 960,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.278645,
+          "min": 5.68175,
+          "max": 21.237249,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.2147495,
+          "min": 5.609875,
+          "max": 21.231583,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 3,
+        "x": 1040,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.2342285,
+          "min": 5.095,
+          "max": 22.711125,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.1958325,
+          "min": 4.943625,
+          "max": 22.59075,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 3,
+        "x": 1120,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.957062,
+          "min": 1.378,
+          "max": 21.643416,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.9069785,
+          "min": 1.322916,
+          "max": 21.441208,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 3,
+        "x": 1200,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.0974995,
+          "min": 5.455374,
+          "max": 6.740999,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.009187,
+          "min": 5.395,
+          "max": 6.739458,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 4,
+        "x": 0,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.8037495,
+          "min": 2.139375,
+          "max": 22.458083,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.774333,
+          "min": 2.114708,
+          "max": 22.425125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 4,
+        "x": 80,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.593125,
+          "min": 3.505791,
+          "max": 6.486583,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.500562,
+          "min": 3.505375,
+          "max": 6.478958,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 4,
+        "x": 160,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.338229,
+          "min": 5.698749,
+          "max": 18.843,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.264186499999999,
+          "min": 5.699458,
+          "max": 18.815083,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 4,
+        "x": 240,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.563833,
+          "min": 5.752,
+          "max": 21.568333,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.520187,
+          "min": 5.748708,
+          "max": 21.403124,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 4,
+        "x": 320,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.3423535,
+          "min": 5.394249,
+          "max": 7.759458,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.282729,
+          "min": 5.378083,
+          "max": 7.708125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 4,
+        "x": 400,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.168333,
+          "min": 4.971249,
+          "max": 21.528874,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.1057705,
+          "min": 4.8585,
+          "max": 22.394,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 4,
+        "x": 480,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.2241245,
+          "min": 5.620333,
+          "max": 22.039083,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.2098534999999995,
+          "min": 5.4845,
+          "max": 22.023666,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 4,
+        "x": 560,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.4465,
+          "min": 5.388124,
+          "max": 7.344916,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.4032285,
+          "min": 5.335499,
+          "max": 7.258541,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 4,
+        "x": 640,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.0367285,
+          "min": 5.341666,
+          "max": 6.885791,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.999145499999999,
+          "min": 5.336125,
+          "max": 6.824375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 4,
+        "x": 720,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.2443124999999995,
+          "min": 5.767958,
+          "max": 24.423916,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.210666,
+          "min": 5.716749,
+          "max": 24.423833,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 4,
+        "x": 800,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.3912705,
+          "min": 2.579291,
+          "max": 23.363374,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.313687,
+          "min": 2.533333,
+          "max": 23.32425,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 4,
+        "x": 880,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.5038325,
+          "min": 5.462791,
+          "max": 23.373124,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.413437,
+          "min": 5.403124,
+          "max": 23.370875,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 4,
+        "x": 960,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.2968955,
+          "min": 5.518333,
+          "max": 22.450375,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.259083,
+          "min": 5.463874,
+          "max": 22.648375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 4,
+        "x": 1040,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.473644999999999,
+          "min": 5.822499,
+          "max": 24.365374,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.4051659999999995,
+          "min": 5.754875,
+          "max": 24.401041,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 4,
+        "x": 1120,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1898955,
+          "min": 4.942625,
+          "max": 21.770999,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.114875,
+          "min": 4.912583,
+          "max": 21.769874,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 4,
+        "x": 1200,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.393666,
+          "min": 5.184625,
+          "max": 22.774041,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.395562,
+          "min": 5.049583,
+          "max": 22.724041,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 5,
+        "x": 0,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.070062500000001,
+          "min": 1.256125,
+          "max": 6.607916,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.0081039999999994,
+          "min": 1.142124,
+          "max": 6.531249,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 5,
+        "x": 80,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.303561999999999,
+          "min": 5.311708,
+          "max": 22.248249,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.250686999999999,
+          "min": 5.311833,
+          "max": 22.232416,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 5,
+        "x": 160,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.4626865,
+          "min": 5.265624,
+          "max": 19.106374,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.3949375,
+          "min": 5.209124,
+          "max": 23.148583,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 5,
+        "x": 240,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.3324995,
+          "min": 0.812333,
+          "max": 23.524499,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.3076665,
+          "min": 0.783166,
+          "max": 23.494916,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 5,
+        "x": 320,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.0075205,
+          "min": 3.13575,
+          "max": 6.633874,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.9363125,
+          "min": 3.136666,
+          "max": 6.58575,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 5,
+        "x": 400,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.534208,
+          "min": 5.511875,
+          "max": 23.974041,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.470437,
+          "min": 5.497,
+          "max": 23.948875,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 5,
+        "x": 480,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.070833,
+          "min": 4.406541,
+          "max": 22.303249,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.022895,
+          "min": 4.410958,
+          "max": 22.24375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 5,
+        "x": 560,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.394125000000001,
+          "min": 5.454374,
+          "max": 23.248333,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.330979,
+          "min": 5.363291,
+          "max": 23.227249,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 5,
+        "x": 640,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.3086660000000006,
+          "min": 5.441499,
+          "max": 6.855999,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.2326245,
+          "min": 5.327999,
+          "max": 6.856375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 5,
+        "x": 720,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.996541,
+          "min": 1.080374,
+          "max": 23.378791,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.9556450000000005,
+          "min": 1.04075,
+          "max": 23.334749,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 5,
+        "x": 800,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.2124995,
+          "min": 2.162791,
+          "max": 23.832374,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.182437,
+          "min": 2.125083,
+          "max": 23.835,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 5,
+        "x": 880,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1754999999999995,
+          "min": 5.721041,
+          "max": 21.679374,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.133229,
+          "min": 5.718458,
+          "max": 21.679958,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 5,
+        "x": 960,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.034041,
+          "min": 1.912041,
+          "max": 23.861249,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.9450614999999996,
+          "min": 1.839,
+          "max": 23.831041,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 5,
+        "x": 1040,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.058873999999999,
+          "min": 4.997041,
+          "max": 8.252333,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.9141665,
+          "min": 4.995708,
+          "max": 7.022249,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 5,
+        "x": 1120,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1362495,
+          "min": 5.343124,
+          "max": 21.482874,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.070604,
+          "min": 5.204666,
+          "max": 21.480291,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 5,
+        "x": 1200,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.167812,
+          "min": 5.836499,
+          "max": 24.367458,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.104062000000001,
+          "min": 5.793499,
+          "max": 24.453791,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 6,
+        "x": 0,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.9641245000000005,
+          "min": 5.254291,
+          "max": 7.10675,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.8851455,
+          "min": 5.183999,
+          "max": 7.051708,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 6,
+        "x": 80,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.8869995,
+          "min": 4.852875,
+          "max": 21.679541,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.815666,
+          "min": 4.84325,
+          "max": 21.567333,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 6,
+        "x": 160,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.390854,
+          "min": 0.33025,
+          "max": 23.013708,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.357187,
+          "min": 0.237708,
+          "max": 22.998541,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 6,
+        "x": 240,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.457687,
+          "min": 5.924999,
+          "max": 6.885666,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.408437,
+          "min": 5.924291,
+          "max": 6.806374,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 6,
+        "x": 320,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.2596454999999995,
+          "min": 4.631499,
+          "max": 24.519291,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.235979,
+          "min": 4.567333,
+          "max": 24.480875,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 6,
+        "x": 400,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.3824784999999995,
+          "min": 5.334625,
+          "max": 21.704666,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.333333,
+          "min": 5.279666,
+          "max": 21.699833,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 6,
+        "x": 480,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.4672705,
+          "min": 5.881208,
+          "max": 22.444541,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.441186500000001,
+          "min": 5.772708,
+          "max": 22.346166,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 6,
+        "x": 560,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1372915,
+          "min": 2.370958,
+          "max": 6.934958,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.096166,
+          "min": 2.332916,
+          "max": 6.876541,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 6,
+        "x": 640,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.9749995,
+          "min": 2.617875,
+          "max": 23.46,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.90425,
+          "min": 2.586708,
+          "max": 23.46375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 6,
+        "x": 720,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.222166,
+          "min": 1.551291,
+          "max": 22.39375,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.2011875,
+          "min": 1.47875,
+          "max": 22.390624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 6,
+        "x": 800,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.334937,
+          "min": 5.777624,
+          "max": 22.263749,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.275812,
+          "min": 5.724749,
+          "max": 22.263874,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 6,
+        "x": 880,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.0554995,
+          "min": 0.68475,
+          "max": 6.842208,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.9793115,
+          "min": 0.619833,
+          "max": 6.77675,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 6,
+        "x": 960,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.4383535,
+          "min": 5.46575,
+          "max": 18.882541,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.3968745,
+          "min": 5.413874,
+          "max": 18.865916,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 6,
+        "x": 1040,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.209728500000001,
+          "min": 2.443333,
+          "max": 23.983,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.202562,
+          "min": 2.355625,
+          "max": 23.986125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 6,
+        "x": 1120,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.252791,
+          "min": 1.75175,
+          "max": 6.887583,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.2211455,
+          "min": 1.743166,
+          "max": 6.87475,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 6,
+        "x": 1200,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1370825,
+          "min": 4.86025,
+          "max": 22.158416,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.05775,
+          "min": 4.771,
+          "max": 22.116624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 7,
+        "x": 0,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.230416,
+          "min": 2.208083,
+          "max": 22.634166,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.19025,
+          "min": 2.100375,
+          "max": 22.586375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 7,
+        "x": 80,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.897083,
+          "min": 4.709333,
+          "max": 6.455125,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.804416,
+          "min": 4.59775,
+          "max": 6.386874,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 7,
+        "x": 160,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.366187,
+          "min": 5.80775,
+          "max": 20.220624,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.316124,
+          "min": 5.713999,
+          "max": 20.280333,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 7,
+        "x": 240,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1317705,
+          "min": 4.931875,
+          "max": 22.431249,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.069186999999999,
+          "min": 4.802958,
+          "max": 22.387749,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 7,
+        "x": 320,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.082125,
+          "min": 4.718583,
+          "max": 21.779624,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.9766245,
+          "min": 4.620374,
+          "max": 21.713375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 7,
+        "x": 400,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.6488115,
+          "min": 4.284916,
+          "max": 22.347583,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.6046035,
+          "min": 4.288958,
+          "max": 22.23175,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 7,
+        "x": 480,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.922604,
+          "min": 4.829833,
+          "max": 21.419041,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.81025,
+          "min": 4.776333,
+          "max": 21.417125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 7,
+        "x": 560,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.153499500000001,
+          "min": 5.460291,
+          "max": 21.769625,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.993603500000001,
+          "min": 5.397999,
+          "max": 7.767916,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 7,
+        "x": 640,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.0442705,
+          "min": 2.401791,
+          "max": 22.359249,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.975041,
+          "min": 2.226541,
+          "max": 22.357624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 7,
+        "x": 720,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.419665999999999,
+          "min": 2.832583,
+          "max": 21.550291,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.3909994999999995,
+          "min": 2.783374,
+          "max": 21.412624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 7,
+        "x": 800,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.0126035,
+          "min": 2.662708,
+          "max": 23.508166,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.9817705,
+          "min": 2.643208,
+          "max": 23.505833,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 7,
+        "x": 880,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.5052495,
+          "min": 5.613416,
+          "max": 21.424249,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.4357915000000006,
+          "min": 5.541083,
+          "max": 21.35275,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 7,
+        "x": 960,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.3552495,
+          "min": 4.090375,
+          "max": 22.97775,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.301333,
+          "min": 3.951708,
+          "max": 22.973125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 7,
+        "x": 1040,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1288955000000005,
+          "min": 0.526374,
+          "max": 6.872875,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.061145,
+          "min": 0.510749,
+          "max": 6.815916,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 7,
+        "x": 1120,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.21627,
+          "min": 0.618916,
+          "max": 24.501249,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.213666,
+          "min": 0.618083,
+          "max": 24.708749,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 7,
+        "x": 1200,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.256645499999999,
+          "min": 3.363375,
+          "max": 6.799083,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.1683535,
+          "min": 3.315416,
+          "max": 6.781541,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 8,
+        "x": 0,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.12852,
+          "min": 3.217249,
+          "max": 23.281583,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.122708,
+          "min": 3.223291,
+          "max": 23.459208,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 8,
+        "x": 80,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.928666,
+          "min": 1.918791,
+          "max": 6.526208,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.8961455,
+          "min": 1.870916,
+          "max": 6.389749,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 8,
+        "x": 160,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1403535,
+          "min": 5.686125,
+          "max": 21.064083,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.0465625,
+          "min": 5.633749,
+          "max": 21.029124,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 8,
+        "x": 240,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.4509995,
+          "min": 5.882625,
+          "max": 22.34675,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.385562,
+          "min": 5.832,
+          "max": 22.344958,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 8,
+        "x": 320,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.653687,
+          "min": 0.800166,
+          "max": 21.999333,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.6057495,
+          "min": 0.68875,
+          "max": 21.998041,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 8,
+        "x": 400,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.140041,
+          "min": 4.8775,
+          "max": 7.065874,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.0804575,
+          "min": 4.82625,
+          "max": 7.059999,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 8,
+        "x": 480,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1871875,
+          "min": 5.419624,
+          "max": 23.05575,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.129811999999999,
+          "min": 5.419374,
+          "max": 23.047749,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 8,
+        "x": 560,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.3475825,
+          "min": 5.548833,
+          "max": 22.3575,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.346562499999999,
+          "min": 5.550583,
+          "max": 22.355125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 8,
+        "x": 640,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.6291455,
+          "min": 5.565625,
+          "max": 22.447708,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.5150825,
+          "min": 5.509833,
+          "max": 22.090249,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 8,
+        "x": 720,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.5544575,
+          "min": 5.67175,
+          "max": 22.884999,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.443187,
+          "min": 5.629749,
+          "max": 22.910791,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 8,
+        "x": 800,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.407437,
+          "min": 0.675541,
+          "max": 22.823208,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.330083,
+          "min": 0.621041,
+          "max": 22.776208,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 8,
+        "x": 880,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.285311999999999,
+          "min": 3.946499,
+          "max": 6.959166,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.2245415,
+          "min": 3.947374,
+          "max": 6.955499,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 8,
+        "x": 960,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1576035000000005,
+          "min": 5.295708,
+          "max": 24.127125,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.1246035,
+          "min": 5.238791,
+          "max": 24.094499,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 8,
+        "x": 1040,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.295958,
+          "min": 5.202499,
+          "max": 22.474583,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.201249499999999,
+          "min": 5.094333,
+          "max": 22.39275,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 8,
+        "x": 1120,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.0234575,
+          "min": 5.445125,
+          "max": 20.988499,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.00727,
+          "min": 5.444374,
+          "max": 20.918624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 8,
+        "x": 1200,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.3038745,
+          "min": 4.6695,
+          "max": 22.542541,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.241666,
+          "min": 4.535874,
+          "max": 22.501833,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 9,
+        "x": 0,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.106812,
+          "min": 1.79725,
+          "max": 22.203749,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.0499785,
+          "min": 1.783874,
+          "max": 22.26525,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 9,
+        "x": 80,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.981937,
+          "min": 4.786374,
+          "max": 22.20175,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.916520500000001,
+          "min": 4.684666,
+          "max": 22.189583,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 9,
+        "x": 160,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1022495,
+          "min": 4.748666,
+          "max": 22.473958,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.0742080000000005,
+          "min": 4.722083,
+          "max": 22.39975,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 9,
+        "x": 240,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1452705000000005,
+          "min": 5.829791,
+          "max": 22.976583,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.0675415,
+          "min": 5.816166,
+          "max": 22.968333,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 9,
+        "x": 320,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.331125,
+          "min": 4.559333,
+          "max": 22.6155,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.2951245,
+          "min": 4.45325,
+          "max": 22.627416,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 9,
+        "x": 400,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.140312,
+          "min": 5.37375,
+          "max": 22.791208,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.0989165,
+          "min": 5.327125,
+          "max": 22.770249,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 9,
+        "x": 480,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.1712705,
+          "min": 5.660708,
+          "max": 6.546666,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.1133120000000005,
+          "min": 5.608374,
+          "max": 6.486833,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 9,
+        "x": 560,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.9199365,
+          "min": 1.694499,
+          "max": 6.634874,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.9000625,
+          "min": 1.614499,
+          "max": 6.599958,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 9,
+        "x": 640,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.423145,
+          "min": 2.950458,
+          "max": 22.554999,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.3401865,
+          "min": 2.955124,
+          "max": 22.408083,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 9,
+        "x": 720,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.163062,
+          "min": 3.003374,
+          "max": 22.50325,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.040875,
+          "min": 2.830541,
+          "max": 22.50175,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 9,
+        "x": 800,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.4158535,
+          "min": 5.527208,
+          "max": 6.91325,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.3737075,
+          "min": 5.470666,
+          "max": 6.854499,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 9,
+        "x": 880,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.4759995,
+          "min": 3.595791,
+          "max": 22.546541,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.4038955,
+          "min": 3.548166,
+          "max": 22.539083,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 9,
+        "x": 960,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.319166,
+          "min": 4.724249,
+          "max": 7.247583,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.2643125,
+          "min": 4.724583,
+          "max": 7.179124,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 9,
+        "x": 1040,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 5.842812,
+          "min": 5.48925,
+          "max": 22.151333,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 5.788729,
+          "min": 5.405625,
+          "max": 22.084999,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 9,
+        "x": 1120,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.377083,
+          "min": 5.081875,
+          "max": 24.453708,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.3071660000000005,
+          "min": 4.963499,
+          "max": 24.433416,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 9,
+        "x": 1200,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 6.2904785,
+          "min": 5.646708,
+          "max": 23.195541,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 6.23427,
+          "min": 5.590124,
+          "max": 23.163374,
+          "samples": 12
+        }
+      }
+    ],
+    "wholeFrameMs": {
+      "median": 21.3158535,
+      "min": 17.160249,
+      "max": 23.524499,
+      "samples": 12
+    }
+  },
+  "translated": {
+    "available": true,
+    "language": "Metal Shading Language",
+    "glsl": {
+      "bytes": 6047,
+      "lines": 257
+    },
+    "text": "\n\n#include <metal_stdlib>\n\n#define ANGLE_ALWAYS_INLINE __attribute__((always_inline))\n\nANGLE_ALWAYS_INLINE int ANGLE_int_clamp(int value, int minValue, int maxValue)\n{\n    return ((value < minValue) ?  minValue : ((value > maxValue) ? maxValue : value));\n};\n\n#define ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX   0\n#define ANGLE_RASTERIZATION_DISCARD_INDEX     1\n#define ANGLE_MULTISAMPLED_RENDERING_INDEX    2\n#define ANGLE_DEPTH_WRITE_ENABLED_INDEX       3\n#define ANGLE_EMULATE_ALPHA_TO_COVERAGE_INDEX 4\n#define ANGLE_WRITE_HELPER_SAMPLE_MASK_INDEX  5\n\nconstant bool ANGLEUseSampleCompareGradient [[function_constant(ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX)]];\nconstant bool ANGLERasterizerDisabled       [[function_constant(ANGLE_RASTERIZATION_DISCARD_INDEX)]];\nconstant bool ANGLEMultisampledRendering    [[function_constant(ANGLE_MULTISAMPLED_RENDERING_INDEX)]];\nconstant bool ANGLEDepthWriteEnabled        [[function_constant(ANGLE_DEPTH_WRITE_ENABLED_INDEX)]];\nconstant bool ANGLEEmulateAlphaToCoverage   [[function_constant(ANGLE_EMULATE_ALPHA_TO_COVERAGE_INDEX)]];\nconstant bool ANGLEWriteHelperSampleMask    [[function_constant(ANGLE_WRITE_HELPER_SAMPLE_MASK_INDEX)]];\n\n#define ANGLE_ALPHA0\n\nconstant bool ANGLESampleMaskWriteEnabled = ANGLEMultisampledRendering;\n#pragma clang diagnostic ignored \"-Wunused-value\"\ntemplate <typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>\nANGLE_ALWAYS_INLINE Z ANGLE_addInt(X x, Y y)\n{\n    using U = metal::make_unsigned_t<Z>;\n    return as_type<Z>(U(Z(x)) + U(Z(y)));\n}\n\nANGLE_ALWAYS_INLINE int ANGLE_postIncrementInt(thread int &x) { int r = x; x = ANGLE_addInt(x, 1); return r; }\nANGLE_ALWAYS_INLINE metal::int2 ANGLE_postIncrementInt(thread metal::int2 &x) { metal::int2 r = x; x = ANGLE_addInt(x, 1); return r; }\nANGLE_ALWAYS_INLINE metal::int3 ANGLE_postIncrementInt(thread metal::int3 &x) { metal::int3 r = x; x = ANGLE_addInt(x, 1); return r; }\nANGLE_ALWAYS_INLINE metal::int4 ANGLE_postIncrementInt(thread metal::int4 &x) { metal::int4 r = x; x = ANGLE_addInt(x, 1); return r; }\n\ntemplate <typename X, typename Y>\nANGLE_ALWAYS_INLINE X ANGLE_mod(X x, Y y)\n{\n    return x - y * metal::floor(x / y);\n}\n\ntemplate <typename X, typename Y>\nANGLE_ALWAYS_INLINE X ANGLE_rshift(X x, Y y)\n{\n    return x >> (y & Y(31));\n}\n\ntemplate <typename X, typename Y>\nANGLE_ALWAYS_INLINE X ANGLE_ilshift(X x, Y y)\n{\n    using UX = metal::make_unsigned_t<X>;\n    return as_type<X>(UX(x) << (y & Y(31)));\n}\n\ntemplate <typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>\nANGLE_ALWAYS_INLINE Z ANGLE_subInt(X x, Y y)\n{\n    using U = metal::make_unsigned_t<Z>;\n    return as_type<Z>(U(Z(x)) - U(Z(y)));\n}\n\ntemplate <typename X, typename Y>\nANGLE_ALWAYS_INLINE X ANGLE_ftoi(Y y)\n{\n    Y min = Y(metal::numeric_limits<X>::min());\n    Y max = Y(metal::numeric_limits<X>::max()) * Y(1.0f - 0x1.0p-24f);\n    return X(metal::clamp(y, min, max));\n}\n\ntemplate <typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>\nANGLE_ALWAYS_INLINE Z ANGLE_imul(X x, Y y)\n{\n    using U = metal::make_unsigned_t<Z>;\n    return as_type<Z>(U(Z(x)) * U(Z(y)));\n}\n\ntemplate <typename X, typename Y>\nANGLE_ALWAYS_INLINE X ANGLE_ulshift(X x, Y y)\n{\n    return x << (y & Y(31));\n}\n\nstruct ANGLE_InvocationFragmentGlobals\n{\n  metal::float4 gl_FragCoord [[position]];\n};\n\nstruct ANGLEDepthRangeParams\n{\n  float ANGLE_near;\n  float ANGLE_far;\n  float ANGLE_diff;\n};\n\nstruct ANGLEUniformBlock\n{\n  metal::float2 ANGLE_depthRange;\n  uint32_t ANGLE_renderArea;\n  uint32_t ANGLE_flipXY;\n  uint32_t ANGLE_misc;\n  int ANGLE_baseInstance;\n  metal::uint2 ANGLE_acbBufferOffsets;\n  metal::int4 ANGLE_xfbBufferOffsets;\n  int ANGLE_xfbVerticesPerInstance;\n  uint32_t ANGLE_coverageMask;\n  metal::uint2 ANGLE_unused;\n};\n\nstruct ANGLE_NonConstGlobals\n{\n  metal::float4 ANGLE_flippedFragCoord;\n};\n\nstruct ANGLE_UserUniforms\n{\n  metal::float3 _uiResolution;\n  float _uiTime;\n};\n\nstruct ANGLE_FragmentOut\n{\n  metal::float4 _uoutColor [[__unassigned_output__]];\n  uint32_t ANGLE_metal_SampleMask [[sample_mask, function_constant(ANGLESampleMaskWriteEnabled)]];\n};\n\nmetal::float2 ANGLE_sc7e(float ANGLE_sc7f, float ANGLE_sc80)\n{\n  metal::float2 ANGLE_sc81 = metal::float2(ANGLE_sc7f, ANGLE_sc80);\n  return ANGLE_sc81;;\n}\n\nmetal::float2 ANGLE_sc7b(float ANGLE_sc7c, float ANGLE_sc7d)\n{\n  metal::float2 ANGLE_sc82 = metal::float2(ANGLE_sc7c, ANGLE_sc7d);\n  return ANGLE_sc82;;\n}\n\nmetal::float4 ANGLE_sc78(metal::float3 ANGLE_sc79, float ANGLE_sc7a)\n{\n  metal::float4 ANGLE_sc83 = metal::float4(ANGLE_sc79.x, ANGLE_sc79.y, ANGLE_sc79.z, ANGLE_sc7a);\n  return ANGLE_sc83;;\n}\n\nmetal::float4 ANGLE_sc75(metal::float3 ANGLE_sc76, float ANGLE_sc77)\n{\n  metal::float4 ANGLE_sc84 = metal::float4(ANGLE_sc76.x, ANGLE_sc76.y, ANGLE_sc76.z, ANGLE_sc77);\n  return ANGLE_sc84;;\n}\n\nmetal::float3 ANGLE_sc72(metal::float2 ANGLE_sc73, float ANGLE_sc74)\n{\n  metal::float3 ANGLE_sc85 = metal::float3(ANGLE_sc73.x, ANGLE_sc73.y, ANGLE_sc74);\n  return ANGLE_sc85;;\n}\n\nmetal::float2 ANGLE_sc6f(int ANGLE_sc70, int ANGLE_sc71)\n{\n  float ANGLE_sc86 = float(ANGLE_sc70);\n  float ANGLE_sc87 = float(ANGLE_sc71);\n  metal::float2 ANGLE_sc88 = metal::float2(ANGLE_sc86, ANGLE_sc87);\n  return ANGLE_sc88;;\n}\n\nmetal::float3 ANGLE_sc6b(float ANGLE_sc6c, float ANGLE_sc6d, float ANGLE_sc6e)\n{\n  metal::float3 ANGLE_sc89 = metal::float3(ANGLE_sc6c, ANGLE_sc6d, ANGLE_sc6e);\n  return ANGLE_sc89;;\n}\n\nmetal::float3x3 ANGLE_sc67(metal::float3 ANGLE_sc68, metal::float3 ANGLE_sc69, metal::float3 ANGLE_sc6a)\n{\n  metal::float3x3 ANGLE_sc8a = metal::float3x3(ANGLE_sc68.x, ANGLE_sc68.y, ANGLE_sc68.z, ANGLE_sc69.x, ANGLE_sc69.y, ANGLE_sc69.z, ANGLE_sc6a.x, ANGLE_sc6a.y, ANGLE_sc6a.z);\n  return ANGLE_sc8a;;\n}\n\nmetal::float3 ANGLE_sc63(float ANGLE_sc64, float ANGLE_sc65, float ANGLE_sc66)\n{\n  metal::float3 ANGLE_sc8b = metal::float3(ANGLE_sc64, ANGLE_sc65, ANGLE_sc66);\n  return ANGLE_sc8b;;\n}\n\nmetal::float3 ANGLE_sc5f(float ANGLE_sc60, float ANGLE_sc61, float ANGLE_sc62)\n{\n  metal::float3 ANGLE_sc8c = metal::float3(ANGLE_sc60, ANGLE_sc61, ANGLE_sc62);\n  return ANGLE_sc8c;;\n}\n\nmetal::float3 ANGLE_sc5b(int ANGLE_sc5c, int ANGLE_sc5d, float ANGLE_sc5e)\n{\n  float ANGLE_sc8d = float(ANGLE_sc5c);\n  float ANGLE_sc8e = float(ANGLE_sc5d);\n  metal::float3 ANGLE_sc8f = metal::float3(ANGLE_sc8d, ANGLE_sc8e, ANGLE_sc5e);\n  return ANGLE_sc8f;;\n}\n\nmetal::float3 ANGLE_sc57(int ANGLE_sc58, int ANGLE_sc59, float ANGLE_sc5a)\n{\n  float ANGLE_sc90 = float(ANGLE_sc58);\n  float ANGLE_sc91 = float(ANGLE_sc59);\n  metal::float3 ANGLE_sc92 = metal::float3(ANGLE_sc90, ANGLE_sc91, ANGLE_sc5a);\n  return ANGLE_sc92;;\n}\n\nmetal::float3 ANGLE_sc53(int ANGLE_sc54, float ANGLE_sc55, int ANGLE_sc56)\n{\n  float ANGLE_sc93 = float(ANGLE_sc54);\n  float ANGLE_sc94 = float(ANGLE_sc56);\n  metal::float3 ANGLE_sc95 = metal::float3(ANGLE_sc93, ANGLE_sc55, ANGLE_sc94);\n  return ANGLE_sc95;;\n}\n\nmetal::float3 ANGLE_sc4f(int ANGLE_sc50, float ANGLE_sc51, int ANGLE_sc52)\n{\n  float ANGLE_sc96 = float(ANGLE_sc50);\n  float ANGLE_sc97 = float(ANGLE_sc52);\n  metal::float3 ANGLE_sc98 = metal::float3(ANGLE_sc96, ANGLE_sc51, ANGLE_sc97);\n  return ANGLE_sc98;;\n}\n\nmetal::float3 ANGLE_sc4b(float ANGLE_sc4c, int ANGLE_sc4d, int ANGLE_sc4e)\n{\n  float ANGLE_sc99 = float(ANGLE_sc4d);\n  float ANGLE_sc9a = float(ANGLE_sc4e);\n  metal::float3 ANGLE_sc9b = metal::float3(ANGLE_sc4c, ANGLE_sc99, ANGLE_sc9a);\n  return ANGLE_sc9b;;\n}\n\nmetal::float3 ANGLE_sc47(float ANGLE_sc48, int ANGLE_sc49, int ANGLE_sc4a)\n{\n  float ANGLE_sc9c = float(ANGLE_sc49);\n  float ANGLE_sc9d = float(ANGLE_sc4a);\n  metal::float3 ANGLE_sc9e = metal::float3(ANGLE_sc48, ANGLE_sc9c, ANGLE_sc9d);\n  return ANGLE_sc9e;;\n}\n\nmetal::float2 ANGLE_sc44(float ANGLE_sc45, float ANGLE_sc46)\n{\n  metal::float2 ANGLE_sc9f = metal::float2(ANGLE_sc45, ANGLE_sc46);\n  return ANGLE_sc9f;;\n}\n\nmetal::float2 ANGLE_sc41(float ANGLE_sc42, float ANGLE_sc43)\n{\n  metal::float2 ANGLE_sca0 = metal::float2(ANGLE_sc42, ANGLE_sc43);\n  return ANGLE_sca0;;\n}\n\nmetal::float2 ANGLE_sc3e(float ANGLE_sc3f, float ANGLE_sc40)\n{\n  metal::float2 ANGLE_sca1 = metal::float2(ANGLE_sc3f, ANGLE_sc40);\n  return ANGLE_sca1;;\n}\n\nmetal::float2x2 ANGLE_sc39(float ANGLE_sc3a, float ANGLE_sc3b, float ANGLE_sc3c, float ANGLE_sc3d)\n{\n  metal::float2x2 ANGLE_sca2 = metal::float2x2(ANGLE_sc3a, ANGLE_sc3b, ANGLE_sc3c, ANGLE_sc3d);\n  return ANGLE_sca2;;\n}\n\nmetal::float2x2 _ur2(float _ua)\n{\n  float ANGLE_sca3 = metal::cos(_ua);\n  float ANGLE_sca4 = metal::sin(_ua);\n  float ANGLE_sca5 = metal::sin(_ua);\n  float ANGLE_sca6 = (-ANGLE_sca5);\n  float ANGLE_sca7 = metal::cos(_ua);\n  metal::float2x2 ANGLE_sca8 = ANGLE_sc39(ANGLE_sca3, ANGLE_sca4, ANGLE_sca6, ANGLE_sca7);\n  return ANGLE_sca8;;\n}\n\nfloat _usmin(float _ua, float _ub, float _uk)\n{\n  _uk *= 5.33333349f;\n  float ANGLE_sca9 = (_ua - _ub);\n  float ANGLE_scaa = metal::abs(ANGLE_sca9);\n  float ANGLE_scab = (_uk - ANGLE_scaa);\n  float ANGLE_scac = metal::max(ANGLE_scab, 0.0f);\n  float _uh = (ANGLE_scac / _uk);\n  float ANGLE_scae = metal::min(_ua, _ub);\n  float ANGLE_scaf = (_uh * _uh);\n  float ANGLE_scb0 = (ANGLE_scaf * _uh);\n  float ANGLE_scb1 = (4.0f - _uh);\n  float ANGLE_scb2 = (ANGLE_scb0 * ANGLE_scb1);\n  float ANGLE_scb3 = (ANGLE_scb2 * _uk);\n  float ANGLE_scb4 = (ANGLE_scb3 * 0.0625f);\n  float ANGLE_scb5 = (ANGLE_scae - ANGLE_scb4);\n  return ANGLE_scb5;;\n}\n\nfloat _usdCapsule(metal::float3 _up, metal::float3 _ua, metal::float3 _ub, float _ur)\n{\n  metal::float3 _upa = (_up - _ua);\n  metal::float3 _uba = (_ub - _ua);\n  float ANGLE_scb8 = metal::dot(_upa, _uba);\n  float ANGLE_scb9 = metal::dot(_uba, _uba);\n  float ANGLE_scba = (ANGLE_scb8 / ANGLE_scb9);\n  float _uh = metal::clamp(ANGLE_scba, 0.0f, 1.0f);\n  metal::float3 ANGLE_scbc = (_uba * _uh);\n  metal::float3 ANGLE_scbd = (_upa - ANGLE_scbc);\n  float ANGLE_scbe = metal::length(ANGLE_scbd);\n  float ANGLE_scbf = (ANGLE_scbe - _ur);\n  return ANGLE_scbf;;\n}\n\nmetal::float2 _ushape(constant ANGLE_UserUniforms & ANGLE_userUniforms, metal::float3 _up, metal::float3 _ua, metal::float3 _ub)\n{\n  metal::float3 _unp1 = _up;\n  {\n    int _ui = 1;\n    bool ANGLE_sc26 = (_ui < 6);\n    while (ANGLE_sc26)\n    {\n      {\n        metal::float3 ANGLE_scc1 = metal::abs(_up);\n        _up = (ANGLE_scc1 - 0.449999988f);\n        _up.xy = (_up.xy * metal::float2x2(-0.344300002f, 0.885399997f, -0.885399997f, -0.344300002f));\n        _up.yz = (_up.yz * metal::float2x2(0.344300002f, 0.885399997f, -0.885399997f, 0.344300002f));\n        float ANGLE_scc3 = (ANGLE_userUniforms._uiTime * 0.0500000007f);\n        metal::float2x2 ANGLE_scc4 = _ur2(ANGLE_scc3);\n        _up.xy = (_up.xy * ANGLE_scc4);\n      }\n      ANGLE_postIncrementInt(_ui);\n      ANGLE_sc26 = (_ui < 6);\n    }\n  }\n  metal::float2x2 ANGLE_scc6 = _ur2(2.8499999f);\n  _up.yz = (_up.yz * ANGLE_scc6);\n  metal::float2x2 ANGLE_scc7 = _ur2(0.400000006f);\n  _up.xz = (_up.xz * ANGLE_scc7);\n  float _ud4 = _usdCapsule(_up, _ua, _ub, 0.0599999987f);\n  float ANGLE_scc9 = metal::length(_unp1);\n  float _ud2 = (ANGLE_scc9 - 4.4000001f);\n  metal::float3 _unp = _up;\n  _unp.xy = (_unp.xy + 0.200000003f);\n  float ANGLE_sccb = (ANGLE_userUniforms._uiTime * 0.00999999978f);\n  _unp.z = (_unp.z - ANGLE_sccb);\n  float _ucell = 0.5f;\n  metal::float3 ANGLE_sccc = ANGLE_mod(_unp, _ucell);\n  float ANGLE_sccd = (_ucell * 0.5f);\n  _unp = (ANGLE_sccc - ANGLE_sccd);\n  float ANGLE_sccf = metal::length(_unp);\n  float _ud5 = (ANGLE_sccf - 0.0799999982f);\n  float ANGLE_scd1 = (-_ud2);\n  float ANGLE_scd2 = (-_ud4);\n  float ANGLE_scd3 = _usmin(ANGLE_scd1, ANGLE_scd2, 0.25f);\n  float _ud6 = (-ANGLE_scd3);\n  float _uid = 2.0f;\n  bool ANGLE_scd5 = (_ud6 > _ud5);\n  if (ANGLE_scd5)\n  {\n    float ANGLE_scd6 = (-_ud2);\n    float ANGLE_scd7 = (-_ud5);\n    float ANGLE_scd8 = _usmin(ANGLE_scd6, ANGLE_scd7, 0.200000003f);\n    _ud6 = (-ANGLE_scd8);\n    _uid = 4.0f;\n  } else {}\n  metal::float2 ANGLE_scda = ANGLE_sc3e(_ud6, _uid);\n  return ANGLE_scda;;\n}\n\nmetal::float2 _umap(constant ANGLE_UserUniforms & ANGLE_userUniforms, metal::float3 _up)\n{\n  float ANGLE_scdb = (ANGLE_userUniforms._uiTime * 0.100000001f);\n  metal::float2x2 ANGLE_scdc = _ur2(ANGLE_scdb);\n  _up.yz = (_up.yz * ANGLE_scdc);\n  metal::float3 _ua1 = metal::float3(0.0f, 0.0f, 0.0f);\n  metal::float3 _ub2 = metal::float3(0.0f, 0.0f, 1.0f);\n  metal::float2 _ud1 = _ushape(ANGLE_userUniforms, _up, _ua1, _ub2);\n  float _ushape = _ud1.x;\n  float _uid = _ud1.y;\n  metal::float2 ANGLE_scde = ANGLE_sc41(_ushape, _uid);\n  return ANGLE_scde;;\n}\n\nmetal::float2 _urayMarch(constant ANGLE_UserUniforms & ANGLE_userUniforms, metal::float3 _uro, metal::float3 _urd)\n{\n  float _udt = 0.0f;\n  float _uid = 0.0f;\n  {\n    int _ui = 0;\n    bool ANGLE_sc27 = (_ui < 60);\n    while (ANGLE_sc27)\n    {\n      {\n        metal::float3 ANGLE_sce0 = (_urd * _udt);\n        metal::float3 _up = (_uro + ANGLE_sce0);\n        metal::float2 _usdf = _umap(ANGLE_userUniforms, _up);\n        float _ud = _usdf.x;\n        _uid = _usdf.y;\n        _udt += _ud;\n        float ANGLE_sce3 = metal::abs(_ud);\n        bool ANGLE__1 = (ANGLE_sce3 < 0.00100000005f);\n        if (!ANGLE__1)\n        {\n          ANGLE__1 = (_udt > 30.0f);\n        } else {}\n        if (ANGLE__1)\n        {\n          break;\n        } else {}\n      }\n      ANGLE_postIncrementInt(_ui);\n      ANGLE_sc27 = (_ui < 60);\n    }\n  }\n  metal::float2 ANGLE_sce8 = ANGLE_sc44(_udt, _uid);\n  return ANGLE_sce8;;\n}\n\nmetal::float3 _ucalcNormal(constant ANGLE_UserUniforms & ANGLE_userUniforms, metal::float3 _up)\n{\n  float _ue = 0.00100000005f;\n  metal::float3 ANGLE_sce9 = ANGLE_sc47(_ue, 0, 0);\n  metal::float3 ANGLE_scea = (_up + ANGLE_sce9);\n  metal::float2 ANGLE_sceb = _umap(ANGLE_userUniforms, ANGLE_scea);\n  metal::float3 ANGLE_scec = ANGLE_sc4b(_ue, 0, 0);\n  metal::float3 ANGLE_sced = (_up - ANGLE_scec);\n  metal::float2 ANGLE_scee = _umap(ANGLE_userUniforms, ANGLE_sced);\n  float ANGLE_scef = (ANGLE_sceb.x - ANGLE_scee.x);\n  metal::float3 ANGLE_scf0 = ANGLE_sc4f(0, _ue, 0);\n  metal::float3 ANGLE_scf1 = (_up + ANGLE_scf0);\n  metal::float2 ANGLE_scf2 = _umap(ANGLE_userUniforms, ANGLE_scf1);\n  metal::float3 ANGLE_scf3 = ANGLE_sc53(0, _ue, 0);\n  metal::float3 ANGLE_scf4 = (_up - ANGLE_scf3);\n  metal::float2 ANGLE_scf5 = _umap(ANGLE_userUniforms, ANGLE_scf4);\n  float ANGLE_scf6 = (ANGLE_scf2.x - ANGLE_scf5.x);\n  metal::float3 ANGLE_scf7 = ANGLE_sc57(0, 0, _ue);\n  metal::float3 ANGLE_scf8 = (_up + ANGLE_scf7);\n  metal::float2 ANGLE_scf9 = _umap(ANGLE_userUniforms, ANGLE_scf8);\n  metal::float3 ANGLE_scfa = ANGLE_sc5b(0, 0, _ue);\n  metal::float3 ANGLE_scfb = (_up - ANGLE_scfa);\n  metal::float2 ANGLE_scfc = _umap(ANGLE_userUniforms, ANGLE_scfb);\n  float ANGLE_scfd = (ANGLE_scf9.x - ANGLE_scfc.x);\n  metal::float3 ANGLE_scfe = ANGLE_sc5f(ANGLE_scef, ANGLE_scf6, ANGLE_scfd);\n  metal::float3 ANGLE_scff = metal::fast::normalize(ANGLE_scfe);\n  return ANGLE_scff;;\n}\n\nmetal::float3x3 _usetCamera(metal::float3 _uro, metal::float3 _uta, float _ucr)\n{\n  metal::float3 ANGLE_sd00 = (_uta - _uro);\n  metal::float3 _ucw = metal::fast::normalize(ANGLE_sd00);\n  float ANGLE_sd02 = metal::sin(_ucr);\n  float ANGLE_sd03 = metal::cos(_ucr);\n  metal::float3 _ucp = ANGLE_sc63(ANGLE_sd02, ANGLE_sd03, 0.0f);\n  metal::float3 ANGLE_sd05 = metal::cross(_ucw, _ucp);\n  metal::float3 _ucu = metal::fast::normalize(ANGLE_sd05);\n  metal::float3 _ucv = metal::cross(_ucu, _ucw);\n  metal::float3x3 ANGLE_sd08 = ANGLE_sc67(_ucu, _ucv, _ucw);\n  return ANGLE_sd08;;\n}\n\nmetal::float3 _urender(constant ANGLE_UserUniforms & ANGLE_userUniforms, metal::float3 _uro, metal::float3 _urd)\n{\n  metal::float3 _ucol = metal::float3(0.0f, 0.0f, 0.0f);\n  metal::float2 _udt = _urayMarch(ANGLE_userUniforms, _uro, _urd);\n  metal::float3 _ul = metal::float3(0.0f, 0.0f, 0.0f);\n  metal::float3 _up = metal::float3(0.0f, 0.0f, 0.0f);\n  bool ANGLE_sd0a = (_udt.x < 30.0f);\n  if (ANGLE_sd0a)\n  {\n    metal::float3 ANGLE_sd0b = (_urd * _udt.x);\n    _up = (_uro + ANGLE_sd0b);\n    metal::float3 _un = _ucalcNormal(ANGLE_userUniforms, _up);\n    metal::float3 ANGLE_sd0e = (metal::float3(0.0f, 2.0f, 0.0f) - _up);\n    _ul = metal::fast::normalize(ANGLE_sd0e);\n    metal::float3 ANGLE_sd10 = (-_urd);\n    float ANGLE_sd11 = metal::dot(_un, ANGLE_sd10);\n    float _uNoV = metal::clamp(ANGLE_sd11, 0.0f, 1.0f);\n    float ANGLE_sd13 = (1.0f - _uNoV);\n    float ANGLE_sd14 = metal::powr(ANGLE_sd13, 2.5f);\n    float _urim = (ANGLE_sd14 * 2.0f);\n    metal::float3 _ubgcol = metal::float3(0.0f, 0.0f, 0.0f);\n    float ANGLE_sd16 = metal::dot(_un, _ul);\n    float _udiff = metal::max(ANGLE_sd16, 0.0f);\n    metal::float3 ANGLE_sd18 = (-_ul);\n    metal::float3 ANGLE_sd19 = metal::reflect(ANGLE_sd18, _un);\n    metal::float3 ANGLE_sd1a = (-_urd);\n    float ANGLE_sd1b = metal::dot(ANGLE_sd19, ANGLE_sd1a);\n    float ANGLE_sd1c = metal::max(ANGLE_sd1b, 0.0f);\n    float _uspec = metal::powr(ANGLE_sd1c, 12.0f);\n    metal::float3 _urimCol = metal::float3(0.0f, 0.0f, 0.0f);\n    bool ANGLE_sd1e = (_udt.y > 3.0f);\n    if (ANGLE_sd1e)\n    {\n      _ubgcol = metal::float3(0.725000024f, 0.133000001f, 0.537f);\n      _urimCol = (metal::float3(0.404000014f, 0.0549999997f, 0.564999998f) * _urim);\n    }\n    else\n    {\n      _ubgcol = metal::float3(0.80400002f, 0.075000003f, 0.184f);\n      _urimCol = (metal::float3(0.917999983f, 0.063000001f, 0.063000001f) * _urim);\n    }\n    float ANGLE_sd21 = (_udiff + 0.0f);\n    metal::float3 ANGLE_sd22 = (_ubgcol * ANGLE_sd21);\n    metal::float3 ANGLE_sd23 = (metal::float3(0.800000012f, 0.800000012f, 0.800000012f) * _uspec);\n    metal::float3 ANGLE_sd24 = (ANGLE_sd23 * 0.5f);\n    _ucol = (ANGLE_sd22 + ANGLE_sd24);\n    _ucol += _urimCol;\n  } else {}\n  float ANGLE_sd26 = metal::powr(_udt.x, 2.29999995f);\n  float ANGLE_sd27 = (ANGLE_sd26 * 0.300000012f);\n  float ANGLE_sd28 = (ANGLE_sd27 / 30.0f);\n  float ANGLE_sd29 = metal::min(ANGLE_sd28, 1.0f);\n  _ucol = metal::mix(_ucol, metal::float3(0.0122999996f, 0.0122999996f, 0.0122999996f), ANGLE_sd29);\n  return _ucol;;\n}\n\nvoid _umainImage(constant ANGLE_UserUniforms & ANGLE_userUniforms, thread metal::float4 & _uO, metal::float2 _uI)\n{\n  _uO = metal::float4(0.0f, 0.0f, 0.0f, 0.0f);\n  float ANGLE_sd2b = (ANGLE_userUniforms._uiTime * 0.5f);\n  float _ut = (18.0f + ANGLE_sd2b);\n  metal::float3 _uta = metal::float3(0.0f, 0.0f, 0.0f);\n  float ANGLE_sd2d = (0.100000001f * _ut);\n  float ANGLE_sd2e = metal::cos(ANGLE_sd2d);\n  float ANGLE_sd2f = (5.5f * ANGLE_sd2e);\n  float ANGLE_sd30 = (0.100000001f * _ut);\n  float ANGLE_sd31 = metal::sin(ANGLE_sd30);\n  float ANGLE_sd32 = (5.5f * ANGLE_sd31);\n  metal::float3 ANGLE_sd33 = ANGLE_sc6b(ANGLE_sd2f, 2.20000005f, ANGLE_sd32);\n  metal::float3 _uro = (_uta + ANGLE_sd33);\n  metal::float3x3 _uca = _usetCamera(_uro, _uta, 0.0f);\n  metal::float3 _utot = metal::float3(0.0f, 0.0f, 0.0f);\n  {\n    int _um = 0;\n    bool ANGLE_sc28 = (_um < 2);\n    while (ANGLE_sc28)\n    {\n      {\n        {\n          int _un = 0;\n          bool ANGLE_sc29 = (_un < 2);\n          while (ANGLE_sc29)\n          {\n            {\n              metal::float2 ANGLE_sd38 = ANGLE_sc6f(_um, _un);\n              metal::float2 ANGLE_sd39 = (ANGLE_sd38 / 2.0f);\n              metal::float2 _uoff = (ANGLE_sd39 - 0.5f);\n              metal::float2 ANGLE_sd3b = (_uI + _uoff);\n              metal::float2 ANGLE_sd3c = (2.0f * ANGLE_sd3b);\n              metal::float2 ANGLE_sd3d = (ANGLE_sd3c - ANGLE_userUniforms._uiResolution.xy);\n              metal::float2 _uuv = (ANGLE_sd3d / ANGLE_userUniforms._uiResolution.y);\n              metal::float3 ANGLE_sd3f = ANGLE_sc72(_uuv, 1.5f);\n              metal::float3 ANGLE_sd40 = metal::fast::normalize(ANGLE_sd3f);\n              metal::float3 _urd = (_uca * ANGLE_sd40);\n              metal::float3 _ucol = _urender(ANGLE_userUniforms, _uro, _urd);\n              metal::float3 ANGLE_sd43 = (_ucol * 1.0f);\n              _ucol = metal::powr(ANGLE_sd43, metal::float3(0.5f, 0.5f, 0.5f));\n              _utot += _ucol;\n            }\n            ANGLE_postIncrementInt(_un);\n            ANGLE_sc29 = (_un < 2);\n          }\n        }\n      }\n      ANGLE_postIncrementInt(_um);\n      ANGLE_sc28 = (_um < 2);\n    }\n  }\n  _utot /= 4.0f;\n  _uO = ANGLE_sc75(_utot, 1.0f);\n}\n\nvoid ANGLE__0_main(thread ANGLE_FragmentOut & ANGLE_fragmentOut, constant ANGLE_UserUniforms & ANGLE_userUniforms, thread ANGLE_NonConstGlobals & ANGLE_nonConstGlobals)\n{\n  ANGLE_fragmentOut._uoutColor = metal::float4(0.0f, 0.0f, 0.0f, 0.0f);\n  metal::float4 _ucolor = metal::float4(0.0f, 0.0f, 0.0f, 1.0f);\n  _umainImage(ANGLE_userUniforms, _ucolor, ANGLE_nonConstGlobals.ANGLE_flippedFragCoord.xy);\n  ANGLE_fragmentOut._uoutColor = ANGLE_sc78(_ucolor.xyz, 1.0f);\n}\n\nfragment ANGLE_FragmentOut main0(constant ANGLE_UserUniforms & ANGLE_userUniforms [[buffer(19)]], constant ANGLEUniformBlock & ANGLE_angleUniforms [[buffer(17)]], metal::float4 gl_FragCoord [[position]])\n{\n  ANGLE_InvocationFragmentGlobals ANGLE_invocationFragmentGlobals;\n  ANGLE_invocationFragmentGlobals.gl_FragCoord = gl_FragCoord;\n  {\n    ANGLE_FragmentOut ANGLE_fragmentOut;\n    {\n      ANGLE_NonConstGlobals ANGLE_nonConstGlobals;\n      {\n        ANGLE_nonConstGlobals.ANGLE_flippedFragCoord = ANGLE_invocationFragmentGlobals.gl_FragCoord;\n        uint32_t ANGLE_sd49 = (ANGLE_angleUniforms.ANGLE_renderArea & 65535u);\n        float ANGLE_sd4a = float(ANGLE_sd49);\n        uint32_t ANGLE_sd4b = ANGLE_rshift(ANGLE_angleUniforms.ANGLE_renderArea, 16u);\n        float ANGLE_sd4c = float(ANGLE_sd4b);\n        metal::float2 ANGLE_sd4d = ANGLE_sc7b(ANGLE_sd4a, ANGLE_sd4c);\n        metal::float2 ANGLE_sd4e = (ANGLE_sd4d * 0.5f);\n        metal::float2 ANGLE_sd4f = (ANGLE_invocationFragmentGlobals.gl_FragCoord.xy - ANGLE_sd4e);\n        metal::float4 ANGLE_sd50 = metal::unpack_snorm4x8_to_float(ANGLE_angleUniforms.ANGLE_flipXY);\n        metal::float2 ANGLE_sd51 = (ANGLE_sd4f * ANGLE_sd50.xy);\n        uint32_t ANGLE_sd52 = (ANGLE_angleUniforms.ANGLE_renderArea & 65535u);\n        float ANGLE_sd53 = float(ANGLE_sd52);\n        uint32_t ANGLE_sd54 = ANGLE_rshift(ANGLE_angleUniforms.ANGLE_renderArea, 16u);\n        float ANGLE_sd55 = float(ANGLE_sd54);\n        metal::float2 ANGLE_sd56 = ANGLE_sc7e(ANGLE_sd53, ANGLE_sd55);\n        metal::float2 ANGLE_sd57 = (ANGLE_sd56 * 0.5f);\n        ANGLE_nonConstGlobals.ANGLE_flippedFragCoord.xy = (ANGLE_sd51 + ANGLE_sd57);\n        ANGLE__0_main(ANGLE_fragmentOut, ANGLE_userUniforms, ANGLE_nonConstGlobals);\n        if (ANGLEMultisampledRendering)\n        {\n          ANGLE_fragmentOut.ANGLE_metal_SampleMask = ANGLE_angleUniforms.ANGLE_coverageMask;\n          if (ANGLEEmulateAlphaToCoverage)\n          {\n            uint32_t ANGLE_sd59 = ANGLE_rshift(ANGLE_angleUniforms.ANGLE_misc, 21u);\n            uint32_t ANGLE_sd5a = (ANGLE_sd59 & 1u);\n            bool ANGLE_sd5b = bool(ANGLE_sd5a);\n            if (ANGLE_sd5b)\n            {\n              int ANGLE_sc32 = gl_FragCoord.x;\n              int ANGLE_sc33 = gl_FragCoord.y;\n              ANGLE_sc32 = ANGLE_ilshift(ANGLE_sc32, 1);\n              ANGLE_sc33 &= 1;\n              ANGLE_sc32 = ANGLE_subInt(ANGLE_sc32, ANGLE_sc33);\n              ANGLE_sc32 &= 3;\n              float ANGLE_sc35 = metal::saturate(ANGLE_ALPHA0);\n              ANGLE_sc35 *= 510.0f;\n              int ANGLE_sc36 = ANGLE_ftoi<int>(ANGLE_sc35);\n              uint32_t ANGLE_sd5e = metal::get_num_samples();\n              switch (ANGLE_sd5e)\n              {\n                case 2:\n                  ANGLE_sc32 = ANGLE_ilshift(ANGLE_sc32, 6);\n                  ANGLE_sc36 = ANGLE_addInt(ANGLE_sc36, 225);\n                  ANGLE_sc36 = ANGLE_subInt(ANGLE_sc36, ANGLE_sc32);\n                  ANGLE_sc36 = ANGLE_rshift(ANGLE_sc36, 8);\n                  ANGLE_sc36 = ANGLE_imul(ANGLE_sc36, 3);\n                  ANGLE_sc36 = ANGLE_rshift(ANGLE_sc36, 1);\n                  break;\n                case 4:\n                  ANGLE_sc32 = ANGLE_ilshift(ANGLE_sc32, 5);\n                  ANGLE_sc36 = ANGLE_addInt(ANGLE_sc36, 113);\n                  ANGLE_sc36 = ANGLE_subInt(ANGLE_sc36, ANGLE_sc32);\n                  ANGLE_sc36 = ANGLE_rshift(ANGLE_sc36, 7);\n                  ANGLE_sc36 = ANGLE_ilshift(ANGLE_sc36, 2);\n                  ANGLE_sc36 = ANGLE_rshift(1030416, ANGLE_sc36);\n                  break;\n                case 8:\n                  ANGLE_sc32 = ANGLE_ilshift(ANGLE_sc32, 4);\n                  ANGLE_sc36 = ANGLE_addInt(ANGLE_sc36, 57);\n                  ANGLE_sc36 = ANGLE_subInt(ANGLE_sc36, ANGLE_sc32);\n                  ANGLE_sc36 = ANGLE_rshift(ANGLE_sc36, 6);\n                  ANGLE_sc36 = ANGLE_ulshift(4294967295u, ANGLE_sc36);\n                  ANGLE_sc36 = (~ANGLE_sc36);\n                  break;\n              }\n              ANGLE_fragmentOut.ANGLE_metal_SampleMask &= ANGLE_sc36;\n            } else {}\n          } else {}\n        } else {}\n      }\n    }\n    return ANGLE_fragmentOut;;\n  }\n}\n\n"
+  },
+  "environment": {
+    "browserMajor": 157,
+    "glRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2, Unspecified Version)",
+    "timerQueryExposed": true,
+    "parallelCompileExposed": true,
+    "timeElapsedBits": 64,
+    "timestampBits": 0
+  },
+  "crossOriginIsolated": true,
+  "disjointReads": 0,
+  "neverReturned": 0,
+  "hiddenDuringRun": false,
+  "runSeconds": 1.0517650001049041,
+  "checks": [
+    {
+      "passed": true,
+      "text": "mainImage ran 1,024,000 times, at most 1 per pixel. Expected exactly once for each of the 1,024,000 pixels."
+    },
+    {
+      "passed": true,
+      "text": "The loop at shaders/day442-image.glsl line 28 can run at most 5 times per run of its enclosing block. Pixels over that: 0."
+    },
+    {
+      "passed": true,
+      "text": "The loop at shaders/day442-image.glsl line 85 can run at most 60 times per run of its enclosing block. Pixels over that: 0."
+    },
+    {
+      "passed": true,
+      "text": "The loop at shaders/day442-image.glsl line 199 can run at most 4 times per run of its enclosing block. Pixels over that: 0."
+    },
+    {
+      "passed": true,
+      "text": "GPU_DISJOINT_EXT read true 0 times."
+    },
+    {
+      "passed": true,
+      "text": "0 timer queries never returned."
+    },
+    {
+      "passed": true,
+      "text": "The tab stayed visible during the run."
+    }
+  ]
+}

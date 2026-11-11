@@ -2,11 +2,12 @@
 // Buildings only carry a name on the map. Their numbers go to the panel as sections.
 import * as THREE from 'three';
 import type { NativeImport, Status } from '../shared/types';
-import { nameLabel, note, numberRow, placeCard, rowsBox } from './buildLabels';
+import { claimRow, nameLabel, note, numberRow, placeCard, rowsBox } from './buildLabels';
 import type { PanelSection } from './numbersPanel';
 import { COLORS } from './palette';
 import { tagComponent } from './picking';
 import type { PlannedBuilding, PlannedLane, Trip } from './planBuildings';
+import { SHADER_FORMS } from './shaderForms';
 import { rowsForStop } from './stopRows';
 
 const DISTRICT_TOP = 0.2;
@@ -157,6 +158,12 @@ function buildingId(building: PlannedBuilding): string {
 
 function buildingSection(building: PlannedBuilding, imports: NativeImport[], invented: boolean): PanelSection {
   const body = rowsBox();
+  building.stops.forEach((stop) => {
+    const form = SHADER_FORMS[stop.stop];
+    if (form) {
+      body.append(claimRow(`Stop ${stop.stop}, shader here: ${form.form}`, form.tag, form.source));
+    }
+  });
   building.stops.flatMap((stop) => rowsForStop(stop, imports)).forEach((row) => body.append(numberRow(row)));
   if (building.noHeightReason) {
     body.append(note(building.noHeightReason));

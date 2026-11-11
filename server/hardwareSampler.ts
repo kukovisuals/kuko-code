@@ -3,6 +3,7 @@ import { execFile } from 'node:child_process';
 import os from 'node:os';
 import type { FlowDelta, HardwareEvent, InterfaceRate } from '../src/shared/liveEvents';
 import { parseGpuStats, parseInterfaceCounters, parseLoopbackFlows, type InterfaceCounters } from './parseNative';
+import { createProcessSampler } from './processSampler';
 
 // Checked on this M2 on 2026-11-06: background-QoS work, which macOS keeps on E cores, ran cpu0 to cpu3
 // at 99% and left cpu4 to cpu7 near idle.
@@ -46,12 +47,14 @@ export function createHardwareSampler(serverPort: number, feedClientPorts: () =>
   const lastCounters = new Map<string, InterfaceCounters>();
   // Null until the first sample, whose totals only set the baseline: they cover each connection's whole life.
   let lastFlows: Map<number, { inBytes: number; outBytes: number }> | null = null;
+  const sampleProcesses = createProcessSampler();
 
   return async function sample(): Promise<HardwareEvent> {
-    const [gpuText, netText, flowText] = await Promise.all([
+    const [gpuText, netText, flowText, psText] = await Promise.all([
       run('ioreg', ['-r', '-d', '1', '-w', '0', '-c', 'IOAccelerator']),
       run('netstat', ['-ibn']),
       run('nettop', ['-L', '1', '-m', 'tcp', '-n', '-x', '-J', 'bytes_in,bytes_out,state']),
+      run('ps', ['-axo', 'pid=,time=,command=']),
     ]);
     const at = Date.now();
     const seconds = Math.max((at - lastAt) / 1000, 0.001);
@@ -98,6 +101,7 @@ export function createHardwareSampler(serverPort: number, feedClientPorts: () =>
       eCorePercents: percents.slice(0, E_CORE_COUNT),
       pCorePercents: percents.slice(E_CORE_COUNT),
       gpu: parseGpuStats(gpuText),
+      processes: sampleProcesses(psText, seconds),
       loopback,
       wifi,
       flows,

@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import hardwareMap from '../data/hardware-map.m2.json';
+import { compileEffect } from '../src/city/live/compileEffect';
 import { LiveRecorder, needsRedraw } from '../src/city/live/liveRecorder';
 import { FRAME_SLOWDOWN, dotsForBytes, frameTrip, sampleTrip } from '../src/city/live/trafficPlan';
-import { flowRow, httpRow, programRow } from '../src/city/live/wireRows';
+import { fileReadRow, flowRow, httpRow, programRow } from '../src/city/live/wireRows';
 import type { ProgramEvent } from '../src/shared/liveEvents';
 import type { HardwareMap } from '../src/shared/types';
 import { validateRecording } from '../src/shared/validateRecording';
@@ -97,6 +98,7 @@ describe('capture rows', () => {
     flowRow({ serverPort: 5173, clientPort: 52000, inBytes: 10, outBytes: 20, isThisFeed: true }, at),
     programRow(frame(30, 14)),
     programRow({ type: 'compile', at, callsMs: 1, compileMs: 2 }),
+    fileReadRow({ type: 'file-read', at, file: 'shaders/day442-image.glsl', bytes: 2048, ms: 0.12 }),
   ];
 
   it('never makes a row without a status and a source', () => {
@@ -113,5 +115,28 @@ describe('capture rows', () => {
 
   it('shows nothing for events with no row of their own', () => {
     expect(programRow({ type: 'source', at, bytes: 1, sha256: 'a' })).toBeNull();
+  });
+});
+
+describe('compileEffect', () => {
+  const sample = (index: number, percent: number) => ({ from: index * 500, to: (index + 1) * 500, percent });
+  const build = { from: 2100, to: 2300 };
+
+  it('says the build raised the reading when the overlapping sample is clearly higher', () => {
+    const result = compileEffect([sample(0, 10), sample(1, 12), sample(2, 11), sample(3, 11), sample(4, 30)], build);
+    expect(result.verdict).toBe('rose');
+    expect(result.text).toContain('11% before, 30% during');
+  });
+
+  it('says plainly when it did not', () => {
+    const result = compileEffect([sample(0, 10), sample(1, 12), sample(2, 11), sample(3, 11), sample(4, 13)], build);
+    expect(result.verdict).toBe('no-rise');
+    expect(result.text).toContain('did not visibly raise');
+    expect(result.text).toContain('200 ms inside a 500 ms sample');
+  });
+
+  it('claims nothing without a sample from before the build, or one covering it', () => {
+    expect(compileEffect([sample(4, 30)], build).verdict).toBe('unknown');
+    expect(compileEffect([sample(0, 10)], build).verdict).toBe('unknown');
   });
 });

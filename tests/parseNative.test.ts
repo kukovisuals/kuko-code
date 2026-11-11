@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { parseGpuStats, parseInterfaceCounters, parseLoopbackFlows } from '../server/parseNative';
+import { parseGpuStats, parseInterfaceCounters, parseLoopbackFlows, parseProcessTimes } from '../server/parseNative';
+import { processLoads } from '../server/processSampler';
+import { shaderFileName } from '../server/shaderFiles';
 
 describe('parseGpuStats', () => {
   it('reads only the named numbers', () => {
@@ -52,5 +54,57 @@ describe('parseLoopbackFlows', () => {
       { clientPort: 52182, inBytes: 1259, outBytes: 185 },
       { clientPort: 50000, inBytes: 10, outBytes: 20 },
     ]);
+  });
+});
+
+describe('parseProcessTimes', () => {
+  const chrome = '/Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Helpers';
+  const text = [
+    `  101  77:41.60 ${chrome}/Google Chrome Helper.app/Contents/MacOS/Google Chrome Helper --type=gpu-process --user-data-dir=/Users/someone/Library/Chrome`,
+    `  102   0:10.84 ${chrome}/Google Chrome Helper (Renderer).app/Contents/MacOS/Google Chrome Helper (Renderer) --type=renderer --lang=en-US`,
+    `  103 1:02:03.50 ${chrome}/Google Chrome Helper (Renderer).app/Contents/MacOS/Google Chrome Helper (Renderer) --type=renderer`,
+    `  104   0:01.00 ${chrome}/Google Chrome Helper.app/Contents/MacOS/Google Chrome Helper --type=utility --utility-sub-type=network`,
+    '  105   0:09.00 /Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper.app/Contents/MacOS/Code Helper --type=gpu-process',
+    '  106   0:02.00 node /Users/someone/dev/project/node_modules/.bin/vite',
+  ].join('\n');
+  const times = parseProcessTimes(text);
+
+  it("keeps only Chrome's renderer and GPU processes, with CPU time in seconds", () => {
+    expect(times).toEqual([
+      { pid: 101, kind: 'chrome-gpu', cpuSeconds: 77 * 60 + 41.6 },
+      { pid: 102, kind: 'chrome-renderer', cpuSeconds: 10.84 },
+      { pid: 103, kind: 'chrome-renderer', cpuSeconds: 3600 + 2 * 60 + 3.5 },
+    ]);
+  });
+
+  it('lets no path, flag or user name out of the parser', () => {
+    const out = JSON.stringify(times);
+    ['/', 'Users', 'someone', '--', 'Chrome'].forEach((leak) => expect(out).not.toContain(leak));
+  });
+
+  it('turns two samples into shares of one core, and sends the page no pid or path', () => {
+    const later = times.map((entry) => ({ ...entry, cpuSeconds: entry.cpuSeconds + (entry.pid === 101 ? 0.1 : entry.pid === 102 ? 0.25 : 0) }));
+    const loads = processLoads(times, [...later, { pid: 200, kind: 'chrome-renderer', cpuSeconds: 50 }], 0.5, 3);
+    expect(loads.nodePercent).toBe(3);
+    expect(loads.gpuProcessPercent).toBeCloseTo(20);
+    expect(loads.rendererCount).toBe(3);
+    expect(loads.renderersPercent).toBeCloseTo(50);
+    expect(loads.busiestRendererPercent).toBeCloseTo(50);
+    expect(Object.keys(loads).sort()).toEqual(['busiestRendererPercent', 'gpuProcessPercent', 'nodePercent', 'rendererCount', 'renderersPercent']);
+  });
+
+  it('gives null for the GPU process when ps shows none', () => {
+    expect(processLoads([], [], 0.5, 0).gpuProcessPercent).toBeNull();
+  });
+});
+
+describe('shaderFileName', () => {
+  it('matches one plain file in ./shaders and nothing else', () => {
+    expect(shaderFileName('/shaders/day442-image.glsl')).toBe('day442-image.glsl');
+    expect(shaderFileName('/shaders/day442-image.glsl?raw')).toBeNull();
+    expect(shaderFileName('/shaders/../package.json')).toBeNull();
+    expect(shaderFileName('/shaders/a/b.glsl')).toBeNull();
+    expect(shaderFileName('/shaders/..%2Fsecret.glsl')).toBeNull();
+    expect(shaderFileName(undefined)).toBeNull();
   });
 });

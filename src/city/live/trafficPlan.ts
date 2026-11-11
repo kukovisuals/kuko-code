@@ -7,6 +7,7 @@ import {
   FRAME_LEGS,
   LOOPBACK_ROAD,
   PIPELINE_TO_FRAME_LEG,
+  SSD_ROAD,
   WIFI_ROAD,
   legLength,
   pointAlong,
@@ -42,8 +43,20 @@ export function httpTrip(): TrafficStep[] {
   return [road(LOOPBACK_ROAD), road(buildLeg(0))];
 }
 
-export function fetchTrip(ms: number): TrafficStep[] {
-  return [road(LOOPBACK_ROAD), wait(lastPoint(LOOPBACK_ROAD), 1, 'fetchMs', ms, BUILD_SLOWDOWN), road(buildLeg(0))];
+// A wait that lights no stop: the dev server's file read has a time but isn't one of the 8 stops.
+function pause(at: Point, ms: number, slowdown: number): TrafficStep {
+  return { points: [at], durationSec: (ms * slowdown) / 1000 };
+}
+
+// Starts on the SSD. readMs is null when the dev server's reading for this file hasn't arrived.
+export function fetchTrip(ms: number, readMs: number | null): TrafficStep[] {
+  return [
+    road(SSD_ROAD),
+    ...(readMs === null ? [] : [pause(lastPoint(SSD_ROAD), readMs, BUILD_SLOWDOWN)]),
+    road(LOOPBACK_ROAD),
+    wait(lastPoint(LOOPBACK_ROAD), 1, 'fetchMs', ms, BUILD_SLOWDOWN),
+    road(buildLeg(0)),
+  ];
 }
 
 export function compileTrip(ms: number): TrafficStep[] {

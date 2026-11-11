@@ -8,6 +8,7 @@ export const COLORS = {
   outline: '#55657a',
   pCore: '#ffd27a',
   eCore: '#9be28f',
+  process: '#8fb4ff',
 } as const;
 
 export const BLOCK_COLORS: Record<string, string> = {
@@ -25,6 +26,7 @@ export const BLOCK_COLORS: Record<string, string> = {
   dcpext: '#1f4a44',
   wifi: '#15181d',
   'dev-server': '#1d3040',
+  ssd: '#2a2433',
   'network-road': '#161e28',
   'exit-built-in': '#1a2129',
   'exit-lg': '#1a2129',
@@ -47,6 +49,7 @@ export const BLOCK_HEIGHTS: Record<string, number> = {
   'network-road': 0.12,
   wifi: 0.3,
   'dev-server': 0.3,
+  ssd: 0.3,
   'exit-built-in': 0.3,
   'exit-lg': 0.3,
 };

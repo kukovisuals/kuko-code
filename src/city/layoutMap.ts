@@ -16,7 +16,8 @@ export interface PlacedBlock extends Rect {
 
 const SLOTS: Record<string, Rect & { within?: string }> = {
   wifi: { x: -42, z: -28.5, w: 16, d: 4 },
-  'dev-server': { x: 30, z: -28.5, w: 16, d: 4 },
+  'dev-server': { x: 16, z: -28.5, w: 16, d: 4 },
+  ssd: { x: 36, z: -28.5, w: 12, d: 4 },
   'network-road': { x: -38, z: -23, w: 76, d: 3.5 },
   'memory-ring': { x: -46, z: -18, w: 92, d: 39 },
   cpu: { x: -43, z: -15, w: 42, d: 16, within: 'memory-ring' },
@@ -55,6 +56,17 @@ export function layoutGpuCores(area: Rect, coreCount: number, gap = 0.5): Rect[]
     z: area.z + gap + Math.floor(index / columns) * (d + gap),
     w,
     d,
+  }));
+}
+
+// Divides a CPU cluster into one row of tiles, one per core.
+export function layoutCpuCores(area: Rect, coreCount: number, gap = 0.4): Rect[] {
+  const w = (area.w - gap * (coreCount + 1)) / coreCount;
+  return Array.from({ length: coreCount }, (_, index) => ({
+    x: area.x + gap + index * (w + gap),
+    z: area.z + gap,
+    w,
+    d: area.d - gap * 2,
   }));
 }
 

@@ -1,5 +1,5 @@
 // Pure: turns each real event into one row of the capture table, always with a status and a source.
-import type { HttpEvent, FlowDelta, InterfaceRate, ProgramEvent } from '../../shared/liveEvents';
+import type { FileReadEvent, HttpEvent, FlowDelta, InterfaceRate, ProgramEvent } from '../../shared/liveEvents';
 import { LIVE_PROGRAM } from '../../shared/liveProgram';
 import type { Status } from '../../shared/types';
 
@@ -39,6 +39,21 @@ export function httpRow(event: HttpEvent): WireRow {
     status: 'partial',
     source: 'Seen by the Vite dev server: bytes written to the socket, headers included. Time is on the server, not on the wire.',
     component: 'dev-server',
+  };
+}
+
+export function fileReadRow(event: FileReadEvent): WireRow {
+  return {
+    at: event.at,
+    group: 'build',
+    from: 'SSD',
+    to: 'Dev server',
+    protocol: 'FILE',
+    length: formatBytes(event.bytes),
+    info: `${event.file}, read in ${event.ms.toFixed(2)} ms`,
+    status: 'partial',
+    source: "performance.now() around fs.readFile in the dev server: open, read and close. macOS may answer from its file cache in memory, so this doesn't prove the SSD was touched.",
+    component: 'ssd',
   };
 }
 

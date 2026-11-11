@@ -39,7 +39,9 @@ export const FRAME_LEGS: Leg[] = [
 ];
 
 // Off-route and display roads. They carry no timing and aren't part of either trip's order.
-export const LOOPBACK_ROAD: Point[] = [[38, -24.5], [38, -21.25], [-22.5, -21.25]];
+// The trip starts at the SSD block. This road ends in the dev server, where the loopback road begins.
+export const SSD_ROAD: Point[] = [[36, -26.5], [24, -26.5]];
+export const LOOPBACK_ROAD: Point[] = [[24, -26.5], [24, -21.25], [-22.5, -21.25]];
 export const WIFI_ROAD: Point[] = [[-34, -24.5], [-34, -21.25], [-22.5, -21.25]];
 export const EXIT_BUILT_IN_ROAD: Point[] = [[7, 12.5], [7, 13], [0, 13], [0, 23]];
 export const EXIT_LG_ROAD: Point[] = [[17, 12.5], [17, 13], [20, 13], [20, 23]];

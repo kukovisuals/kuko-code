@@ -12,6 +12,7 @@ import {
   LOOPBACK_ROAD,
   PIPELINE_POINT,
   PIPELINE_TO_FRAME_LEG,
+  SSD_ROAD,
   WIFI_ROAD,
   legLength,
   pointAlong,
@@ -110,6 +111,7 @@ export function buildRoads(): RoadsView {
   });
   group.add(dashedRibbon(PIPELINE_TO_FRAME_LEG.points, COLORS.perFrame, ROAD_WIDTH));
 
+  group.add(ribbon(SSD_ROAD, COLORS.oneShot, ROAD_WIDTH), arrows(SSD_ROAD, COLORS.oneShot));
   group.add(ribbon(LOOPBACK_ROAD, COLORS.oneShot, ROAD_WIDTH), arrows(LOOPBACK_ROAD, COLORS.oneShot));
   group.add(dashedRibbon(WIFI_ROAD, COLORS.wifiDim, ROAD_WIDTH * 0.8, 0.85));
 

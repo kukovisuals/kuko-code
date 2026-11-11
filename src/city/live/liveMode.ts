@@ -2,11 +2,12 @@
 import { PROGRAM_MESSAGE, type FeedEvent, type HardwareEvent, type HttpEvent, type ProgramEvent, type ProgramMessage } from '../../shared/liveEvents';
 import type { DisplayLabel, HardwareMap, Recording } from '../../shared/types';
 import { validateRecording } from '../../shared/validateRecording';
+import { compileEffect, type LoadSample } from './compileEffect';
 import { createHardwareView } from './hardwareView';
 import { LiveRecorder, needsRedraw } from './liveRecorder';
 import { createTraffic } from './traffic';
 import { compileTrip, dotsForBytes, fetchTrip, firstDrawTrip, frameTrip, httpTrip, linkTrip, wifiTrip } from './trafficPlan';
-import { flowRow, httpRow, interfaceRow, programRow } from './wireRows';
+import { fileReadRow, flowRow, httpRow, interfaceRow, programRow } from './wireRows';
 import { createWireTable } from './wireTable';
 
 // One dot for every 12th frame and one row for every 30th: at 60 Hz, every frame would be a blur.
@@ -14,6 +15,7 @@ export const FRAME_DOT_EVERY = 12;
 export const FRAME_ROW_EVERY = 30;
 const NET_ROW_EVERY = 4;
 const REDRAW_CHECK_MS = 1000;
+const LOAD_SAMPLES_KEPT = 40;
 // Spaces out the burst of files at page load, so each one is seen as its own dot.
 const HTTP_DOT_GAP_SEC = 0.09;
 
@@ -52,6 +54,21 @@ export function createLiveMode(handlers: LiveHandlers) {
   let netSamples = 0;
   const httpWaiting: HttpEvent[] = [];
   let httpClock = 0;
+  // The dev server's read time for each shader file, held until the program reports fetching that file.
+  const readMsByFile = new Map<string, number>();
+  // GPU process CPU samples, and the build they are compared against. See compileEffect.
+  const gpuProcessSamples: LoadSample[] = [];
+  let lastSampleAt: number | null = null;
+  let build: { from: number | null; to: number | null; settled: boolean } = { from: null, to: null, settled: false };
+
+  const judgeBuild = () => {
+    if (build.from === null || build.to === null || build.settled) {
+      return;
+    }
+    hardware.setCompileEffect(compileEffect(gpuProcessSamples, { from: build.from, to: build.to }));
+    // Once a sample ends after the build did, no later sample can change the answer.
+    build.settled = gpuProcessSamples.some((sample) => sample.to >= (build.to as number));
+  };
 
   const publish = () => {
     if (!running) {
@@ -81,9 +98,11 @@ export function createLiveMode(handlers: LiveHandlers) {
     }
     switch (event.type) {
       case 'fetch':
-        traffic.enqueueBuild([{ steps: fetchTrip(event.ms), style: BUILD_DOT }]);
+        traffic.enqueueBuild([{ steps: fetchTrip(event.ms, readMsByFile.get(event.file) ?? null), style: BUILD_DOT }]);
+        readMsByFile.delete(event.file);
         break;
       case 'compile':
+        build.from = event.at - event.compileMs;
         traffic.enqueueBuild([{ steps: compileTrip(event.compileMs), style: BUILD_DOT }]);
         break;
       case 'link':
@@ -92,6 +111,8 @@ export function createLiveMode(handlers: LiveHandlers) {
       case 'first-draw':
         traffic.enqueueBuild([{ steps: firstDrawTrip(event.ms), style: BUILD_DOT }]);
         handlers.onProgramState(true, 'Running: real GPU time on every frame');
+        build.to = event.at;
+        judgeBuild();
         publish();
         break;
       case 'frame':
@@ -109,6 +130,15 @@ export function createLiveMode(handlers: LiveHandlers) {
   };
 
   const onHardware = (event: HardwareEvent) => {
+    const gpuProcessPercent = event.processes?.gpuProcessPercent ?? null;
+    if (gpuProcessPercent !== null && lastSampleAt !== null) {
+      gpuProcessSamples.push({ from: lastSampleAt, to: event.at, percent: gpuProcessPercent });
+      if (gpuProcessSamples.length > LOAD_SAMPLES_KEPT && build.settled) {
+        gpuProcessSamples.shift();
+      }
+    }
+    lastSampleAt = event.at;
+    judgeBuild();
     hardware.update(event);
     event.flows.forEach((flow) => {
       table.add(flowRow(flow, event.at));
@@ -138,6 +168,12 @@ export function createLiveMode(handlers: LiveHandlers) {
     if (event.at < performance.timeOrigin) {
       return;
     }
+    if (event.type === 'file-read') {
+      table.add(fileReadRow(event));
+      hardware.addFileRead(event);
+      readMsByFile.set(event.file, event.ms);
+      return;
+    }
     table.add(httpRow(event));
     // Shader files get their dot from the program's own fetch event, which keeps the build trip in order.
     if (!event.path.endsWith('.glsl')) {
@@ -161,7 +197,7 @@ export function createLiveMode(handlers: LiveHandlers) {
   return {
     trafficMesh: traffic.mesh,
     hardwareGroup: hardware.group,
-    hardwareSection: hardware.section,
+    hardwareSections: hardware.sections,
     get running() {
       return running;
     },
@@ -169,6 +205,8 @@ export function createLiveMode(handlers: LiveHandlers) {
       recorder.reset();
       traffic.clear();
       drawn = null;
+      build = { from: null, to: null, settled: false };
+      hardware.setCompileEffect(null);
       running = true;
       handlers.onProgramState(true, 'Starting: fetching and compiling');
       handlers.frame.src = `/program.html?run=${Date.now()}`;

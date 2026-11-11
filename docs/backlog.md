@@ -69,6 +69,16 @@ placeholder numbers and a test fixture.
 - [x] T25 Day 442 as the live program (one pass, one draw per frame)
 - [ ] T26 Show where the shader executes, in levels you can click into
 
+**The two questions (user, 2026-11-11).** Q1: can I follow the shader from the files on disk down to the
+hardware? Q2: can I see which code makes the GPU slow, and what hardware is sitting idle?
+Suggested order: T27, T29, T28, T30, then T26. The user hasn't confirmed the order.
+- [x] T27 Q1: the whole path, from disk to pixels, with the CPU cores drawn
+- [ ] T28 Q1 + Q2: what the compiler turned the shader into
+- [x] T29 Q2: which code costs GPU time, by switching parts off and timing again (only `AA` gave a clear saving: see findings)
+- [ ] T30 Q2: spare room, and whether the shader can reach it
+- [ ] T31 Root readings from `powermetrics`: GPU clock, power, per-core frequency (feeds T27 and T30)
+- [ ] T32 Replace T29's guessed variants: show how each line of Day 442 compiles and runs on the hardware, no suggestions
+
 ## 3. Open decisions
 
 The user has not answered these yet. Build with the default unless they say otherwise.
@@ -583,12 +593,234 @@ and what that means for `if` and `break` in the ray march.
 - The frame bar's three parts match the panel's numbers.
 - Stop 7 has no road and no time of its own.
 
+### T27 The whole path, from disk to pixels, with the CPU cores drawn
+**Depends on:** T25.
+**Goal:** the user's words on 2026-11-11: "follow the pipeline of the execution of the shader from the bin files of
+the computer to the hardware level" and "i don't see the cores should we see them?".
+**Files:** new: `server/processSampler.ts`, `server/shaderFiles.ts`, `src/city/processZones.ts`,
+`src/city/shaderForms.ts`, `src/city/live/coreTiles.ts`, `live/processView.ts`, `live/compileEffect.ts`. Changed:
+`data/hardware-map.m2.json`, `server/hardwareSampler.ts`, `liveFeedPlugin.ts`, `parseNative.ts`,
+`src/shared/liveEvents.ts`, `src/city/layoutMap.ts`, `routePlan.ts`, `buildRoads.ts`, `buildBlocks.ts`, `buildStops.ts`,
+`mapClaims.ts`, `palette.ts`, `main.ts`, `city.css`, `live/hardwareView.ts`, `liveMode.ts`, `trafficPlan.ts`,
+`wireRows.ts`, and tests `parseNative`, `layoutMap`, `routePlan`, `liveMode`.
+**Build:**
+- **An SSD block, off-chip, where the trip starts.** The dev server reports the time it took to read each `.glsl`
+  file (measured in Node). The road runs SSD, dev server, loopback, stop 1.
+- **Eight CPU core tiles,** 4 P and 4 E, each named, each with its own live load. Today these are unlabeled bars.
+- **Three processes named on the CPU district:** Node (dev server), Chrome renderer, Chrome GPU process. Each shows
+  its CPU use from `ps`, with no root. Stops 2 to 5 are grouped under the process that runs them.
+- **No dot ever lands on a core.** macOS doesn't tell a page, or `ps`, which core ran a thread. The panel says so.
+- **Each stop names the form the shader is in:** text file, JS string, GLSL in the GPU process, Metal source,
+  machine code for the GPU, then pixels. The last two forms are modeled.
+**Teach:** a process isn't a core: macOS moves threads between cores many times a second. Why Chrome uses a
+separate GPU process. Why per-process CPU is a real reading and per-core placement would be invented.
+**Check before building:** `ps -axo %cpu,command` worked without root on 2026-11-11 and showed one `gpu-process`
+and 13 `renderer` rows. Which renderer is our tab isn't known yet. The parser must keep only the type and the
+number, because the command line holds paths.
+**Done when:**
+- The trip can be followed from the SSD block to a display exit with no gap: yes. A test walks every step of
+  the dot's trip and checks each one starts where the last ended.
+- All 8 cores are visible with names and live load, tagged partial and whole Mac: partly. All 8 show a name and a
+  percent on the map (P1 to P4, E1 to E4). The partial tag and the "whole Mac" source are on each core's panel row,
+  not on the 8 map labels, to keep them readable. At the default camera, towers 4 and 5 stand in front of E1 and E4.
+- Compiling the shader visibly raises the GPU process's CPU reading, or the page says it didn't: the page says
+  which. On 2026-11-11, 3 restarts gave one rise (20% to 29%) and two "did not visibly raise" (23% to 25%, 21% to
+  21%). On first load it says it has no sample from before the build.
+- No path or identifier from `ps` reaches the page, with a test for it: yes. Checked on the live feed too.
+- 108 tests and the type-check pass. No console errors in Chrome.
+
+**Findings, 2026-11-11:**
+- `ps %cpu` on macOS is a decaying average, so the sampler uses the change in each process's CPU time instead.
+  100% means one core busy for the whole sample.
+- VS Code has its own `--type=renderer` and `--type=gpu-process` rows. The parser only counts Chrome's.
+- `ps` can't say which renderer is our tab, so the city shows all Chrome renderers added up, plus the busiest.
+- The dev server now serves `/shaders/*.glsl` itself, so the read it times is the one that answered the request.
+  Reads took 0.3 to 0.6 ms. macOS may answer from its file cache in memory, so the reading is partial and doesn't
+  prove the SSD was touched.
+- The build takes about 75 ms and a sample is about 560 ms, so a compile is at most about 13% of one sample. That
+  is why the rise is usually inside the noise. The 5-point threshold is ours.
+- Node's reading comes from `process.cpuUsage()`, not `ps`, because it is exact for the dev server's own process.
+- Shader forms at stops 3 and 4 are tagged published (Chromium and ANGLE docs), not measured. T28 can make stop 4
+  measured.
+
+### T28 What the compiler turned the shader into
+**Depends on:** T25.
+**Goal:** the user's words on 2026-11-11: "should we show how the compiler is running the code".
+**Files:** to be listed when the ticket starts. Expect `src/program/buildPasses.ts`, `src/shared/liveEvents.ts`, a new
+panel file under `src/city/live/`, `city.css`.
+**Build:**
+- Ask Chrome for the translated source with `WEBGL_debug_shaders`. On this Mac that should be Metal Shading
+  Language. Show it beside the GLSL at stop 4, with both sizes.
+- Mark the user's functions in both texts (`map`, `shape`, `rayMarch`), so one can be followed across.
+- Everything after that text (Metal's intermediate code, GPU machine code) is modeled. A page can't read it.
+**Teach:** two compilers, not one. ANGLE rewrites GLSL as Metal source, then Apple's compiler builds machine code.
+Loops and `#define AA 2` look different after each step.
+**Check before building:** that `WEBGL_debug_shaders` is exposed in the user's Chrome and returns Metal source, not
+GLSL. If it isn't, this ticket shrinks to a modeled diagram, and says so.
+**Done when:**
+- The translated text shown is the one Chrome returned for this exact shader, tagged measured, with its source.
+- The stages after it are drawn as modeled.
+
+### T29 Which code costs GPU time
+**Depends on:** T25. Uses the timing method from T05.
+**Goal:** the user's words on 2026-11-11: "understand and see how some code in their program is making the gpu run
+slower" and "the goal is maybe to make the shader simpler".
+**Files:** `experiments.html`, `src/experiments/` (`variants`, `schedule`, `summarize`, `variantProgram`, `runTimings`,
+`pictures`, `buildResult`, `resultView`, `sourceView`, `main`, `experiments.css`), `src/shared/experimentResult.ts`,
+`server/experimentStore.ts`, `vite.config.ts`, `tests/experiments.test.ts`. Output: `data/experiments/day442.json`.
+The city doesn't read the saved result yet (parking lot).
+**Build:**
+- A page can't time one line of a shader. It can compile a copy with one thing changed and time the whole frame
+  again. The difference is that thing's cost.
+- Variants of Day 442, each a one-line change made by the tool, never saved over the user's file: `AA 1`, 30 march
+  steps, 3 folds, no normal, and the fold's `r2(iTime * 0.05)` passed in as a ready-made matrix.
+- Variants run interleaved and repeated, with the spread shown, because T05 found 38% run-to-run noise.
+- Result: a bar per variant, "this change saves about X ms of 39 ms", tagged partial. Beside it, a picture of each
+  variant, because a cheaper shader that looks wrong isn't a saving.
+- Clicking a bar highlights the lines it changed.
+**Teach:** why per-line GPU profiling doesn't exist for a page. Why the costs don't add up (T05: time isn't
+proportional to work). Why 32 pixels in a SIMD group all wait for the slowest ray.
+**Done when:**
+- Every variant compiles, and its changed lines are shown.
+- Each bar has a median, a spread and the number of runs.
+- A no-change variant reads the same as the original within the spread, or the page says the method failed.
+
+**Result, 2026-11-11, in the user's Chrome on the M2, 2 runs:**
+- Every variant compiled, and clicking a row shows its changed lines: yes. Each bar shows a median, a range across
+  rounds and the number of rounds and frames: yes. The control passed in both runs, but see the first finding.
+- 119 tests and the type-check pass. No console errors on a reload.
+
+**Findings from T29 (median saving, then its range over 6 rounds; all partial; "agreed" = every round had the same sign):**
+
+| Variant | Run 1 (original 41.7 ms) | Run 2 (original 33.4 ms) | Picture (measured, same in both) |
+|---|---|---|---|
+| No change (control) | -1.0, -14.1 to 15.1 | -1.8, -9.1 to 12.8 | identical |
+| `AA 1` | **18.9, 12.2 to 28.5, agreed** | **21.9, 9.5 to 30.2, agreed** | 2.7 levels, 10.9% of pixels moved |
+| 30 march steps | 14.5, 5.7 to 19.7, agreed | 10.1, -1.5 to 19.9 | 25.1 levels, 35% moved |
+| 3 folds | 10.5, -1.6 to 18.3 | -2.9, -9.3 to 19.4 | 29.5 levels, 58% moved |
+| No normal | 7.9, -0.1 to 20.5 | 3.9, 2.0 to 15.7, agreed | 22.2 levels, 45% moved |
+| Fold matrix from JS | 2.0, -6.2 to 15.9 | 2.2, -6.1 to 15.8 | identical |
+
+- **The noise is as wide as most savings.** The control, which is the same text compiled again, swung by 9 to 15 ms
+  in a single round. So the method can't separate a 5 ms effect with 6 rounds. It passed its own check (the
+  control spans zero), but a pass at this width says little.
+- **`AA` is the only change that was clearly cheaper in both runs:** about 19 to 22 ms of 33 to 42 ms, and the
+  picture barely changed (mean 2.7 of 255 levels). One ray per pixel instead of four didn't cut the time to a
+  quarter. It cut it roughly in half. That fits T05: time isn't proportional to work.
+- **30 march steps and 3 folds change the picture a lot** (35% and 58% of pixels moved), so neither is a free saving
+  even where it read cheaper.
+- **The fold matrix from JS made no clear difference,** with an identical picture. The compiler may already compute
+  `r2(iTime * 0.05)` once rather than per step, but that is inferred: the Metal code (T28) would show it.
+- **The run is much slower than its frames suggest.** Run 2 took 293 s for 1,092 frames (268 ms each on average),
+  but the median gap between frames was 17.1 ms. So a few very long stalls took most of the time. Run 1 took about
+  140 s. The cause isn't known. A GPU left idle between stalls may also drop its clock, which would add noise. Not
+  checked: whether a city tab was open in another window.
+- A few single-round readings were far below the rest (`AA 1` had a round at 4.65 ms). Cause unknown.
+
+### T30 Spare room, and whether the shader can reach it
+**Depends on:** T27, T29.
+**Goal:** the user's words on 2026-11-11: "see how some hardware in the computer are not utilize so we can use them in
+our program" and "find some space in the hardware we're not utilizing to make the code faster".
+**Files:** to be listed when the ticket starts. Expect `src/city/live/hardwareView.ts`, `data/hardware-map.m2.json`, a new
+panel file, `city.css`.
+**Build:**
+- Each hardware block gets two labels: how busy it is (partial, or "no reading" for the Neural Engine and media
+  engine), and whether a WebGL fragment shader can use it (yes, indirectly, or no, with the reason).
+- Idle blocks are drawn dim with an "idle" tag, so spare room is visible at a glance.
+- An "indirectly" list for the CPU: work that is the same for every pixel can be done once in JS and passed in as
+  a uniform. T29 measures whether that helps.
+**Teach:** a fragment shader only runs on the GPU. Idle CPU cores can't take pixels from it. What they can take is
+work that doesn't depend on the pixel. With the GPU at 100%, the shader has no spare room where it runs.
+**Done when:**
+- Every block shows a load or "no reading", and a reachable label with its reason.
+- The page states plainly which part is the bottleneck for the running shader, from the measured readings.
+
+### T31 Root readings from `powermetrics`
+**Depends on:** T24. Feeds T27 and T30.
+**Goal:** the user's words on 2026-11-11: "what do we need so u can have root access?". The user added a sudo rule
+that allows one exact command with no password, and it worked.
+**Files:** to be listed when the ticket starts. Expect `server/hardwareSampler.ts`, `server/parseNative.ts`,
+`src/shared/liveEvents.ts`, `src/city/live/hardwareView.ts`, `tests/parseNative.test.ts`.
+**Build:**
+- The dev server runs `sudo -n /usr/bin/powermetrics --samplers cpu_power,gpu_power -i 500 -n 1`. The arguments
+  must match the rule exactly, or sudo asks for a password and the call fails.
+- If the call fails, the feed carries "no root reading" and everything else keeps working.
+- The parser keeps named numbers only. The header lines (machine model, OS build, boot arguments) are dropped,
+  with a test.
+- New readings, all partial and whole Mac: frequency and active share for each of the 8 CPU cores and both
+  clusters, GPU frequency and active share, and CPU, GPU and Neural Engine power in mW.
+**Teach:** a chip changes its clock speed with load, so "busy 30% of the time" at 600 MHz is far less work than at
+3,504 MHz. Power is the reading that shows which block is doing the work.
+**Done when:**
+- Each new number shows on its block and in the panel with a status and a source.
+- Removing the sudo rule leaves the city working, with "no root reading" shown.
+- No header line from `powermetrics` reaches the page, with a test for it.
+
+**First sample, 2026-11-11, city and Day 442 running (one 503 ms sample, partial):**
+- GPU: 1,398 MHz, its top step, for 100% of the sample. Idle 0%. Power about 9.3 W.
+- CPU: 1.6 W in total. No core was active for more than 31% of the sample. Neural Engine: 0 mW.
+- So the GPU drew about 6x the power of all 8 CPU cores together. It has no spare room and no faster clock step.
+- The 1,398 MHz top step matches the community number in R3.
+- `powermetrics` reports E cores as CPU 0 to 3 and P cores as CPU 4 to 7, which agrees with T24's check.
+- Decision for the user: CLAUDE.md still says native tools are out of scope for v0. This goes further than T24.
+
+### T32 How each line of Day 442 compiles and runs, with no suggestions
+**Depends on:** T29 (replaces its page), T28 (absorbs its translated-source check).
+**Goal:** the user's words on 2026-11-11: "we don't want ur guess", "point out how the code is interacting with the
+hardware, the compiler, what line of code is making it slower", "u shouldn't add suggestions... that's for the user
+to decide after it sees the visualization".
+**Rule for this page:** it never proposes a change. No variants picked by the tool, no "this saves X", no advice.
+It shows what the code did on the hardware, and the user decides what to change.
+**Files:** `experiments.html`, `src/experiments/` (rewritten), `src/shared/experimentResult.ts`,
+`server/experimentStore.ts`, `tests/experiments.test.ts`. T29's `variants.ts`, `summarize.ts`, `buildResult.ts`,
+`pictures.ts` and `resultView.ts` go away.
+**Build, three panels around the user's own source:**
+- **Compiler (measured text).** `WEBGL_debug_shaders.getTranslatedShaderSource` returns what ANGLE handed to Apple's
+  Metal compiler. Show it beside the GLSL, with sizes, and link each user function (`shape`, `map`, `rayMarch`, ...)
+  across the two texts. Everything after it (Metal IR, GPU machine code) is drawn as modeled: a page can't read it.
+- **Work per line (measured count).** The tool numbers every `{ }` block in the source and compiles a counting copy
+  that adds `_c++` at the top of one block and writes the count instead of a color. `readPixels` reads it back. So
+  every line gets: how many times it ran this frame across all 1,024,000 pixels, its maximum in one pixel, and a
+  heatmap of where on screen it ran. Control flow is unchanged by the counter, so the counts are exact. The counting
+  copy is never timed.
+- **Time by screen area (partial).** The real shader drawn under a scissor, one tile at a time, each tile around a
+  `TIME_ELAPSED_EXT` query, repeated with spread. Shown as a heatmap beside the count heatmaps, so the user can see
+  whether the slow areas are where a line ran most. A time range per tile, including the draw's fixed overhead.
+- **SIMD groups (modeled, from measured counts).** Apple's GPU runs 32 pixels in lockstep (published). Their shape on
+  screen isn't published, so the 8 x 4 grouping is modeled. Per loop: the group runs as long as its slowest pixel,
+  so show max vs mean iterations per group and the share of lanes waiting.
+**Teach:** no browser API times a line, so time per line is never shown. What a page can measure is how often each
+line ran, and where the time went on screen. Two compilers sit between the GLSL and the GPU. A SIMD group finishes
+when its slowest pixel does.
+**Check before building:** that `WEBGL_debug_shaders` is exposed in the user's Chrome and returns Metal source.
+**Done when:**
+- The page contains no suggestion or variant chosen by the tool.
+- Every line of the Image and Common pass shows a count and a max, tagged measured, with its source.
+- A self-check: the counted iterations of the 60-step loop never exceed 60 per ray, and the `mainImage` block runs
+  exactly once per pixel (1,024,000).
+- Tile times show a median, a range and the rounds, tagged partial.
+- The translated source shown is the text Chrome returned, or the page says the extension is missing.
+
 ## 5. Parking lot
+
+- **From T27: Metal's compiler helper process.** Apple's Metal can compile in a helper process
+  (`MTLCompilerService`). None was in `ps` when checked on 2026-11-11, and this wasn't verified further. If it runs
+  during a build, stop 5's CPU work is partly outside the Chrome GPU process and the city doesn't read it.
+- **From T27: put the partial tag on the core map labels,** or one tag per cluster, if the user wants it on the map.
+- **From T27: R2's map and R5's roads don't show the SSD block yet.**
+- **From T29: the city doesn't read `data/experiments/day442.json` yet.** A stop 6 panel section could list the bars.
+- **From T29: find the long stalls during an experiment run** (median frame 17 ms, mean 268 ms). Then try more rounds,
+  or wait for each timer result before the next draw so the GPU never queues, and see whether the control narrows.
+- **From T29: the variant list is fixed in code.** Picking a line to change from the page would need a small editor.
 
 New ideas or out-of-scope findings go here, not into the current ticket.
 
 - After v0: import native summaries from Instruments or tshark through `imports[]`.
   Summaries only, never raw traces, which can contain identifiers.
+- From the two questions (2026-11-11): compile the translated Metal source with `xcrun metal` to see the
+  intermediate code. Needs Xcode, and it wouldn't be the exact binary Chrome's GPU process built.
+- From the two questions: move pixel work off the GPU with WebGPU compute or a worker. Not a WebGL fragment
+  shader any more, so it is a different program, not a faster Day 442.
 
 **Findings from T02:**
 

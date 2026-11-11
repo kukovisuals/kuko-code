@@ -82,7 +82,7 @@ const live = createLiveMode({
   },
 });
 stage.scene.add(live.trafficMesh, live.hardwareGroup);
-panel.setGroup('live', [live.hardwareSection]);
+panel.setGroup('live', live.hardwareSections);
 
 function select(id: string | null, reveal: boolean): void {
   selected = id;
