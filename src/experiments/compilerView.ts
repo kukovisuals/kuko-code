@@ -1,7 +1,7 @@
 // The compiler panel: the steps from GLSL to the GPU, which of them a page can read, and the translated text
 // Chrome returned, with the user's functions found in it.
-import type { Translated } from './translatedSource';
-import { linesNaming } from './translatedSource';
+import type { Translated } from '../shared/translatedSource';
+import { linesNaming } from '../shared/translatedText';
 
 export interface UserFunction {
   name: string;

@@ -2,6 +2,7 @@
 import { PROGRAM_MESSAGE, type FeedEvent, type HardwareEvent, type HttpEvent, type ProgramEvent, type ProgramMessage } from '../../shared/liveEvents';
 import type { DisplayLabel, HardwareMap, Recording } from '../../shared/types';
 import { validateRecording } from '../../shared/validateRecording';
+import { gpuFill } from '../gpuFill';
 import { compileEffect, type LoadSample } from './compileEffect';
 import { createHardwareView } from './hardwareView';
 import { LiveRecorder, needsRedraw } from './liveRecorder';
@@ -41,6 +42,7 @@ export interface LiveHandlers {
   onGpu(percent: number | null): void;
   onFeedState(text: string): void;
   onProgramState(running: boolean, text: string): void;
+  onTranslated(event: Extract<ProgramEvent, { type: 'translated' }>): void;
 }
 
 export function createLiveMode(handlers: LiveHandlers) {
@@ -84,6 +86,7 @@ export function createLiveMode(handlers: LiveHandlers) {
       return;
     }
     drawn = recording;
+    hardware.setProgram(true, gpuFill(result.value));
     handlers.onRecording(result.value);
   };
 
@@ -107,6 +110,9 @@ export function createLiveMode(handlers: LiveHandlers) {
         break;
       case 'link':
         traffic.enqueueBuild([{ steps: linkTrip(event.linkMs), style: BUILD_DOT }]);
+        break;
+      case 'translated':
+        handlers.onTranslated(event);
         break;
       case 'first-draw':
         traffic.enqueueBuild([{ steps: firstDrawTrip(event.ms), style: BUILD_DOT }]);
@@ -207,12 +213,14 @@ export function createLiveMode(handlers: LiveHandlers) {
       drawn = null;
       build = { from: null, to: null, settled: false };
       hardware.setCompileEffect(null);
+      hardware.setProgram(true, null);
       running = true;
       handlers.onProgramState(true, 'Starting: fetching and compiling');
       handlers.frame.src = `/program.html?run=${Date.now()}`;
     },
     stopProgram(text = 'Stopped. Its GPU work has ended, so watch the GPU reading fall.') {
       running = false;
+      hardware.setProgram(false, null);
       handlers.frame.src = 'about:blank';
       handlers.onProgramState(false, text);
     },

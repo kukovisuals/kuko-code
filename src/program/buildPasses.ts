@@ -2,6 +2,7 @@
 import { FULLSCREEN_TRIANGLE_VERTEX } from '../record/fullscreenTriangle';
 import type { ProgramEvent } from '../shared/liveEvents';
 import { LIVE_PROGRAM } from '../shared/liveProgram';
+import { translatedSource } from '../shared/translatedSource';
 import { wrapImagePass } from '../shaderView/wrapShadertoy';
 
 type Report = (event: ProgramEvent) => void;
@@ -67,6 +68,9 @@ function buildProgram(gl: WebGL2RenderingContext, fragmentSource: string, report
   const linkMs = performance.now() - startedAt;
   if (!ok) throw new Error(`${LIVE_PROGRAM.name} did not link:\n${gl.getProgramInfoLog(program) ?? 'no info log'}`);
   report({ type: 'link', at: Date.now(), callsMs, linkMs });
+  // Read only after the link is timed, so asking for the text can't land inside any measured time.
+  const translated = translatedSource(gl, fragment.shader);
+  report({ type: 'translated', at: Date.now(), glsl: fragmentSource, text: translated?.text ?? null, language: translated?.language ?? null });
   return program;
 }
 

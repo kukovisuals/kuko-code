@@ -20,7 +20,9 @@ import { buildPlaceholderRecording, isPlaceholderRecording } from './placeholder
 import { planBuildings } from './planBuildings';
 import { buildTimeline, sampleTimeline, type Timeline } from './replay';
 import { createReplayToken } from './replayToken';
+import { createCompilerPanel } from './live/compilerPanel';
 import { createLiveMode } from './live/liveMode';
+import type { TranslatedEvent } from './shaderForms';
 import { LIVE_PROGRAM } from '../shared/liveProgram';
 import { createStage } from './stage';
 import { formatValue } from './stopRows';
@@ -44,6 +46,9 @@ let zoomOpen = false;
 let selected: string | null = null;
 // Live draws the real program. File shows a saved recording or the invented preview instead.
 let mode: 'live' | 'file' = 'live';
+// What Chrome translated the live program's shader into. It belongs to the live run, never to a saved file.
+let translated: TranslatedEvent | null = null;
+const compilerPanel = createCompilerPanel();
 
 const panel = createNumbersPanel((id) => select(id, false));
 panel.setGroup('displays', blocks.displaySections);
@@ -80,6 +85,13 @@ const live = createLiveMode({
   onFeedState: (text) => hud.setFeedState(text),
   onProgramState(running, text) {
     hud.setProgramState(running, text);
+  },
+  onTranslated(event) {
+    translated = event;
+    // Usually this lands before the first recording is drawn. If not, stop 4 is redrawn to show it.
+    if (mode === 'live' && stopsView && !timeline) {
+      render();
+    }
   },
 });
 stage.scene.add(live.trafficMesh, live.hardwareGroup);
@@ -123,6 +135,8 @@ const hud = createHud({
 
 function startLive(): void {
   mode = 'live';
+  translated = null;
+  compilerPanel.close();
   blocks.setCoresChip('partial');
   hud.setErrors([]);
   recordings = [];
@@ -197,7 +211,8 @@ function render(): void {
     gpuDistrict.setFill(recording ? gpuFill(recording) : null);
   }
   if (recording) {
-    stopsView = buildStops(planBuildings(recording), recording.imports, isPlaceholderRecording(recording));
+    const compiler = { translated: mode === 'live' ? translated : null, open: (event: TranslatedEvent) => compilerPanel.open(event) };
+    stopsView = buildStops(planBuildings(recording), recording.imports, isPlaceholderRecording(recording), compiler);
     stage.scene.add(stopsView.group);
   }
   panel.setGroup('stops', [...(stopsView?.sections ?? []), ...(mode === 'file' ? [gpuDistrict.fillSection] : [])]);
@@ -209,6 +224,7 @@ function render(): void {
 
 function show(list: Recording[]): void {
   mode = 'file';
+  compilerPanel.close();
   live.stopProgram('Stopped, because a file is on screen. Run it to go live again.');
   blocks.setCoresChip('fill modeled');
   recordings = list;

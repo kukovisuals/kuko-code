@@ -73,9 +73,9 @@ placeholder numbers and a test fixture.
 hardware? Q2: can I see which code makes the GPU slow, and what hardware is sitting idle?
 Suggested order: T27, T29, T28, T30, then T26. The user hasn't confirmed the order.
 - [x] T27 Q1: the whole path, from disk to pixels, with the CPU cores drawn
-- [ ] T28 Q1 + Q2: what the compiler turned the shader into
+- [x] T28 Q1 + Q2: what the compiler turned the shader into (stop 4 is measured in live mode: see findings)
 - [x] T29 Q2: which code costs GPU time, by switching parts off and timing again (only `AA` gave a clear saving: see findings)
-- [ ] T30 Q2: spare room, and whether the shader can reach it
+- [x] T30 Q2: spare room, and whether the shader can reach it (the GPU reads 100% even with the program stopped: see findings)
 - [ ] T31 Root readings from `powermetrics`: GPU clock, power, per-core frequency (feeds T27 and T30)
 - [ ] T32 Replace T29's guessed variants: show how each line of Day 442 compiles and runs on the hardware, no suggestions
 - [x] T33 Chip-like look for the city: real material colors, same primitive shapes (user request, 2026-11-11)
@@ -662,6 +662,36 @@ GLSL. If it isn't, this ticket shrinks to a modeled diagram, and says so.
 - The translated text shown is the one Chrome returned for this exact shader, tagged measured, with its source.
 - The stages after it are drawn as modeled.
 
+**Files used:** `src/shared/translatedText.ts` (new, pure), `src/shared/translatedSource.ts` (moved from
+`src/experiments/`), `src/shared/liveEvents.ts`, `src/program/buildPasses.ts`, `src/city/shaderForms.ts`,
+`src/city/buildStops.ts`, `src/city/main.ts`, `src/city/live/compilerPanel.ts` (new), `src/city/live/liveMode.ts`,
+`src/city/live/wireRows.ts`, `city.css`, `tests/compilerText.test.ts` (new). The experiments page imports the moved file.
+
+**Result, 2026-11-11, in the user's Chrome on the M2, live mode:**
+- Check before building: `WEBGL_debug_shaders` is exposed and returns Metal Shading Language (`#include <metal_stdlib>`).
+- The program frame reads the text after the link is timed and posts a `translated` event. The city only shows it.
+- Stop 4's row reads "GLSL in, Metal source out", tagged measured, source `WEBGL_debug_shaders.getTranslatedShaderSource`
+  for this exact fragment shader: yes. With a file or the preview on screen it falls back to published: yes.
+- "Open compiler view" on stop 4 shows GLSL (6,047 bytes, 257 lines) beside Metal (24,779 bytes, 663 lines), both
+  tagged measured with their source. Clicking a function highlights it in both texts: yes.
+- Steps 3 (Apple's Metal compiler) and 4 (GPU machine code) are dashed outlines tagged modeled: yes.
+- `npm test`: 129 pass, 1 fails. The failure is older than T28 (parking lot). `tsc --noEmit` is clean.
+
+**Findings from T28:**
+
+- Two compilers. ANGLE's output is the last text a page can read. Its size is about 4x the GLSL.
+- 377 of the 663 Metal lines name ANGLE. 232 of them name none of the user's functions or variables: pure plumbing
+  for uniforms, inputs and outputs, which Metal has no globals for.
+- ANGLE prefixes every user name with `_u` (`map` becomes `_umap`). 10 of the 12 GLSL functions are found that way.
+- `sdLink` and `arrow` are defined but never called (`sdLink` only appears in a comment), and ANGLE left both out.
+- All 4 GLSL `for` loops are `while` loops in the Metal text, and 0 `for` loops remain.
+- No `#define` name survives: `AA` is written 6 times in the GLSL and 0 times in Metal, and the same is true of `FAR`
+  and `PI`. The preprocessor swaps in the value before ANGLE translates.
+- `shaders/day442-image.glsl` now says `#define AA 1`, not 2 as this ticket says. It changed in dc8573a.
+- The GLSL is 6,047 bytes in UTF-8. The 5,595 noted in the check was a character count: the banner comment has
+  multi-byte characters.
+- Whether Apple's compiler unrolls the loops, or hoists `r2(iTime * 0.05)` out of the fold loop, can't be seen from a page.
+
 ### T29 Which code costs GPU time
 **Depends on:** T25. Uses the timing method from T05.
 **Goal:** the user's words on 2026-11-11: "understand and see how some code in their program is making the gpu run
@@ -735,6 +765,34 @@ work that doesn't depend on the pixel. With the GPU at 100%, the shader has no s
 **Done when:**
 - Every block shows a load or "no reading", and a reachable label with its reason.
 - The page states plainly which part is the bottleneck for the running shader, from the measured readings.
+
+**Files used:** `src/city/live/spareRoom.ts` (new, pure), `src/city/live/spareRoomView.ts` (new),
+`src/city/live/hardwareView.ts`, `src/city/live/liveMode.ts`, `city.css`, `tests/spareRoom.test.ts` (new). The hardware
+map JSON and `buildBlocks.ts` were not changed: the reach reasons live in `spareRoom.ts` with their sources, and the
+idle cover sits on top of the blocks like the core tiles do.
+
+**Result, 2026-11-11, in the user's Chrome on the M2, live mode, built-in display:**
+- Every block shows a load or "no reading", and a reach label with its reason and source: yes. 10 blocks, in a card
+  on the map and in the "Spare room" panel section. GPU cores, both clusters and Wi-Fi have a load (partial). SLC,
+  unified memory, Neural Engine, media engine, display engines and SSD show "no reading".
+- The page states the bottleneck from the readings: yes. Running, it said "The GPU is the bottleneck: busy 100%,
+  while the busiest CPU core is at 65%. Each frame's draw takes 13.10 ms of GPU time against a 16.67 ms budget. It
+  still meets the budget...", tagged modeled. Stopped, it says there is no shader to judge.
+- Idle cover: checked by tests only. No block went under the idle line live: the E cluster read 53 to 66% and Wi-Fi
+  1 to 2 KB/s, so the cover was never drawn on screen.
+- `npm test`: 140 pass, 1 fails (the old `AA 2` test in the parking lot). `tsc --noEmit` is clean. No console errors.
+
+**Findings from T30:**
+- **The GPU reads 96 to 100% with Day 442 stopped.** So most of the live GPU reading is the city drawing itself (and
+  any other app), not the shader. The verdict can say the GPU is full, but not how much of it is Day 442's. This
+  also applies to T24 and T25's 100% readings. Only a run with the city tab closed (T16's recorder) can separate them.
+- **The CPU is busy without the shader too:** the E cluster stayed at about 63% and the busiest core at 68 to 72%
+  with the program stopped. The city, Chrome and other apps are the load there.
+- **Day 442 at `AA 1` met the 60 Hz budget:** stop 6 read 13.10 and 14.31 ms (partial) against 16.67 ms. T25 read
+  39 ms at `AA 2`. So it is no longer late, but the GPU has no room left to add work.
+- **No block a fragment shader can use is idle.** The only "yes" is the GPU cores, and they are full. The CPU is
+  "indirectly", and T29 found no clear saving from the one thing it could take (the fold matrix).
+- The idle (under 10%) and full (90% or more) lines are ours, and the page says so.
 
 ### T31 Root readings from `powermetrics`
 **Depends on:** T24. Feeds T27 and T30.
@@ -840,6 +898,18 @@ texture is cheaper than geometry.
 - **From T29: the variant list is fixed in code.** Picking a line to change from the page would need a small editor.
 
 New ideas or out-of-scope findings go here, not into the current ticket.
+
+- From T28: `tests/experiments.test.ts` line 43 expects `AA 2` (maxPerParent 4), but Day 442 is `AA 1` since dc8573a,
+  so it fails. Decide which is right, the shader or the test.
+- From T28: store a SHA-256 of the translated text in the recording, so a cache run (T06) can tell if the Metal text
+  changed between builds.
+- From T28: the city's compiler view and the experiments page's compiler panel are two views of one text. T32 can
+  merge them.
+- From T30: measure how much GPU the city itself uses. Stop the program, then read the GPU with the city tab open,
+  hidden and closed. That tells how much of every live GPU reading is the city's own drawing.
+- From T30: the city could stop drawing (or draw at a lower rate) while Day 442 runs, so the live readings are
+  closer to the shader's own. That changes how the live view looks, so it is the user's call.
+- From T30: 10 more cards on the map. If it feels crowded, hide them unless the "Spare room" section is open.
 
 - After v0: import native summaries from Instruments or tshark through `imports[]`.
   Summaries only, never raw traces, which can contain identifiers.

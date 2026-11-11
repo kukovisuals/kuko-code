@@ -7,7 +7,7 @@ import type { PanelSection } from './numbersPanel';
 import { COLORS } from './palette';
 import { tagComponent } from './picking';
 import type { PlannedBuilding, PlannedLane, Trip } from './planBuildings';
-import { SHADER_FORMS } from './shaderForms';
+import { shaderFormAt, type TranslatedEvent } from './shaderForms';
 import { rowsForStop } from './stopRows';
 
 const DISTRICT_TOP = 0.2;
@@ -20,6 +20,12 @@ const HATCH_TILE = 1.6;
 const FLOOR_TONES = [1, 0.78];
 const REST_GLOW = 0.12;
 const ACTIVE_GLOW = 0.9;
+
+// The text Chrome returned for stop 4, and how to open it. Null when this recording carries no such text.
+export interface CompilerLink {
+  translated: TranslatedEvent | null;
+  open(translated: TranslatedEvent): void;
+}
 
 export interface StopsView {
   group: THREE.Group;
@@ -156,12 +162,30 @@ function buildingId(building: PlannedBuilding): string {
   return `stop-${building.stops.map((stop) => stop.stop).join('+')}`;
 }
 
-function buildingSection(building: PlannedBuilding, imports: NativeImport[], invented: boolean): PanelSection {
+function compilerRow(compiler: CompilerLink): HTMLElement {
+  const { translated } = compiler;
+  if (!translated) {
+    return note('Run the live program to read the Metal source Chrome makes from this shader.');
+  }
+  if (translated.text === null) {
+    return note('WEBGL_debug_shaders is not exposed in this browser, so the translated text cannot be read.');
+  }
+  const button = document.createElement('button');
+  button.className = 'section-button';
+  button.textContent = 'Open compiler view';
+  button.addEventListener('click', () => compiler.open(translated));
+  return button;
+}
+
+function buildingSection(building: PlannedBuilding, imports: NativeImport[], invented: boolean, compiler: CompilerLink): PanelSection {
   const body = rowsBox();
   building.stops.forEach((stop) => {
-    const form = SHADER_FORMS[stop.stop];
+    const form = shaderFormAt(stop.stop, compiler.translated);
     if (form) {
       body.append(claimRow(`Stop ${stop.stop}, shader here: ${form.form}`, form.tag, form.source));
+    }
+    if (stop.stop === 4) {
+      body.append(compilerRow(compiler));
     }
   });
   building.stops.flatMap((stop) => rowsForStop(stop, imports)).forEach((row) => body.append(numberRow(row)));
@@ -181,7 +205,7 @@ function drawsWireframe(building: PlannedBuilding): boolean {
   return floors.some((floor) => floor.metric.status === 'modeled') || metrics.every((metric) => metric.status === 'modeled');
 }
 
-export function buildStops(plan: PlannedBuilding[], imports: NativeImport[], invented: boolean): StopsView {
+export function buildStops(plan: PlannedBuilding[], imports: NativeImport[], invented: boolean, compiler: CompilerLink): StopsView {
   const group = new THREE.Group();
   const litByMetric = new Map<string, THREE.MeshStandardMaterial[]>();
   const labels: HTMLElement[] = [];
@@ -212,7 +236,7 @@ export function buildStops(plan: PlannedBuilding[], imports: NativeImport[], inv
       tower.add(drawNoHeightMarker(building));
       tallest = building.stops[0].stop === 7 ? DISTRICT_TOP + NO_HEIGHT_MARKER : DISTRICT_TOP;
     }
-    const section = buildingSection(building, imports, invented);
+    const section = buildingSection(building, imports, invented, compiler);
     section.body.dataset.stops = building.stops.map((stop) => stop.stop).join(',');
     sections.push(section);
 

@@ -111,6 +111,11 @@ export function programRow(event: ProgramEvent): WireRow | null {
       return build('Renderer', 'ANGLE', 'GLSL', '', `Compile vertex + fragment, ${event.compileMs.toFixed(2)} ms (calls ${event.callsMs.toFixed(2)} ms)`, 'partial', 'compileShader plus blocking COMPILE_STATUS.', 'stop-4');
     case 'link':
       return build('ANGLE', 'Metal compiler', 'GLSL', '', `Link program, ${event.linkMs.toFixed(2)} ms`, 'partial', 'linkProgram plus blocking LINK_STATUS.', 'stop-5');
+    case 'translated':
+      // With the extension missing there is nothing to show. The compiler view says why.
+      return event.text === null
+        ? null
+        : build('ANGLE', 'Metal compiler', 'MSL', formatBytes(new TextEncoder().encode(event.text).length), `Translated text, ${event.language}`, 'measured', 'WEBGL_debug_shaders.getTranslatedShaderSource on the fragment shader, read after the link was timed.', 'stop-4');
     case 'round-trip':
       return build('Renderer', 'GPU process', 'IPC', '', `Round trip ${event.ms.toFixed(3)} ms`, 'partial', 'Median of 7 gl.getError() calls, a proxy.', 'stop-2+3');
     case 'first-draw':

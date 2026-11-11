@@ -17,7 +17,7 @@ import { ScreenView } from './screenView';
 import { markBlock, renderSource, type ListedFile } from './sourceView';
 import { spread } from './spread';
 import { runTileTimings, TILE_SIZE, tileGrid, TIMED_ROUNDS, WARMUP_ROUNDS } from './tileTimings';
-import { translatedSource } from './translatedSource';
+import { translatedSource } from '../shared/translatedSource';
 
 // Every draw uses this one moment of the animation, so counts and times describe the same picture.
 const SCENE_TIME_S = 4;

@@ -4,10 +4,12 @@ import * as THREE from 'three';
 import type { FileReadEvent, GpuStats, HardwareEvent } from '../../shared/liveEvents';
 import { nameLabel, note, numberRow, placeCard, rowsBox } from '../buildLabels';
 import { layoutMap, type Rect } from '../layoutMap';
+import type { GpuFill } from '../gpuFill';
 import type { PanelSection } from '../numbersPanel';
 import type { CompileEffect } from './compileEffect';
 import { createCoreTiles } from './coreTiles';
 import { createProcessView } from './processView';
+import { createSpareRoomView } from './spareRoomView';
 
 const GPU_SOURCE = 'ioreg IOAccelerator PerformanceStatistics, whole GPU and every app using it. macOS gives one number for all 10 cores, so per-core use is unknown.';
 const NET_SOURCE = 'netstat -ib interface counters, whole Mac.';
@@ -18,7 +20,8 @@ export function createHardwareView(onGpu: (stats: GpuStats | null) => void) {
   const group = new THREE.Group();
   const cores = createCoreTiles();
   const processes = createProcessView();
-  group.add(cores.group, processes.group);
+  const spare = createSpareRoomView();
+  group.add(cores.group, processes.group, spare.group);
 
   const gpuLabel = nameLabel('GPU waiting', 'live-hardware', 'block', 'partial');
   gpuLabel.classList.add('live-reading');
@@ -37,16 +40,21 @@ export function createHardwareView(onGpu: (stats: GpuStats | null) => void) {
 
   return {
     group,
-    sections: [section, processes.section],
+    sections: [spare.section, section, processes.section],
     addFileRead(event: FileReadEvent) {
       fileReads.set(event.file, event);
     },
     setCompileEffect(next: CompileEffect | null) {
       effect = next;
     },
+    // Whether the program runs, and stop 6's GPU time against the frame budget, for the bottleneck verdict.
+    setProgram(running: boolean, fill: GpuFill | null) {
+      spare.setProgram(running, fill);
+    },
     update(event: HardwareEvent) {
       cores.update(event.pCorePercents, event.eCorePercents);
       processes.update(event.processes, effect);
+      spare.update(event);
       gpuText.textContent = event.gpu ? `GPU ${event.gpu.devicePercent}%` : 'GPU no reading';
       onGpu(event.gpu);
 

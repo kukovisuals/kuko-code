@@ -707,3 +707,218 @@ body.zoom-open .name-label {
   width: 290px;
   z-index: 5;
 }
+
+/* Stop 4's compiler view. It sits over the map, because two texts side by side need the room. */
+.tag-missing {
+  color: #ffc9c9;
+  border-color: #8a3b3b;
+}
+
+.section-button {
+  justify-self: start;
+  margin-top: 4px;
+}
+
+#compiler-panel {
+  inset: 4vh 3vw;
+  z-index: 40;
+  display: grid;
+  grid-template-rows: auto auto auto auto minmax(0, 1fr);
+  gap: 10px;
+  max-width: none;
+  background: rgba(10, 14, 20, 0.97);
+}
+
+#compiler-panel[hidden] {
+  display: none;
+}
+
+.compiler-head {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.compiler-head button {
+  margin-left: auto;
+}
+
+.compiler-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.compiler-step {
+  padding: 8px 10px;
+  border: 1px solid #3b7a50;
+  border-radius: 6px;
+  background: rgba(59, 122, 80, 0.14);
+}
+
+/* Modeled steps are drawn like the city's wireframes: an outline only, in the modeled color. */
+.compiler-step-modeled {
+  background: transparent;
+  border: 1px dashed var(--modeled);
+}
+
+.compiler-step-missing {
+  background: transparent;
+  border: 1px dashed #8a3b3b;
+}
+
+.compiler-step-title {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.compiler-facts {
+  display: grid;
+  gap: 3px;
+}
+
+.compiler-fact .tag {
+  margin-right: 4px;
+}
+
+.compiler-functions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.compiler-function code {
+  font-family: var(--mono);
+  color: var(--one-shot);
+}
+
+.compiler-texts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+  min-height: 0;
+}
+
+.compiler-pane {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 4px;
+  min-height: 0;
+}
+
+.compiler-pane-head {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.compiler-text {
+  margin: 0;
+  overflow: auto;
+  padding: 4px 0;
+  font: 11px/1.45 var(--mono);
+  background: #05070a;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+.code-line {
+  padding-right: 8px;
+  white-space: pre;
+}
+
+.code-gutter {
+  display: inline-block;
+  width: 4ch;
+  margin-right: 1.5ch;
+  color: #52606f;
+  text-align: right;
+  user-select: none;
+}
+
+.code-angle {
+  color: #64717f;
+}
+
+/* A user function's definition, marked in both texts. */
+.code-def {
+  color: var(--text);
+  background: rgba(242, 163, 58, 0.16);
+  box-shadow: inset 3px 0 var(--one-shot);
+}
+
+.code-selected {
+  background: rgba(53, 201, 232, 0.22);
+}
+
+.code-def.code-selected {
+  background: rgba(53, 201, 232, 0.34);
+}
+
+@media (max-width: 899px) {
+  #compiler-panel {
+    inset: 8px;
+    overflow: auto;
+    grid-template-rows: none;
+  }
+
+  .compiler-steps,
+  .compiler-texts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .compiler-text {
+    max-height: 50vh;
+  }
+}
+
+/* T30: spare room. A card on each block with its load and whether the shader can use it. */
+.spare-card {
+  color: #e3eaf2;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  background: rgba(7, 9, 12, 0.78);
+  border-color: #3a4656;
+}
+
+.spare-card.reach-yes {
+  border-color: var(--per-frame);
+}
+
+.spare-card.reach-no {
+  color: #9aa6b4;
+}
+
+.spare-card.spare-idle {
+  color: #9aa6b4;
+  background: rgba(7, 9, 12, 0.9);
+}
+
+.tag-idle {
+  color: #c9d3de;
+  border-color: #5b6878;
+  border-style: dashed;
+}
+
+.tag-no-reading {
+  color: #9aa6b4;
+  border-color: #45566a;
+  border-style: dotted;
+}
+
+.row.reach-no .row-name {
+  color: #9aa6b4;
+}
+
+.row.spare-verdict {
+  padding: 4px 0;
+  font-weight: 600;
+}
+
+.row.spare-verdict .row-name {
+  white-space: normal;
+}

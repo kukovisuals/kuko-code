@@ -1,5 +1,6 @@
 // What the live view passes around. Feed events come from the dev server, and program events come from
 // the embedded program frame. Times are milliseconds since the Unix epoch, all from this one Mac.
+import type { TranslatedLanguage } from './translatedText';
 import type { Environment } from './types';
 
 export interface HttpEvent {
@@ -80,6 +81,9 @@ export type ProgramEvent =
   | { type: 'source'; at: number; bytes: number; sha256: string }
   | { type: 'compile'; at: number; callsMs: number; compileMs: number }
   | { type: 'link'; at: number; callsMs: number; linkMs: number }
+  // The fragment GLSL exactly as handed to gl.shaderSource(), and the text WEBGL_debug_shaders returned for it.
+  // Text is null when the extension isn't exposed.
+  | { type: 'translated'; at: number; glsl: string; text: string | null; language: TranslatedLanguage | null }
   | { type: 'round-trip'; at: number; ms: number }
   | { type: 'first-draw'; at: number; ms: number }
   | { type: 'steady-draw'; at: number; ms: number }

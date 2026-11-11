@@ -6,7 +6,7 @@ import { countingShader, instrument } from '../src/experiments/countingShader';
 import { blankComments, findBlocks, loopBound } from '../src/experiments/findBlocks';
 import { median, spread } from '../src/experiments/spread';
 import { tileGrid } from '../src/experiments/tileTimings';
-import { linesNaming } from '../src/experiments/translatedSource';
+import { linesNaming } from '../src/shared/translatedText';
 import type { BlockResult } from '../src/shared/experimentResult';
 
 const read = (name: string) => readFileSync(new URL(`../shaders/${name}.glsl`, import.meta.url), 'utf8');
