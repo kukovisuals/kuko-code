@@ -1,6 +1,15 @@
 // Scene colors. One-shot and per-frame colors must stay different, per the honesty rules.
 export const COLORS = {
-  background: '#0a0e13',
+  background: '#07090c',
+  // Illustrative material colors for the parts that carry no data.
+  board: '#10161a',
+  substrate: '#1d2a26',
+  dieFloor: '#2b303a',
+  gpuPad: '#4f73a8',
+  capacitor: '#a58258',
+  solder: '#9aa0a6',
+  chipPackage: '#1a1c1f',
+  shieldCan: '#6f767e',
   oneShot: '#f2a33a',
   perFrame: '#35c9e8',
   wifiDim: '#6b7888',
@@ -11,25 +20,29 @@ export const COLORS = {
   process: '#8fb4ff',
 } as const;
 
+// Illustrative, not measured. Die blocks borrow the blue-violet to pink to gold tints of Apple's M2
+// artwork, kept muted so the one-shot and per-frame colors stay the brightest things on the map.
 export const BLOCK_COLORS: Record<string, string> = {
-  'memory-ring': '#3a4a60',
-  cpu: '#1b2a40',
-  'p-cluster': '#2b4265',
-  'e-cluster': '#2b4265',
-  gpu: '#241f3d',
-  'gpu-core': '#2c2650',
-  slc: '#20343a',
-  'neural-engine': '#171b22',
-  'media-engine': '#171b22',
-  'display-engines': '#14302d',
-  dcp: '#1f4a44',
-  dcpext: '#1f4a44',
-  wifi: '#15181d',
-  'dev-server': '#1d3040',
-  ssd: '#2a2433',
-  'network-road': '#161e28',
-  'exit-built-in': '#1a2129',
-  'exit-lg': '#1a2129',
+  // Drawn as the gold stiffener frame of the package.
+  'memory-ring': '#c49a4c',
+  cpu: '#3a4170',
+  'p-cluster': '#565f9a',
+  'e-cluster': '#565f9a',
+  gpu: '#2f4c7c',
+  'gpu-core': '#3b5d94',
+  slc: '#6f7686',
+  'neural-engine': '#74476a',
+  'media-engine': '#86584c',
+  'display-engines': '#7d6830',
+  dcp: '#a58a44',
+  dcpext: '#a58a44',
+  // Off-chip parts: a shielded radio can, black chip packages and bare board.
+  wifi: '#5d646c',
+  'dev-server': '#1c2630',
+  ssd: '#1a1c1f',
+  'network-road': '#17282a',
+  'exit-built-in': '#22262b',
+  'exit-lg': '#22262b',
 };
 
 // Top surface height for each block, in world units.
@@ -57,3 +70,8 @@ export const BLOCK_HEIGHTS: Record<string, number> = {
 // Roads run above everything flat, so they stay readable where they cross the ring.
 export const ROAD_Y = 0.5;
 export const CHIP_FLOOR_Y = 0.08;
+
+// Blocks whose top shows the fine cell pattern of the die.
+export const DIE_BLOCKS = ['cpu', 'gpu', 'slc', 'neural-engine', 'media-engine', 'display-engines'];
+// The logic board's top sits just under the blocks, so no two faces share a plane.
+export const BOARD_Y = -0.02;

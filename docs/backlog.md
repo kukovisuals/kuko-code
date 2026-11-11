@@ -78,6 +78,7 @@ Suggested order: T27, T29, T28, T30, then T26. The user hasn't confirmed the ord
 - [ ] T30 Q2: spare room, and whether the shader can reach it
 - [ ] T31 Root readings from `powermetrics`: GPU clock, power, per-core frequency (feeds T27 and T30)
 - [ ] T32 Replace T29's guessed variants: show how each line of Day 442 compiles and runs on the hardware, no suggestions
+- [x] T33 Chip-like look for the city: real material colors, same primitive shapes (user request, 2026-11-11)
 
 ## 3. Open decisions
 
@@ -800,6 +801,31 @@ when its slowest pixel does.
   exactly once per pixel (1,024,000).
 - Tile times show a median, a range and the rounds, tagged partial.
 - The translated source shown is the text Chrome returned, or the page says the extension is missing.
+
+### T33 Chip-like look for the city
+**Depends on:** T17.
+**Goal:** the map reads as a chip package on a logic board, with no change to layout, roads, stops or numbers.
+**Files:** `src/city/palette.ts`, `src/city/dieTexture.ts`, `src/city/buildBoard.ts`, `src/city/buildBlocks.ts`,
+`src/city/buildGpuDistrict.ts`, `src/city/main.ts`, `src/city/city.css`, `index.html`.
+**Build:**
+- Die blocks take muted tints after Apple's M2 artwork (blue-violet, pink, gold). The memory ring is drawn as a gold
+  package frame. Off-chip blocks look like chip packages and a shielded can.
+- `buildBoard` adds a board, a substrate and small parts as one `InstancedMesh`. They are untagged, so clicks pass through.
+- `dieTexture` is one 64 px canvas, repeated, for the cell pattern.
+- No new lights, no environment map, no post-processing. The arrangement is not taken from a die photo.
+**Teach:** metalness without an environment map renders dark; an `InstancedMesh` is one draw call; a repeated
+texture is cheaper than geometry.
+**Done when:**
+- Layout and route tests still pass, and the legend says the colors and board parts are illustrative.
+- One-shot orange and per-frame cyan are still the brightest colors on the map.
+
+**Findings from T33:**
+- The board adds 2 slabs and 1 instanced draw call. The die pattern adds 7 small textures that share one canvas.
+- Block names needed a dark backing in CSS, because the blocks under them are no longer dark.
+- The dimmed exit roads (opacity 0.28) are faint over the gold display engines block.
+- `tests/experiments.test.ts` has 1 failing test (`maxPerParent` expected 4, got 1). T33 doesn't touch that code.
+
+---
 
 ## 5. Parking lot
 

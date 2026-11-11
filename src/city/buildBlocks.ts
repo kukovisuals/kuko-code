@@ -5,7 +5,8 @@ import { claimRow, nameLabel, note, numberRow, placeCard, rowsBox, tagChip } fro
 import { layoutMap, type PlacedBlock } from './layoutMap';
 import { MAP_CLAIMS } from './mapClaims';
 import type { PanelSection } from './numbersPanel';
-import { BLOCK_COLORS, BLOCK_HEIGHTS, CHIP_FLOOR_Y, COLORS } from './palette';
+import { dieTexture } from './dieTexture';
+import { BLOCK_COLORS, BLOCK_HEIGHTS, CHIP_FLOOR_Y, COLORS, DIE_BLOCKS } from './palette';
 import { tagComponent } from './picking';
 
 const RING_THICKNESS = 2;
@@ -70,7 +71,12 @@ function outline(geometry: THREE.BufferGeometry, offChip: boolean): THREE.LineSe
 function drawBox(placed: PlacedBlock, offChip: boolean): THREE.Mesh {
   const height = BLOCK_HEIGHTS[placed.id];
   const geometry = new THREE.BoxGeometry(placed.w, height, placed.d);
-  const material = new THREE.MeshStandardMaterial({ color: BLOCK_COLORS[placed.id], roughness: 0.85, ...BEHIND_OUTLINE });
+  const material = new THREE.MeshStandardMaterial({
+    color: BLOCK_COLORS[placed.id],
+    roughness: 0.7,
+    map: DIE_BLOCKS.includes(placed.id) ? dieTexture(placed.w, placed.d) : null,
+    ...BEHIND_OUTLINE,
+  });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.set(placed.x + placed.w / 2, height / 2, placed.z + placed.d / 2);
   mesh.receiveShadow = true;
@@ -102,7 +108,8 @@ function drawRing(placed: PlacedBlock): THREE.Group {
   geometry.translate(0, height, 0);
   const ring = new THREE.Mesh(
     geometry,
-    new THREE.MeshStandardMaterial({ color: BLOCK_COLORS[placed.id], roughness: 0.6, side: THREE.DoubleSide, ...BEHIND_OUTLINE }),
+    // Low metalness on purpose: with no environment map to reflect, a fully metal surface renders near black.
+    new THREE.MeshStandardMaterial({ color: BLOCK_COLORS[placed.id], roughness: 0.4, metalness: 0.3, side: THREE.DoubleSide, ...BEHIND_OUTLINE }),
   );
   ring.receiveShadow = true;
   ring.add(outline(geometry, false));
@@ -110,7 +117,11 @@ function drawRing(placed: PlacedBlock): THREE.Group {
 
   const floor = new THREE.Mesh(
     new THREE.BoxGeometry(placed.w - RING_THICKNESS, CHIP_FLOOR_Y, placed.d - RING_THICKNESS),
-    new THREE.MeshStandardMaterial({ color: '#0e141b', roughness: 0.95 }),
+    new THREE.MeshStandardMaterial({
+      color: COLORS.dieFloor,
+      roughness: 0.8,
+      map: dieTexture(placed.w - RING_THICKNESS, placed.d - RING_THICKNESS),
+    }),
   );
   floor.position.set(placed.x + placed.w / 2, CHIP_FLOOR_Y / 2, placed.z + placed.d / 2);
   floor.receiveShadow = true;

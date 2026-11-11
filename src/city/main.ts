@@ -5,6 +5,7 @@ import type { HardwareMap, Recording } from '../shared/types';
 import { validateRecording } from '../shared/validateRecording';
 import * as THREE from 'three';
 import { buildBlocks } from './buildBlocks';
+import { buildBoard } from './buildBoard';
 import { buildGpuDistrict } from './buildGpuDistrict';
 import { nameLabelFrom, note, numberRow, paintSelectedLabels } from './buildLabels';
 import { buildRoads } from './buildRoads';
@@ -31,7 +32,7 @@ const blocks = buildBlocks(hardwareMap);
 const roads = buildRoads();
 const gpuDistrict = buildGpuDistrict(hardwareMap, blocks.cores);
 const token = createReplayToken();
-stage.scene.add(blocks.group, roads.group, gpuDistrict.group, token.mesh);
+stage.scene.add(buildBoard(), blocks.group, roads.group, gpuDistrict.group, token.mesh);
 gpuDistrict.setZoomVisible(false);
 
 let recordings: Recording[] = [];

@@ -99,7 +99,7 @@ export function buildGpuDistrict(map: HardwareMap, coresArea: Rect): GpuDistrict
   const fills = cores.map((core) => {
     const pad = new THREE.Mesh(
       new THREE.BoxGeometry(core.w, 0.08, core.d),
-      new THREE.MeshStandardMaterial({ color: '#3a3268', roughness: 0.7 }),
+      new THREE.MeshStandardMaterial({ color: COLORS.gpuPad, roughness: 0.6 }),
     );
     pad.position.set(core.x + core.w / 2, CORE_TOP, core.z + core.d / 2);
     pad.receiveShadow = true;
