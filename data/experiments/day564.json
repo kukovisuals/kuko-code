@@ -1,0 +1,3336 @@
+{
+  "schema": "shader-hardware/1",
+  "savedAt": "2026-11-11T23:42:57.057Z",
+  "program": "Day 564",
+  "width": 1280,
+  "height": 800,
+  "sceneTimeS": 4,
+  "sources": {
+    "counts": "A counting copy adds one counter per { } block and writes the counts instead of a color; readPixels reads them back. Counted on the GPU.",
+    "simd": "32 threads per SIMD group (community source: metal-benchmarks). Their 8 x 4 layout on screen is our model.",
+    "tiles": "EXT_disjoint_timer_query_webgl2 TIME_ELAPSED_EXT around one scissored draw of the unchanged shader.",
+    "translated": "WEBGL_debug_shaders getTranslatedShaderSource on the unchanged fragment shader."
+  },
+  "counting": {
+    "passes": 1,
+    "outputsPerPass": 8,
+    "blocks": [
+      {
+        "id": "shaders/day564-image.glsl:6:1",
+        "file": "shaders/day564-image.glsl",
+        "kind": "function",
+        "functionName": "W",
+        "startLine": 6,
+        "endLine": 8,
+        "header": "#define H(p) fract(sin(dot(p, vec2(127.1, 311.7))) * 4e3) #define L(p,s) length(p - s * clamp(dot(p,s) ,0.,.5)) bool W(vec2 c, float k)",
+        "total": 5814400,
+        "maxPerPixel": 6,
+        "pixelsRan": 1024000,
+        "waitingShare": 0,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day564-image.glsl:11:1",
+        "file": "shaders/day564-image.glsl",
+        "kind": "function",
+        "functionName": "mainImage",
+        "startLine": 11,
+        "endLine": 45,
+        "header": "void mainImage( out vec4 O, vec2 I )",
+        "total": 1024000,
+        "maxPerPixel": 1,
+        "pixelsRan": 1024000,
+        "waitingShare": 0,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day564-image.glsl:27:5",
+        "file": "shaders/day564-image.glsl",
+        "kind": "for",
+        "functionName": "mainImage",
+        "startLine": 27,
+        "endLine": 34,
+        "header": "for( s.x++; i++<4.; s = vec2(-s.y, s))",
+        "total": 4096000,
+        "maxPerPixel": 4,
+        "pixelsRan": 1024000,
+        "waitingShare": 0,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      },
+      {
+        "id": "shaders/day564-image.glsl:30:9",
+        "file": "shaders/day564-image.glsl",
+        "kind": "if",
+        "functionName": "mainImage",
+        "startLine": 30,
+        "endLine": 33,
+        "header": "if( W(c, i-1.) && W(c+s, mod(i+1., 4.)) )",
+        "total": 753600,
+        "maxPerPixel": 2,
+        "pixelsRan": 628800,
+        "waitingShare": 0,
+        "maxPerParent": null,
+        "overBoundPixels": null
+      }
+    ]
+  },
+  "tiles": {
+    "size": 80,
+    "columns": 16,
+    "rows": 10,
+    "warmupRounds": 2,
+    "timedRounds": 12,
+    "seed": 768884109,
+    "items": [
+      {
+        "column": 0,
+        "row": 0,
+        "x": 0,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1463955,
+          "min": 0.093958,
+          "max": 0.356749,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.109958,
+          "min": 0.039125,
+          "max": 0.326333,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 0,
+        "x": 80,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1082285,
+          "min": 0.082958,
+          "max": 0.298999,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0907705,
+          "min": 0.030499,
+          "max": 0.302458,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 0,
+        "x": 160,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1286245,
+          "min": 0.083874,
+          "max": 0.584958,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.10270750000000001,
+          "min": 0.033416,
+          "max": 0.566749,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 0,
+        "x": 240,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.139208,
+          "min": 0.102416,
+          "max": 0.422333,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.12645800000000001,
+          "min": 0.0475,
+          "max": 0.371875,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 0,
+        "x": 320,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.117229,
+          "min": 0.094208,
+          "max": 0.762458,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.09643750000000001,
+          "min": 0.050041,
+          "max": 0.388375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 0,
+        "x": 400,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1025825,
+          "min": 0.073458,
+          "max": 0.456916,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.051019999999999996,
+          "min": 0.017749,
+          "max": 0.432791,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 0,
+        "x": 480,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.10743749999999999,
+          "min": 0.075875,
+          "max": 1.264708,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.07435349999999999,
+          "min": 0.027999,
+          "max": 1.235041,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 0,
+        "x": 560,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1383535,
+          "min": 0.105333,
+          "max": 1.224375,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.1050615,
+          "min": 0.048999,
+          "max": 1.195666,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 0,
+        "x": 640,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1455615,
+          "min": 0.091874,
+          "max": 0.438125,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.108187,
+          "min": 0.046,
+          "max": 0.396708,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 0,
+        "x": 720,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1045,
+          "min": 0.075875,
+          "max": 1.126624,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.09031249999999999,
+          "min": 0.026375,
+          "max": 1.127124,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 0,
+        "x": 800,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1072285,
+          "min": 0.085208,
+          "max": 0.448625,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0751665,
+          "min": 0.032208,
+          "max": 0.108791,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 0,
+        "x": 880,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1460205,
+          "min": 0.101833,
+          "max": 0.63175,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.122583,
+          "min": 0.049124,
+          "max": 0.62875,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 0,
+        "x": 960,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.130125,
+          "min": 0.112625,
+          "max": 0.347249,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.112791,
+          "min": 0.043499,
+          "max": 0.284958,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 0,
+        "x": 1040,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.0922075,
+          "min": 0.07875,
+          "max": 0.510083,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0809165,
+          "min": 0.024791,
+          "max": 0.465125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 0,
+        "x": 1120,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.0975,
+          "min": 0.072291,
+          "max": 0.414708,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.055812,
+          "min": 0.019875,
+          "max": 0.373374,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 0,
+        "x": 1200,
+        "y": 0,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.12385399999999999,
+          "min": 0.092833,
+          "max": 0.503708,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0773955,
+          "min": 0.040333,
+          "max": 0.497875,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 1,
+        "x": 0,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1180415,
+          "min": 0.094749,
+          "max": 0.245916,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0865415,
+          "min": 0.042166,
+          "max": 0.245,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 1,
+        "x": 80,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1160625,
+          "min": 0.077625,
+          "max": 0.17075,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.08227000000000001,
+          "min": 0.035499,
+          "max": 0.149499,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 1,
+        "x": 160,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.0880415,
+          "min": 0.072,
+          "max": 0.150999,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0400415,
+          "min": 0.028125,
+          "max": 0.127875,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 1,
+        "x": 240,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.13985350000000002,
+          "min": 0.087874,
+          "max": 0.482124,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.1287705,
+          "min": 0.045874,
+          "max": 0.464958,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 1,
+        "x": 320,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1224365,
+          "min": 0.087874,
+          "max": 0.479,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.050916,
+          "min": 0.039333,
+          "max": 0.452166,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 1,
+        "x": 400,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.089875,
+          "min": 0.0795,
+          "max": 0.183625,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0409995,
+          "min": 0.023874,
+          "max": 0.172375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 1,
+        "x": 480,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.168562,
+          "min": 0.072499,
+          "max": 1.34925,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.11945800000000001,
+          "min": 0.033083,
+          "max": 1.314874,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 1,
+        "x": 560,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.119,
+          "min": 0.09975,
+          "max": 0.685833,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.095937,
+          "min": 0.045499,
+          "max": 0.6605,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 1,
+        "x": 640,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1329995,
+          "min": 0.111916,
+          "max": 0.532708,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.10041649999999999,
+          "min": 0.04325,
+          "max": 0.51825,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 1,
+        "x": 720,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.10174949999999999,
+          "min": 0.0775,
+          "max": 1.006583,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.08829100000000001,
+          "min": 0.028874,
+          "max": 1.005416,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 1,
+        "x": 800,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1019785,
+          "min": 0.077875,
+          "max": 0.308916,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.075833,
+          "min": 0.031791,
+          "max": 0.261875,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 1,
+        "x": 880,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.19727,
+          "min": 0.09125,
+          "max": 0.439416,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.08304149999999999,
+          "min": 0.029624,
+          "max": 0.423375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 1,
+        "x": 960,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1828745,
+          "min": 0.097708,
+          "max": 0.564666,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.11997849999999999,
+          "min": 0.04075,
+          "max": 0.557333,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 1,
+        "x": 1040,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1748745,
+          "min": 0.077249,
+          "max": 0.695416,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0722285,
+          "min": 0.019666,
+          "max": 0.67925,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 1,
+        "x": 1120,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.09906200000000001,
+          "min": 0.074625,
+          "max": 1.303833,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.039374,
+          "min": 0.019999,
+          "max": 1.275624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 1,
+        "x": 1200,
+        "y": 80,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.133895,
+          "min": 0.093583,
+          "max": 0.338874,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.097374,
+          "min": 0.042374,
+          "max": 0.293291,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 2,
+        "x": 0,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.12527,
+          "min": 0.094124,
+          "max": 0.396749,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.1303745,
+          "min": 0.043083,
+          "max": 0.392375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 2,
+        "x": 80,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.119083,
+          "min": 0.077916,
+          "max": 0.312875,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.1096455,
+          "min": 0.032458,
+          "max": 0.270874,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 2,
+        "x": 160,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.094708,
+          "min": 0.077124,
+          "max": 1.099708,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0679365,
+          "min": 0.030749,
+          "max": 1.07025,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 2,
+        "x": 240,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1459165,
+          "min": 0.096458,
+          "max": 0.492375,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.123249,
+          "min": 0.038374,
+          "max": 0.444458,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 2,
+        "x": 320,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.140208,
+          "min": 0.106,
+          "max": 0.559458,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.1137495,
+          "min": 0.061375,
+          "max": 0.550874,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 2,
+        "x": 400,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.11056250000000001,
+          "min": 0.085749,
+          "max": 0.376624,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.083062,
+          "min": 0.038041,
+          "max": 0.350708,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 2,
+        "x": 480,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1060615,
+          "min": 0.074291,
+          "max": 1.219791,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.07927000000000001,
+          "min": 0.031666,
+          "max": 1.163874,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 2,
+        "x": 560,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.127083,
+          "min": 0.092125,
+          "max": 0.1805,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0930825,
+          "min": 0.03975,
+          "max": 0.157375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 2,
+        "x": 640,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1616035,
+          "min": 0.100166,
+          "max": 0.368,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.15024949999999998,
+          "min": 0.049791,
+          "max": 0.342874,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 2,
+        "x": 720,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.10362450000000001,
+          "min": 0.089749,
+          "max": 0.908791,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.1017705,
+          "min": 0.02825,
+          "max": 0.88075,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 2,
+        "x": 800,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.11574999999999999,
+          "min": 0.088624,
+          "max": 0.371375,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.086229,
+          "min": 0.029749,
+          "max": 0.292583,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 2,
+        "x": 880,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1522915,
+          "min": 0.098166,
+          "max": 0.302749,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.1357285,
+          "min": 0.035624,
+          "max": 0.291708,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 2,
+        "x": 960,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.136208,
+          "min": 0.09325,
+          "max": 0.418083,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.10168650000000001,
+          "min": 0.080333,
+          "max": 0.419,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 2,
+        "x": 1040,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1077075,
+          "min": 0.074041,
+          "max": 1.006625,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.08064550000000001,
+          "min": 0.036624,
+          "max": 0.984541,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 2,
+        "x": 1120,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1236035,
+          "min": 0.07575,
+          "max": 0.549625,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.09210399999999999,
+          "min": 0.029874,
+          "max": 0.520458,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 2,
+        "x": 1200,
+        "y": 160,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.15662500000000001,
+          "min": 0.096624,
+          "max": 0.85575,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.134187,
+          "min": 0.039874,
+          "max": 0.843249,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 3,
+        "x": 0,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1849785,
+          "min": 0.093833,
+          "max": 1.143875,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.120145,
+          "min": 0.021625,
+          "max": 1.144291,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 3,
+        "x": 80,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1068745,
+          "min": 0.078791,
+          "max": 0.569333,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.06372900000000001,
+          "min": 0.029833,
+          "max": 0.570083,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 3,
+        "x": 160,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.149687,
+          "min": 0.072541,
+          "max": 0.637375,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.078979,
+          "min": 0.0185,
+          "max": 0.583375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 3,
+        "x": 240,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.14479150000000002,
+          "min": 0.08725,
+          "max": 0.434583,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.102895,
+          "min": 0.046374,
+          "max": 0.399333,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 3,
+        "x": 320,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1254785,
+          "min": 0.092083,
+          "max": 0.346,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.09802050000000001,
+          "min": 0.039583,
+          "max": 0.327749,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 3,
+        "x": 400,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.106833,
+          "min": 0.075875,
+          "max": 1.205999,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0653745,
+          "min": 0.018583,
+          "max": 1.1515,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 3,
+        "x": 480,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1405625,
+          "min": 0.096708,
+          "max": 0.346291,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.09987399999999999,
+          "min": 0.034416,
+          "max": 0.337541,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 3,
+        "x": 560,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.15668700000000002,
+          "min": 0.09975,
+          "max": 1.190125,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.099687,
+          "min": 0.043166,
+          "max": 1.136833,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 3,
+        "x": 640,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.174375,
+          "min": 0.102166,
+          "max": 1.143291,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.160041,
+          "min": 0.042,
+          "max": 1.0975,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 3,
+        "x": 720,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.095583,
+          "min": 0.0765,
+          "max": 0.524583,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.043457499999999996,
+          "min": 0.029874,
+          "max": 0.480166,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 3,
+        "x": 800,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1294785,
+          "min": 0.084875,
+          "max": 0.424708,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.1046035,
+          "min": 0.03125,
+          "max": 0.403624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 3,
+        "x": 880,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.11720749999999999,
+          "min": 0.091874,
+          "max": 0.424083,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0596865,
+          "min": 0.038875,
+          "max": 0.415916,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 3,
+        "x": 960,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1331245,
+          "min": 0.103125,
+          "max": 0.742083,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.11960399999999999,
+          "min": 0.041125,
+          "max": 0.741124,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 3,
+        "x": 1040,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.131374,
+          "min": 0.078416,
+          "max": 0.369374,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.104687,
+          "min": 0.031749,
+          "max": 0.345166,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 3,
+        "x": 1120,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.10587450000000001,
+          "min": 0.072999,
+          "max": 0.37825,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.081833,
+          "min": 0.030625,
+          "max": 0.346249,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 3,
+        "x": 1200,
+        "y": 240,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1677705,
+          "min": 0.1125,
+          "max": 0.467624,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.09631200000000001,
+          "min": 0.027541,
+          "max": 0.380166,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 4,
+        "x": 0,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.12972899999999998,
+          "min": 0.094,
+          "max": 1.312874,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.11056150000000001,
+          "min": 0.036791,
+          "max": 1.277208,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 4,
+        "x": 80,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.13002,
+          "min": 0.073833,
+          "max": 1.302749,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0961245,
+          "min": 0.033041,
+          "max": 1.273916,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 4,
+        "x": 160,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.105645,
+          "min": 0.077249,
+          "max": 0.562791,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.076541,
+          "min": 0.02,
+          "max": 0.559375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 4,
+        "x": 240,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.132854,
+          "min": 0.093499,
+          "max": 1.194583,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.118583,
+          "min": 0.04275,
+          "max": 1.195041,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 4,
+        "x": 320,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1429365,
+          "min": 0.089624,
+          "max": 0.684458,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.11529149999999999,
+          "min": 0.018125,
+          "max": 0.68375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 4,
+        "x": 400,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.09791649999999999,
+          "min": 0.067916,
+          "max": 1.285333,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.073041,
+          "min": 0.027958,
+          "max": 1.255375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 4,
+        "x": 480,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.123562,
+          "min": 0.073708,
+          "max": 1.143874,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.094479,
+          "min": 0.033375,
+          "max": 1.088958,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 4,
+        "x": 560,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.11614550000000001,
+          "min": 0.09075,
+          "max": 0.934333,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.09568650000000001,
+          "min": 0.035083,
+          "max": 0.869625,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 4,
+        "x": 640,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.11877,
+          "min": 0.093,
+          "max": 0.419708,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0518535,
+          "min": 0.021375,
+          "max": 0.389458,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 4,
+        "x": 720,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.101229,
+          "min": 0.076958,
+          "max": 0.403,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0715825,
+          "min": 0.037708,
+          "max": 0.362083,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 4,
+        "x": 800,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.11056250000000001,
+          "min": 0.069124,
+          "max": 0.36225,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0910205,
+          "min": 0.032791,
+          "max": 0.360749,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 4,
+        "x": 880,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.135249,
+          "min": 0.088791,
+          "max": 0.446541,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0943535,
+          "min": 0.017333,
+          "max": 0.327999,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 4,
+        "x": 960,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.129416,
+          "min": 0.087124,
+          "max": 1.270208,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0849785,
+          "min": 0.04225,
+          "max": 1.273874,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 4,
+        "x": 1040,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.15074900000000002,
+          "min": 0.073416,
+          "max": 1.20475,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.087083,
+          "min": 0.016708,
+          "max": 1.189125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 4,
+        "x": 1120,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1311665,
+          "min": 0.073249,
+          "max": 1.237874,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.113374,
+          "min": 0.044124,
+          "max": 1.190375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 4,
+        "x": 1200,
+        "y": 320,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.120958,
+          "min": 0.093583,
+          "max": 1.277875,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0748955,
+          "min": 0.042166,
+          "max": 1.0965,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 5,
+        "x": 0,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1242705,
+          "min": 0.106249,
+          "max": 1.127666,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0943125,
+          "min": 0.036374,
+          "max": 1.09925,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 5,
+        "x": 80,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.10539499999999999,
+          "min": 0.08125,
+          "max": 0.524,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0805205,
+          "min": 0.0315,
+          "max": 0.512499,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 5,
+        "x": 160,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.11139550000000001,
+          "min": 0.070666,
+          "max": 0.51325,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.05524950000000001,
+          "min": 0.029958,
+          "max": 0.463083,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 5,
+        "x": 240,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.131687,
+          "min": 0.093291,
+          "max": 0.528916,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.1077285,
+          "min": 0.037916,
+          "max": 0.496458,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 5,
+        "x": 320,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.129375,
+          "min": 0.092666,
+          "max": 0.562999,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.101083,
+          "min": 0.035458,
+          "max": 0.536583,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 5,
+        "x": 400,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1114375,
+          "min": 0.073291,
+          "max": 0.338916,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0682915,
+          "min": 0.019083,
+          "max": 0.342958,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 5,
+        "x": 480,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.13614500000000002,
+          "min": 0.077374,
+          "max": 1.142041,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.09977,
+          "min": 0.029624,
+          "max": 1.115499,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 5,
+        "x": 560,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.2981455,
+          "min": 0.091458,
+          "max": 1.158874,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.2903115,
+          "min": 0.047416,
+          "max": 1.148625,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 5,
+        "x": 640,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1460205,
+          "min": 0.096249,
+          "max": 0.407,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.1079995,
+          "min": 0.017041,
+          "max": 0.328791,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 5,
+        "x": 720,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.128125,
+          "min": 0.074916,
+          "max": 0.445958,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.1059165,
+          "min": 0.02975,
+          "max": 0.440374,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 5,
+        "x": 800,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.0996245,
+          "min": 0.072,
+          "max": 0.313291,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.08816650000000001,
+          "min": 0.027125,
+          "max": 0.279208,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 5,
+        "x": 880,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.176479,
+          "min": 0.100791,
+          "max": 0.488166,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0990615,
+          "min": 0.044291,
+          "max": 0.483625,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 5,
+        "x": 960,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.12593700000000002,
+          "min": 0.099624,
+          "max": 0.217291,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.066479,
+          "min": 0.039624,
+          "max": 0.121874,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 5,
+        "x": 1040,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.109499,
+          "min": 0.081874,
+          "max": 1.200208,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.081666,
+          "min": 0.032291,
+          "max": 1.197291,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 5,
+        "x": 1120,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1747285,
+          "min": 0.080249,
+          "max": 0.924583,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.1367495,
+          "min": 0.022625,
+          "max": 0.86825,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 5,
+        "x": 1200,
+        "y": 400,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.12072849999999999,
+          "min": 0.092208,
+          "max": 0.353499,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.091583,
+          "min": 0.037291,
+          "max": 0.335624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 6,
+        "x": 0,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.121583,
+          "min": 0.090708,
+          "max": 0.203541,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0727495,
+          "min": 0.0385,
+          "max": 0.188,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 6,
+        "x": 80,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.155833,
+          "min": 0.0785,
+          "max": 0.528624,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.108395,
+          "min": 0.021791,
+          "max": 0.475624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 6,
+        "x": 160,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1344785,
+          "min": 0.085375,
+          "max": 1.239958,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.09095800000000001,
+          "min": 0.026958,
+          "max": 1.240208,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 6,
+        "x": 240,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.129916,
+          "min": 0.109458,
+          "max": 0.413208,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.10952049999999999,
+          "min": 0.0475,
+          "max": 0.413124,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 6,
+        "x": 320,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1263745,
+          "min": 0.102875,
+          "max": 0.419666,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.10145799999999999,
+          "min": 0.03975,
+          "max": 0.375875,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 6,
+        "x": 400,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1178115,
+          "min": 0.081249,
+          "max": 0.507291,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0689375,
+          "min": 0.030208,
+          "max": 0.482833,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 6,
+        "x": 480,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.11737449999999999,
+          "min": 0.07175,
+          "max": 0.752875,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.09574949999999999,
+          "min": 0.028833,
+          "max": 0.724541,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 6,
+        "x": 560,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1389785,
+          "min": 0.101499,
+          "max": 1.085833,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.125937,
+          "min": 0.056416,
+          "max": 1.082666,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 6,
+        "x": 640,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.12222849999999999,
+          "min": 0.092708,
+          "max": 1.321833,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.106312,
+          "min": 0.046249,
+          "max": 1.322791,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 6,
+        "x": 720,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1031035,
+          "min": 0.078249,
+          "max": 1.136375,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.050979,
+          "min": 0.031874,
+          "max": 1.078333,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 6,
+        "x": 800,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1135205,
+          "min": 0.079249,
+          "max": 0.924208,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0876875,
+          "min": 0.029083,
+          "max": 0.868374,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 6,
+        "x": 880,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.122,
+          "min": 0.095875,
+          "max": 1.188375,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.106958,
+          "min": 0.04175,
+          "max": 1.133375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 6,
+        "x": 960,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1067285,
+          "min": 0.086333,
+          "max": 0.385458,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.090208,
+          "min": 0.038374,
+          "max": 0.371416,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 6,
+        "x": 1040,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.121874,
+          "min": 0.073625,
+          "max": 0.376124,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.077999,
+          "min": 0.028624,
+          "max": 0.324499,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 6,
+        "x": 1120,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.0997495,
+          "min": 0.073041,
+          "max": 0.37575,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.07410349999999999,
+          "min": 0.029125,
+          "max": 0.34325,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 6,
+        "x": 1200,
+        "y": 480,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.2256665,
+          "min": 0.113833,
+          "max": 0.68175,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.196208,
+          "min": 0.018458,
+          "max": 0.662249,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 7,
+        "x": 0,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1334785,
+          "min": 0.092624,
+          "max": 0.486374,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.07997850000000001,
+          "min": 0.038125,
+          "max": 0.487083,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 7,
+        "x": 80,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.10914499999999999,
+          "min": 0.094083,
+          "max": 0.811875,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.087187,
+          "min": 0.032583,
+          "max": 0.757916,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 7,
+        "x": 160,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1088955,
+          "min": 0.080416,
+          "max": 1.347291,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.087666,
+          "min": 0.03325,
+          "max": 1.270875,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 7,
+        "x": 240,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.125395,
+          "min": 0.095208,
+          "max": 0.669458,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.098687,
+          "min": 0.04125,
+          "max": 0.620916,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 7,
+        "x": 320,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.12493749999999999,
+          "min": 0.090125,
+          "max": 0.707624,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.094937,
+          "min": 0.04725,
+          "max": 0.681125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 7,
+        "x": 400,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.110083,
+          "min": 0.092916,
+          "max": 0.399874,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0901455,
+          "min": 0.036125,
+          "max": 0.339916,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 7,
+        "x": 480,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.10199949999999999,
+          "min": 0.073124,
+          "max": 0.757791,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0752495,
+          "min": 0.029291,
+          "max": 0.73125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 7,
+        "x": 560,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.15258300000000002,
+          "min": 0.097624,
+          "max": 1.210416,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.09860350000000001,
+          "min": 0.021458,
+          "max": 1.172291,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 7,
+        "x": 640,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.161937,
+          "min": 0.089375,
+          "max": 0.391291,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.1093125,
+          "min": 0.044916,
+          "max": 0.369166,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 7,
+        "x": 720,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.10410349999999999,
+          "min": 0.084291,
+          "max": 0.307624,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.058707999999999996,
+          "min": 0.029583,
+          "max": 0.251749,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 7,
+        "x": 800,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.10577049999999999,
+          "min": 0.072458,
+          "max": 0.443,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0925825,
+          "min": 0.032249,
+          "max": 0.39075,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 7,
+        "x": 880,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.182562,
+          "min": 0.091874,
+          "max": 1.195791,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.09606200000000001,
+          "min": 0.019541,
+          "max": 1.150125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 7,
+        "x": 960,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.120041,
+          "min": 0.090041,
+          "max": 1.183625,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0681245,
+          "min": 0.037208,
+          "max": 1.123875,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 7,
+        "x": 1040,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.10729150000000001,
+          "min": 0.069124,
+          "max": 1.228875,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.08712500000000001,
+          "min": 0.029874,
+          "max": 1.19025,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 7,
+        "x": 1120,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.10927,
+          "min": 0.076249,
+          "max": 0.445875,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.095687,
+          "min": 0.027249,
+          "max": 0.442499,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 7,
+        "x": 1200,
+        "y": 560,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.12439549999999999,
+          "min": 0.089083,
+          "max": 1.230458,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.095687,
+          "min": 0.042749,
+          "max": 1.219124,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 8,
+        "x": 0,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.12468699999999999,
+          "min": 0.102416,
+          "max": 1.00375,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.100437,
+          "min": 0.017791,
+          "max": 1.001291,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 8,
+        "x": 80,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.11972849999999999,
+          "min": 0.070583,
+          "max": 0.935874,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.095187,
+          "min": 0.03025,
+          "max": 0.936625,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 8,
+        "x": 160,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.09835350000000001,
+          "min": 0.077124,
+          "max": 1.201541,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.079125,
+          "min": 0.03025,
+          "max": 1.20175,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 8,
+        "x": 240,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.113208,
+          "min": 0.08825,
+          "max": 0.416166,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.090125,
+          "min": 0.041249,
+          "max": 0.402125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 8,
+        "x": 320,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.12147849999999999,
+          "min": 0.091375,
+          "max": 0.413749,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0940625,
+          "min": 0.036125,
+          "max": 0.401458,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 8,
+        "x": 400,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.100624,
+          "min": 0.074125,
+          "max": 1.261,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.079895,
+          "min": 0.0295,
+          "max": 1.261458,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 8,
+        "x": 480,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.098333,
+          "min": 0.073124,
+          "max": 0.253124,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.075291,
+          "min": 0.034749,
+          "max": 0.175375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 8,
+        "x": 560,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1414575,
+          "min": 0.094375,
+          "max": 1.259291,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.08399999999999999,
+          "min": 0.040875,
+          "max": 1.168374,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 8,
+        "x": 640,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.217833,
+          "min": 0.113624,
+          "max": 1.160999,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.175979,
+          "min": 0.05725,
+          "max": 1.161833,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 8,
+        "x": 720,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.103833,
+          "min": 0.073375,
+          "max": 0.651916,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0901035,
+          "min": 0.028833,
+          "max": 0.592499,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 8,
+        "x": 800,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.100958,
+          "min": 0.073666,
+          "max": 0.326333,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.077791,
+          "min": 0.02575,
+          "max": 0.292624,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 8,
+        "x": 880,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1414375,
+          "min": 0.100833,
+          "max": 0.438833,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.1359165,
+          "min": 0.04675,
+          "max": 0.430125,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 8,
+        "x": 960,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1415625,
+          "min": 0.105374,
+          "max": 0.436499,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.121666,
+          "min": 0.035833,
+          "max": 0.405249,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 8,
+        "x": 1040,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.09160399999999999,
+          "min": 0.074875,
+          "max": 0.33675,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0746665,
+          "min": 0.0285,
+          "max": 0.308249,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 8,
+        "x": 1120,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1062915,
+          "min": 0.082749,
+          "max": 0.292249,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0927495,
+          "min": 0.028874,
+          "max": 0.263083,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 8,
+        "x": 1200,
+        "y": 640,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.136812,
+          "min": 0.096708,
+          "max": 0.94125,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.11922850000000002,
+          "min": 0.038666,
+          "max": 0.867041,
+          "samples": 12
+        }
+      },
+      {
+        "column": 0,
+        "row": 9,
+        "x": 0,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1171035,
+          "min": 0.105999,
+          "max": 0.168083,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.095874,
+          "min": 0.045166,
+          "max": 0.280499,
+          "samples": 12
+        }
+      },
+      {
+        "column": 1,
+        "row": 9,
+        "x": 80,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1034785,
+          "min": 0.075625,
+          "max": 0.460625,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.08218700000000001,
+          "min": 0.021583,
+          "max": 0.461583,
+          "samples": 12
+        }
+      },
+      {
+        "column": 2,
+        "row": 9,
+        "x": 160,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.107333,
+          "min": 0.070333,
+          "max": 1.266375,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0781875,
+          "min": 0.033125,
+          "max": 1.235458,
+          "samples": 12
+        }
+      },
+      {
+        "column": 3,
+        "row": 9,
+        "x": 240,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.11668700000000001,
+          "min": 0.089499,
+          "max": 0.335333,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.09477,
+          "min": 0.039958,
+          "max": 0.298375,
+          "samples": 12
+        }
+      },
+      {
+        "column": 4,
+        "row": 9,
+        "x": 320,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.143833,
+          "min": 0.093624,
+          "max": 0.630749,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.12420800000000001,
+          "min": 0.03875,
+          "max": 0.583374,
+          "samples": 12
+        }
+      },
+      {
+        "column": 5,
+        "row": 9,
+        "x": 400,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.10270750000000001,
+          "min": 0.069875,
+          "max": 0.4375,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.101854,
+          "min": 0.028499,
+          "max": 0.410708,
+          "samples": 12
+        }
+      },
+      {
+        "column": 6,
+        "row": 9,
+        "x": 480,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.0993745,
+          "min": 0.084624,
+          "max": 1.304833,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0746455,
+          "min": 0.03225,
+          "max": 1.297791,
+          "samples": 12
+        }
+      },
+      {
+        "column": 7,
+        "row": 9,
+        "x": 560,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.20154149999999998,
+          "min": 0.102166,
+          "max": 1.227041,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.13302049999999999,
+          "min": 0.018291,
+          "max": 1.215916,
+          "samples": 12
+        }
+      },
+      {
+        "column": 8,
+        "row": 9,
+        "x": 640,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1492285,
+          "min": 0.097083,
+          "max": 1.393374,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.10347899999999999,
+          "min": 0.041791,
+          "max": 1.141374,
+          "samples": 12
+        }
+      },
+      {
+        "column": 9,
+        "row": 9,
+        "x": 720,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.101874,
+          "min": 0.069499,
+          "max": 0.372,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0881245,
+          "min": 0.035875,
+          "max": 0.372666,
+          "samples": 12
+        }
+      },
+      {
+        "column": 10,
+        "row": 9,
+        "x": 800,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1280625,
+          "min": 0.091125,
+          "max": 0.920833,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.118916,
+          "min": 0.021958,
+          "max": 0.864,
+          "samples": 12
+        }
+      },
+      {
+        "column": 11,
+        "row": 9,
+        "x": 880,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.134187,
+          "min": 0.096124,
+          "max": 0.445249,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0973325,
+          "min": 0.037583,
+          "max": 0.406458,
+          "samples": 12
+        }
+      },
+      {
+        "column": 12,
+        "row": 9,
+        "x": 960,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1305825,
+          "min": 0.091166,
+          "max": 1.357041,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.115729,
+          "min": 0.037,
+          "max": 1.311999,
+          "samples": 12
+        }
+      },
+      {
+        "column": 13,
+        "row": 9,
+        "x": 1040,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.10387450000000001,
+          "min": 0.07525,
+          "max": 0.443708,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0819785,
+          "min": 0.020708,
+          "max": 0.414124,
+          "samples": 12
+        }
+      },
+      {
+        "column": 14,
+        "row": 9,
+        "x": 1120,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.152208,
+          "min": 0.100249,
+          "max": 0.405416,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.102208,
+          "min": 0.02075,
+          "max": 0.34675,
+          "samples": 12
+        }
+      },
+      {
+        "column": 15,
+        "row": 9,
+        "x": 1200,
+        "y": 720,
+        "width": 80,
+        "height": 80,
+        "ms": {
+          "median": 0.1233325,
+          "min": 0.104708,
+          "max": 0.355208,
+          "samples": 12
+        },
+        "emptyMs": {
+          "median": 0.0972495,
+          "min": 0.057375,
+          "max": 0.3555,
+          "samples": 12
+        }
+      }
+    ],
+    "wholeFrameMs": {
+      "median": 0.34579150000000003,
+      "min": 0.311958,
+      "max": 0.494666,
+      "samples": 12
+    }
+  },
+  "translated": {
+    "available": true,
+    "language": "Metal Shading Language",
+    "glsl": {
+      "bytes": 1434,
+      "lines": 65
+    },
+    "text": "\n\n#include <metal_stdlib>\n\n#define ANGLE_ALWAYS_INLINE __attribute__((always_inline))\n\nANGLE_ALWAYS_INLINE int ANGLE_int_clamp(int value, int minValue, int maxValue)\n{\n    return ((value < minValue) ?  minValue : ((value > maxValue) ? maxValue : value));\n};\n\n#define ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX   0\n#define ANGLE_RASTERIZATION_DISCARD_INDEX     1\n#define ANGLE_MULTISAMPLED_RENDERING_INDEX    2\n#define ANGLE_DEPTH_WRITE_ENABLED_INDEX       3\n#define ANGLE_EMULATE_ALPHA_TO_COVERAGE_INDEX 4\n#define ANGLE_WRITE_HELPER_SAMPLE_MASK_INDEX  5\n\nconstant bool ANGLEUseSampleCompareGradient [[function_constant(ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX)]];\nconstant bool ANGLERasterizerDisabled       [[function_constant(ANGLE_RASTERIZATION_DISCARD_INDEX)]];\nconstant bool ANGLEMultisampledRendering    [[function_constant(ANGLE_MULTISAMPLED_RENDERING_INDEX)]];\nconstant bool ANGLEDepthWriteEnabled        [[function_constant(ANGLE_DEPTH_WRITE_ENABLED_INDEX)]];\nconstant bool ANGLEEmulateAlphaToCoverage   [[function_constant(ANGLE_EMULATE_ALPHA_TO_COVERAGE_INDEX)]];\nconstant bool ANGLEWriteHelperSampleMask    [[function_constant(ANGLE_WRITE_HELPER_SAMPLE_MASK_INDEX)]];\n\n#define ANGLE_ALPHA0\n\nconstant bool ANGLESampleMaskWriteEnabled = ANGLEMultisampledRendering;\n#pragma clang diagnostic ignored \"-Wunused-value\"\nANGLE_ALWAYS_INLINE void ANGLE_loopForwardProgress()\n{\n    volatile bool p = true;\n}\n\ntemplate <typename X, typename Y>\nANGLE_ALWAYS_INLINE X ANGLE_mod(X x, Y y)\n{\n    return x - y * metal::floor(x / y);\n}\n\ntemplate <typename X, typename Y>\nANGLE_ALWAYS_INLINE X ANGLE_rshift(X x, Y y)\n{\n    return x >> (y & Y(31));\n}\n\ntemplate <typename X, typename Y>\nANGLE_ALWAYS_INLINE X ANGLE_ilshift(X x, Y y)\n{\n    using UX = metal::make_unsigned_t<X>;\n    return as_type<X>(UX(x) << (y & Y(31)));\n}\n\ntemplate <typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>\nANGLE_ALWAYS_INLINE Z ANGLE_subInt(X x, Y y)\n{\n    using U = metal::make_unsigned_t<Z>;\n    return as_type<Z>(U(Z(x)) - U(Z(y)));\n}\n\ntemplate <typename X, typename Y>\nANGLE_ALWAYS_INLINE X ANGLE_ftoi(Y y)\n{\n    Y min = Y(metal::numeric_limits<X>::min());\n    Y max = Y(metal::numeric_limits<X>::max()) * Y(1.0f - 0x1.0p-24f);\n    return X(metal::clamp(y, min, max));\n}\n\ntemplate <typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>\nANGLE_ALWAYS_INLINE Z ANGLE_addInt(X x, Y y)\n{\n    using U = metal::make_unsigned_t<Z>;\n    return as_type<Z>(U(Z(x)) + U(Z(y)));\n}\n\ntemplate <typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>\nANGLE_ALWAYS_INLINE Z ANGLE_imul(X x, Y y)\n{\n    using U = metal::make_unsigned_t<Z>;\n    return as_type<Z>(U(Z(x)) * U(Z(y)));\n}\n\ntemplate <typename X, typename Y>\nANGLE_ALWAYS_INLINE X ANGLE_ulshift(X x, Y y)\n{\n    return x << (y & Y(31));\n}\n\nstruct ANGLE_InvocationFragmentGlobals\n{\n  metal::float4 gl_FragCoord [[position]];\n};\n\nstruct ANGLEDepthRangeParams\n{\n  float ANGLE_near;\n  float ANGLE_far;\n  float ANGLE_diff;\n};\n\nstruct ANGLEUniformBlock\n{\n  metal::float2 ANGLE_depthRange;\n  uint32_t ANGLE_renderArea;\n  uint32_t ANGLE_flipXY;\n  uint32_t ANGLE_misc;\n  int ANGLE_baseInstance;\n  metal::uint2 ANGLE_acbBufferOffsets;\n  metal::int4 ANGLE_xfbBufferOffsets;\n  int ANGLE_xfbVerticesPerInstance;\n  uint32_t ANGLE_coverageMask;\n  metal::uint2 ANGLE_unused;\n};\n\nstruct ANGLE_NonConstGlobals\n{\n  metal::float4 ANGLE_flippedFragCoord;\n};\n\nstruct ANGLE_UserUniforms\n{\n  metal::float3 _uiResolution;\n  float _uiTime;\n};\n\nstruct ANGLE_FragmentOut\n{\n  metal::float4 _uoutColor [[__unassigned_output__]];\n  uint32_t ANGLE_metal_SampleMask [[sample_mask, function_constant(ANGLESampleMaskWriteEnabled)]];\n};\n\nmetal::float2 ANGLE_sbea(float ANGLE_sbeb, float ANGLE_sbec)\n{\n  metal::float2 ANGLE_sbed = metal::float2(ANGLE_sbeb, ANGLE_sbec);\n  return ANGLE_sbed;;\n}\n\nmetal::float2 ANGLE_sbe7(float ANGLE_sbe8, float ANGLE_sbe9)\n{\n  metal::float2 ANGLE_sbee = metal::float2(ANGLE_sbe8, ANGLE_sbe9);\n  return ANGLE_sbee;;\n}\n\nmetal::float4 ANGLE_sbe4(metal::float3 ANGLE_sbe5, float ANGLE_sbe6)\n{\n  metal::float4 ANGLE_sbef = metal::float4(ANGLE_sbe5.x, ANGLE_sbe5.y, ANGLE_sbe5.z, ANGLE_sbe6);\n  return ANGLE_sbef;;\n}\n\nmetal::float2 ANGLE_sbe1(float ANGLE_sbe2, metal::float2 ANGLE_sbe3)\n{\n  metal::float2 ANGLE_sbf0 = metal::float2(ANGLE_sbe2, ANGLE_sbe3.x);\n  return ANGLE_sbf0;;\n}\n\nbool _uW(constant ANGLE_UserUniforms & ANGLE_userUniforms, metal::float2 _uc, float _uk)\n{\n  float ANGLE_sbf1 = metal::dot(_uc, metal::float2(127.099998f, 311.700012f));\n  float ANGLE_sbf2 = metal::sin(ANGLE_sbf1);\n  float ANGLE_sbf3 = (ANGLE_sbf2 * 4000.0f);\n  float ANGLE_sbf4 = metal::fract(ANGLE_sbf3);\n  float ANGLE_sbf5 = (ANGLE_sbf4 * 4.0f);\n  float ANGLE_sbf6 = metal::floor(ANGLE_sbf5);\n  bool ANGLE__1 = (_uk == ANGLE_sbf6);\n  if (!ANGLE__1)\n  {\n    float ANGLE_sbf8 = (ANGLE_userUniforms._uiTime * 4.00000005e-07f);\n    metal::float2 ANGLE_sbf9 = (_uc + ANGLE_sbf8);\n    float ANGLE_sbfa = metal::dot(ANGLE_sbf9, metal::float2(127.099998f, 311.700012f));\n    float ANGLE_sbfb = metal::sin(ANGLE_sbfa);\n    float ANGLE_sbfc = (ANGLE_sbfb * 4000.0f);\n    float ANGLE_sbfd = metal::fract(ANGLE_sbfc);\n    float ANGLE_sbfe = (ANGLE_sbfd * 4.0f);\n    float ANGLE_sbff = metal::floor(ANGLE_sbfe);\n    ANGLE__1 = (_uk == ANGLE_sbff);\n  } else {}\n  return ANGLE__1;;\n}\n\nvoid _umainImage(constant ANGLE_UserUniforms & ANGLE_userUniforms, thread metal::float4 & _uO, metal::float2 _uI)\n{\n  _uO = metal::float4(0.0f, 0.0f, 0.0f, 0.0f);\n  metal::float2 _um = (20.0f / ANGLE_userUniforms._uiResolution.yy);\n  _uI *= _um;\n  metal::float2 _uc = metal::floor(_uI);\n  metal::float2 ANGLE_sc04 = (_uI - _uc);\n  metal::float2 _uv = (ANGLE_sc04 - 0.5f);\n  metal::float2 _us = metal::float2(0.0f, 0.0f);\n  float _ui = 0.0f;\n  float _ud1 = 1.0f;\n  float _un = 0.0f;\n  {\n    _us.x++;\n    float ANGLE_sc06 = (_ui++);\n    bool ANGLE_sbd1 = (ANGLE_sc06 < 4.0f);\n    while (ANGLE_sbd1)\n    {\n      {\n        ANGLE_loopForwardProgress();\n        {\n          float ANGLE_sc08 = (_ui - 1.0f);\n          bool ANGLE__2 = _uW(ANGLE_userUniforms, _uc, ANGLE_sc08);\n          if (ANGLE__2)\n          {\n            metal::float2 ANGLE_sc0a = (_uc + _us);\n            float ANGLE_sc0b = (_ui + 1.0f);\n            float ANGLE_sc0c = ANGLE_mod(ANGLE_sc0b, 4.0f);\n            ANGLE__2 = _uW(ANGLE_userUniforms, ANGLE_sc0a, ANGLE_sc0c);\n          } else {}\n          if (ANGLE__2)\n          {\n            float ANGLE_sc0f = metal::dot(_uv, _us);\n            float ANGLE_sc10 = metal::clamp(ANGLE_sc0f, 0.0f, 0.5f);\n            metal::float2 ANGLE_sc11 = (_us * ANGLE_sc10);\n            metal::float2 ANGLE_sc12 = (_uv - ANGLE_sc11);\n            float ANGLE_sc13 = metal::length(ANGLE_sc12);\n            _ud1 = metal::min(_ud1, ANGLE_sc13);\n            _un++;\n          } else {}\n        }\n      }\n      float ANGLE_sc15 = (-_us.y);\n      _us = ANGLE_sbe1(ANGLE_sc15, _us);\n      float ANGLE_sc17 = (_ui++);\n      ANGLE_sbd1 = (ANGLE_sc17 < 4.0f);\n    }\n  }\n  bool ANGLE_sc19 = (_un == 1.0f);\n  if (ANGLE_sc19)\n  {\n    float ANGLE_sc1a = metal::length(_uv);\n    float ANGLE_sc1b = (ANGLE_sc1a - 0.300000012f);\n    float ANGLE_sc1c = metal::abs(ANGLE_sc1b);\n    float ANGLE_sc1d = (ANGLE_sc1c + 0.0399999991f);\n    _ud1 = metal::min(ANGLE_sc1d, _ud1);\n  } else {}\n  float ANGLE_sc1f = (_ud1 - 0.0399999991f);\n  metal::float4 ANGLE_sc20 = (ANGLE_sc1f / _um.xxxx);\n  _uO = (1.0f - ANGLE_sc20);\n}\n\nvoid ANGLE__0_main(thread ANGLE_FragmentOut & ANGLE_fragmentOut, constant ANGLE_UserUniforms & ANGLE_userUniforms, thread ANGLE_NonConstGlobals & ANGLE_nonConstGlobals)\n{\n  ANGLE_fragmentOut._uoutColor = metal::float4(0.0f, 0.0f, 0.0f, 0.0f);\n  metal::float4 _ucolor = metal::float4(0.0f, 0.0f, 0.0f, 1.0f);\n  _umainImage(ANGLE_userUniforms, _ucolor, ANGLE_nonConstGlobals.ANGLE_flippedFragCoord.xy);\n  ANGLE_fragmentOut._uoutColor = ANGLE_sbe4(_ucolor.xyz, 1.0f);\n}\n\nfragment ANGLE_FragmentOut main0(constant ANGLE_UserUniforms & ANGLE_userUniforms [[buffer(19)]], constant ANGLEUniformBlock & ANGLE_angleUniforms [[buffer(17)]], metal::float4 gl_FragCoord [[position]])\n{\n  ANGLE_InvocationFragmentGlobals ANGLE_invocationFragmentGlobals;\n  ANGLE_invocationFragmentGlobals.gl_FragCoord = gl_FragCoord;\n  {\n    ANGLE_FragmentOut ANGLE_fragmentOut;\n    {\n      ANGLE_NonConstGlobals ANGLE_nonConstGlobals;\n      {\n        ANGLE_nonConstGlobals.ANGLE_flippedFragCoord = ANGLE_invocationFragmentGlobals.gl_FragCoord;\n        uint32_t ANGLE_sc23 = (ANGLE_angleUniforms.ANGLE_renderArea & 65535u);\n        float ANGLE_sc24 = float(ANGLE_sc23);\n        uint32_t ANGLE_sc25 = ANGLE_rshift(ANGLE_angleUniforms.ANGLE_renderArea, 16u);\n        float ANGLE_sc26 = float(ANGLE_sc25);\n        metal::float2 ANGLE_sc27 = ANGLE_sbe7(ANGLE_sc24, ANGLE_sc26);\n        metal::float2 ANGLE_sc28 = (ANGLE_sc27 * 0.5f);\n        metal::float2 ANGLE_sc29 = (ANGLE_invocationFragmentGlobals.gl_FragCoord.xy - ANGLE_sc28);\n        metal::float4 ANGLE_sc2a = metal::unpack_snorm4x8_to_float(ANGLE_angleUniforms.ANGLE_flipXY);\n        metal::float2 ANGLE_sc2b = (ANGLE_sc29 * ANGLE_sc2a.xy);\n        uint32_t ANGLE_sc2c = (ANGLE_angleUniforms.ANGLE_renderArea & 65535u);\n        float ANGLE_sc2d = float(ANGLE_sc2c);\n        uint32_t ANGLE_sc2e = ANGLE_rshift(ANGLE_angleUniforms.ANGLE_renderArea, 16u);\n        float ANGLE_sc2f = float(ANGLE_sc2e);\n        metal::float2 ANGLE_sc30 = ANGLE_sbea(ANGLE_sc2d, ANGLE_sc2f);\n        metal::float2 ANGLE_sc31 = (ANGLE_sc30 * 0.5f);\n        ANGLE_nonConstGlobals.ANGLE_flippedFragCoord.xy = (ANGLE_sc2b + ANGLE_sc31);\n        ANGLE__0_main(ANGLE_fragmentOut, ANGLE_userUniforms, ANGLE_nonConstGlobals);\n        if (ANGLEMultisampledRendering)\n        {\n          ANGLE_fragmentOut.ANGLE_metal_SampleMask = ANGLE_angleUniforms.ANGLE_coverageMask;\n          if (ANGLEEmulateAlphaToCoverage)\n          {\n            uint32_t ANGLE_sc33 = ANGLE_rshift(ANGLE_angleUniforms.ANGLE_misc, 21u);\n            uint32_t ANGLE_sc34 = (ANGLE_sc33 & 1u);\n            bool ANGLE_sc35 = bool(ANGLE_sc34);\n            if (ANGLE_sc35)\n            {\n              int ANGLE_sbda = gl_FragCoord.x;\n              int ANGLE_sbdb = gl_FragCoord.y;\n              ANGLE_sbda = ANGLE_ilshift(ANGLE_sbda, 1);\n              ANGLE_sbdb &= 1;\n              ANGLE_sbda = ANGLE_subInt(ANGLE_sbda, ANGLE_sbdb);\n              ANGLE_sbda &= 3;\n              float ANGLE_sbdd = metal::saturate(ANGLE_ALPHA0);\n              ANGLE_sbdd *= 510.0f;\n              int ANGLE_sbde = ANGLE_ftoi<int>(ANGLE_sbdd);\n              uint32_t ANGLE_sc38 = metal::get_num_samples();\n              switch (ANGLE_sc38)\n              {\n                case 2:\n                  ANGLE_sbda = ANGLE_ilshift(ANGLE_sbda, 6);\n                  ANGLE_sbde = ANGLE_addInt(ANGLE_sbde, 225);\n                  ANGLE_sbde = ANGLE_subInt(ANGLE_sbde, ANGLE_sbda);\n                  ANGLE_sbde = ANGLE_rshift(ANGLE_sbde, 8);\n                  ANGLE_sbde = ANGLE_imul(ANGLE_sbde, 3);\n                  ANGLE_sbde = ANGLE_rshift(ANGLE_sbde, 1);\n                  break;\n                case 4:\n                  ANGLE_sbda = ANGLE_ilshift(ANGLE_sbda, 5);\n                  ANGLE_sbde = ANGLE_addInt(ANGLE_sbde, 113);\n                  ANGLE_sbde = ANGLE_subInt(ANGLE_sbde, ANGLE_sbda);\n                  ANGLE_sbde = ANGLE_rshift(ANGLE_sbde, 7);\n                  ANGLE_sbde = ANGLE_ilshift(ANGLE_sbde, 2);\n                  ANGLE_sbde = ANGLE_rshift(1030416, ANGLE_sbde);\n                  break;\n                case 8:\n                  ANGLE_sbda = ANGLE_ilshift(ANGLE_sbda, 4);\n                  ANGLE_sbde = ANGLE_addInt(ANGLE_sbde, 57);\n                  ANGLE_sbde = ANGLE_subInt(ANGLE_sbde, ANGLE_sbda);\n                  ANGLE_sbde = ANGLE_rshift(ANGLE_sbde, 6);\n                  ANGLE_sbde = ANGLE_ulshift(4294967295u, ANGLE_sbde);\n                  ANGLE_sbde = (~ANGLE_sbde);\n                  break;\n              }\n              ANGLE_fragmentOut.ANGLE_metal_SampleMask &= ANGLE_sbde;\n            } else {}\n          } else {}\n        } else {}\n      }\n    }\n    return ANGLE_fragmentOut;;\n  }\n}\n\n"
+  },
+  "environment": {
+    "browserMajor": 157,
+    "glRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2, Unspecified Version)",
+    "timerQueryExposed": true,
+    "parallelCompileExposed": true,
+    "timeElapsedBits": 64,
+    "timestampBits": 0
+  },
+  "crossOriginIsolated": true,
+  "disjointReads": 0,
+  "neverReturned": 0,
+  "hiddenDuringRun": false,
+  "runSeconds": 0.307289999961853,
+  "checks": [
+    {
+      "passed": true,
+      "text": "mainImage ran 1,024,000 times, at most 1 per pixel. Expected exactly once for each of the 1,024,000 pixels."
+    },
+    {
+      "passed": true,
+      "text": "GPU_DISJOINT_EXT read true 0 times."
+    },
+    {
+      "passed": true,
+      "text": "0 timer queries never returned."
+    },
+    {
+      "passed": true,
+      "text": "The tab stayed visible during the run."
+    }
+  ]
+}

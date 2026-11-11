@@ -75,9 +75,10 @@ function buildProgram(gl: WebGL2RenderingContext, fragmentSource: string, report
 }
 
 export async function buildLiveProgram(gl: WebGL2RenderingContext, report: Report): Promise<WebGLProgram> {
-  const common = await fetchSource(LIVE_PROGRAM.commonFile, report);
+  const common = LIVE_PROGRAM.commonFile === null ? null : await fetchSource(LIVE_PROGRAM.commonFile, report);
   const image = await fetchSource(LIVE_PROGRAM.imageFile, report);
-  const whole = `${common}\n${image}`;
+  // With no Common pass, the source is the Image file alone, so its bytes and hash match the file on disk.
+  const whole = common === null ? image : `${common}\n${image}`;
   report({ type: 'source', at: Date.now(), bytes: new TextEncoder().encode(whole).length, sha256: await sha256Hex(whole) });
-  return buildProgram(gl, wrapImagePass(common, image), report);
+  return buildProgram(gl, wrapImagePass(common ?? '', image), report);
 }

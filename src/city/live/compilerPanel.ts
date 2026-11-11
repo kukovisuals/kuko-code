@@ -86,7 +86,7 @@ function steps(glsl: string, translated: TranslatedEvent): HTMLElement {
     ),
     step(
       "3. Apple's Metal compiler",
-      'Compiler 2 of 2, part of macOS. Turns the Metal source into GPU code, and may unroll a loop with a constant bound, like the AA loop. A page cannot read its output or its choices; its time is inside the link.',
+      'Compiler 2 of 2, part of macOS. Turns the Metal source into GPU code, and may unroll a loop with a constant bound. A page cannot read its output or its choices; its time is inside the link.',
       'modeled',
     ),
     step('4. GPU machine code', `Runs on the GPU cores, one instruction for 32 pixels at once (${SIMD_SOURCE}). A page cannot read it.`, 'modeled'),

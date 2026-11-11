@@ -1,8 +1,10 @@
 // Pure: collects the program's real events into the same Recording shape a saved file has, so the
 // existing buildings can draw them. Values still waiting for their event stay null, never invented.
 import type { ProgramEvent } from '../../shared/liveEvents';
-import { LIVE_PROGRAM } from '../../shared/liveProgram';
+import { LIVE_FILES, LIVE_PROGRAM } from '../../shared/liveProgram';
 import type { DisplayLabel, HardwareMap, Metric, MetricUnit, Recording, Stats, Status, Stop } from '../../shared/types';
+
+const FETCH_SOURCE = `PerformanceResourceTiming: ${LIVE_FILES.length} GLSL file${LIVE_FILES.length === 1 ? '' : 's'} (${LIVE_FILES.map((name) => `${name}.glsl`).join(', ')}) over loopback, one after another`;
 
 export const WARMUP_FRAMES = 60;
 const WINDOW_FRAMES = 300;
@@ -88,7 +90,7 @@ export class LiveRecorder {
 
     const stops: Stop[] = [
       stop(1, 'Network', 'network-road', 'measured', ['fetchMs'], [
-        metric('fetchMs', fetches.length === 2 ? sum(fetches.map((entry) => entry.ms)) : null, 'ms', 'measured', 'PerformanceResourceTiming: 2 GLSL files (Common, Image) over loopback, one after another'),
+        metric('fetchMs', fetches.length === LIVE_FILES.length ? sum(fetches.map((entry) => entry.ms)) : null, 'ms', 'measured', FETCH_SOURCE),
       ]),
       stop(2, 'Renderer', 'cpu', 'measured', ['buildCallsMs', 'frameCallsMs'], [
         metric('buildCallsMs', compile && link ? compile.callsMs + link.callsMs : null, 'ms', 'measured', 'performance.now() around the compile and link calls, before waiting for their results'),

@@ -1,4 +1,4 @@
-// Shows how Day 442 compiles and runs on this Mac: how often each line ran (counted on the GPU), where on
+// Shows how the live program compiles and runs on this Mac: how often each line ran (counted on the GPU), where on
 // screen the GPU time went (timed by tile), and the text the compiler produced. Readings only: the page never
 // proposes a change. Raw WebGL2, no Three.js, and nothing else animating.
 import { getTimerQueryExt, probeEnvironment } from '../record/probeEnvironment';
@@ -76,6 +76,8 @@ async function save(result: ExperimentResult): Promise<string> {
 
 async function start(): Promise<void> {
   const canvas = byId<HTMLCanvasElement>('canvas');
+  document.title = `${LIVE_PROGRAM.name} on the hardware`;
+  byId('page-title').textContent = `How ${LIVE_PROGRAM.name} compiles and runs on the M2`;
   const runButton = byId<HTMLButtonElement>('run');
   const progress = byId<HTMLElement>('progress');
   const checksList = byId<HTMLElement>('checks');
@@ -99,16 +101,17 @@ async function start(): Promise<void> {
   if (!gl) throw new Error('WebGL2 is not available.');
   const ext = getTimerQueryExt(gl);
 
-  const common = await fetchShader(LIVE_PROGRAM.commonFile);
+  const common = LIVE_PROGRAM.commonFile === null ? null : await fetchShader(LIVE_PROGRAM.commonFile);
   const image = await fetchShader(LIVE_PROGRAM.imageFile);
-  const listed: ListedFile[] = [
-    { file: `shaders/${LIVE_PROGRAM.commonFile}.glsl`, text: common },
+  const files = [
+    ...(common === null ? [] : [{ file: `shaders/${LIVE_PROGRAM.commonFile}.glsl`, text: common }]),
     { file: `shaders/${LIVE_PROGRAM.imageFile}.glsl`, text: image },
-  ].map((file) => ({ ...file, blocks: findBlocks(file.file, file.text) }));
+  ];
+  const listed: ListedFile[] = files.map((file) => ({ ...file, blocks: findBlocks(file.file, file.text) }));
   const blocks = listed.flatMap((file) => file.blocks.blocks);
 
   // The compiler: the unchanged shader, and the text Chrome translated it into.
-  const glsl = wrapImagePass(common, image);
+  const glsl = wrapImagePass(common ?? '', image);
   const real = new GlProgram(gl, glsl);
   const translated = translatedSource(gl, real.fragment);
   const functions = blocks.filter((block) => block.kind === 'function').map((block) => ({ name: block.functionName, file: block.file, line: block.startLine }));

@@ -1,11 +1,14 @@
-// The saved result of the experiments page: how each block of Day 442 ran on the GPU, GPU time by screen tile,
+// The saved result of the experiments page: how each block of the live program ran on the GPU, GPU time by screen tile,
 // and the translated source. The page writes it and the city may read it, so the shape lives here, where both
 // can import it without the city importing measuring code. It holds readings only, never a suggestion.
+import { LIVE_PROGRAM } from './liveProgram';
 import type { Environment } from './types';
 
-export const EXPERIMENT_SCHEMA = 'day442-hardware/1';
-export const EXPERIMENT_SAVE_PATH = '/__experiments/day442';
-export const EXPERIMENT_FILE = 'data/experiments/day442.json';
+// One schema for any shader. Day 442's older file says day442-hardware/1, with the same shape.
+export const EXPERIMENT_SCHEMA = 'shader-hardware/1';
+// Each shader gets its own file, so a new program never overwrites an older program's result.
+export const EXPERIMENT_SAVE_PATH = `/__experiments/${LIVE_PROGRAM.slug}`;
+export const EXPERIMENT_FILE = `data/experiments/${LIVE_PROGRAM.slug}.json`;
 
 export interface Spread {
   median: number;

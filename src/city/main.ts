@@ -56,6 +56,9 @@ panel.setGroup('hardware', blocks.hardwareSections);
 panel.setGroup('roads', [roads.section]);
 
 const programFrame = document.getElementById('program-frame') as HTMLIFrameElement;
+// The name comes from the one config the program also reads, so the page can't name a different shader.
+(document.getElementById('program-name') as HTMLElement).textContent = `Program: ${LIVE_PROGRAM.name}`;
+programFrame.title = `${LIVE_PROGRAM.name} running on the GPU`;
 const live = createLiveMode({
   hardwareMap,
   frame: programFrame,

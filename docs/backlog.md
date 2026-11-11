@@ -79,6 +79,7 @@ Suggested order: T27, T29, T28, T30, then T26. The user hasn't confirmed the ord
 - [ ] T31 Root readings from `powermetrics`: GPU clock, power, per-core frequency (feeds T27 and T30)
 - [ ] T32 Replace T29's guessed variants: show how each line of Day 442 compiles and runs on the hardware, no suggestions
 - [x] T33 Chip-like look for the city: real material colors, same primitive shapes (user request, 2026-11-11)
+- [x] T34 Day 564 replaces Day 442 as the live program (user request, 2026-11-11)
 
 ## 3. Open decisions
 
@@ -883,6 +884,43 @@ texture is cheaper than geometry.
 - The dimmed exit roads (opacity 0.28) are faint over the gold display engines block.
 - `tests/experiments.test.ts` has 1 failing test (`maxPerParent` expected 4, got 1). T33 doesn't touch that code.
 
+### T34 Day 564 as the live program
+**Depends on:** T25, T28.
+**Goal:** the user's words on 2026-11-11: "add this new shader for us to analyze", then "Replace Day 442". Day 564
+("circuit") becomes the program the city, the program page and the experiments page run.
+**Files:** `shaders/day564-image.glsl`, `src/shared/liveProgram.ts`, `src/shared/experimentResult.ts`,
+`src/program/buildPasses.ts`, `src/experiments/main.ts`, `src/city/live/liveRecorder.ts`, `src/city/live/spareRoom.ts`,
+`src/city/live/compilerPanel.ts`, `src/city/main.ts`, `index.html`, `experiments.html`, `tests/experiments.test.ts`.
+**Build:**
+- Image pass code unchanged from the user's export. Day 564 has no Common pass, so `commonFile` is `null` and only
+  one file is fetched. `LIVE_FILES` lists the files, so stop 1 waits for the right number of fetches.
+- Experiment results are saved per shader: `data/experiments/<slug>.json`. The schema is `shader-hardware/1`.
+  `data/experiments/day442.json` stays as it was.
+- Page titles come from `LIVE_PROGRAM.name`, so the page can't name a different shader than the one running.
+- Spare room: the "no textures" claim now cites `day564-image.glsl` (grep: 0 hits for texture, iChannel or
+  sampler). The CPU claim says T29's result was measured on Day 442 and not repeated on Day 564.
+**Teach:** WebGL zeroes variables the shader never sets, so `i` and `s` start at 0. Unused variables are removed
+before Metal sees the text. Four loop passes with a hash cost far less than a 60-step ray march.
+**Done when:**
+- Day 564 draws in `program.html` and in the city with no console errors: yes, both.
+- Stop 1 has one fetch and a measured value: yes, 3.79 ms (one reading, live mode).
+- The experiments page counts, times and saves to `data/experiments/day564.json`: yes, all four checks pass.
+- Type-check passes, and tests show only the known `maxPerParent` failure: yes, 142 pass and 1 fails.
+
+**Findings from T34 (2026-11-11, experiments page, iTime = 4 s, 1280 x 800, city tab closed):**
+- **The whole frame costs 0.35 ms median** (range 0.31 to 0.49, 12 rounds, measured with `TIME_ELAPSED_EXT`).
+  Day 442 at `AA 1` read 13.10 and 14.31 ms in live mode (partial). That's not a like-for-like comparison: one
+  number comes from the experiments page, the other from live mode.
+- **The 160 tile medians add up to 20.44 ms, not 0.35 ms.** An empty shader takes 0.096 ms per tile, and
+  160 x 0.096 = 15.4 ms of that is per-draw overhead. With a shader this cheap, the tile heatmap mostly shows overhead.
+- **Counted on the GPU:** mainImage ran once per pixel. The loop body ran 4 times per pixel. `W` ran 5,814,400 times
+  (5.68 per pixel, at most 6). The `if` body ran 753,600 times (at most 2 per pixel). `&&` skips the second `W`
+  when the first is false, which is why `W` runs fewer than 8 times per pixel.
+- **ANGLE adds `_us = float2(0.0f, 0.0f)` and `_ui = 0.0f`** to the Metal text, for the uninitialized `s` and `i`.
+  `d` and `d3` are not in the Metal text: they were dropped before it.
+- The block finder gives no bound for `for( s.x++; i++<4.; ...)`, because it only reads `for(int i = a; i < b; i++)`.
+  The count shows 4 anyway.
+
 ---
 
 ## 5. Parking lot
@@ -910,6 +948,12 @@ New ideas or out-of-scope findings go here, not into the current ticket.
 - From T30: the city could stop drawing (or draw at a lower rate) while Day 442 runs, so the live readings are
   closer to the shader's own. That changes how the live view looks, so it is the user's call.
 - From T30: 10 more cards on the map. If it feels crowded, hide them unless the "Spare room" section is open.
+- From T34: T26 and T32 are written around Day 442 (its ray march, `p = abs(p) - 0.45`, `AA`). They need Day 564
+  examples before they start.
+- From T34: the tile heatmap is mostly per-draw overhead for a shader this cheap. Subtract the empty shader per
+  tile, or use bigger tiles.
+- From T34: `tests/compilerText.test.ts` and the Day 442 block tests still read the Day 442 files. They test the
+  tools, not the live program, so they were left in place.
 
 - After v0: import native summaries from Instruments or tshark through `imports[]`.
   Summaries only, never raw traces, which can contain identifiers.

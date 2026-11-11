@@ -55,9 +55,9 @@ interface Fixed {
 const CLUSTER_REACH: Omit<Fixed, 'blockId' | 'name'> = {
   reach: 'indirectly',
   reason:
-    "A fragment shader can't run on the CPU. JS can only take work that is the same for every pixel and pass it in as a uniform. T29 tried that with the fold matrix and saw no clear saving.",
+    "A fragment shader can't run on the CPU. JS can only take work that is the same for every pixel and pass it in as a uniform. T29 tried that on Day 442, not Day 564, and saw no clear saving.",
   reasonTag: 'partial',
-  reasonSource: `${CHROMIUM_SOURCE}. T29 result in data/experiments/day442.json: fold matrix from JS saved 2.0 and 2.2 ms, inside the noise`,
+  reasonSource: `${CHROMIUM_SOURCE}. T29 result for Day 442 in data/experiments/day442.json: fold matrix from JS saved 2.0 and 2.2 ms, inside the noise. Not tried on Day 564`,
 };
 
 // Reach doesn't change while the page runs, so it is fixed here with its reason.
@@ -84,9 +84,9 @@ const BLOCKS: Fixed[] = [
     blockId: 'memory-ring',
     name: 'Unified memory',
     reach: 'indirectly',
-    reason: 'A shader reaches memory only by reading textures and buffers. Day 442 reads none: it is pure math.',
+    reason: 'A shader reaches memory only by reading textures and buffers. Day 564 reads none: it is pure math.',
     reasonTag: 'measured',
-    reasonSource: 'shaders/day442-common.glsl and day442-image.glsl contain no texture, iChannel or sampler',
+    reasonSource: 'shaders/day564-image.glsl contains no texture, iChannel or sampler',
   },
   {
     blockId: 'neural-engine',

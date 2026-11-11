@@ -56,6 +56,22 @@ describe('findBlocks on the real Day 442 files', () => {
   });
 });
 
+describe('findBlocks on Day 564', () => {
+  const day564 = findBlocks('image', read('day564-image'));
+  const at = (line: number) => day564.blocks.find((block) => block.startLine === line);
+
+  it('finds W, mainImage, the 4-direction loop and the if inside it', () => {
+    expect(day564.blocks.filter((block) => block.kind === 'function').map((block) => block.functionName)).toEqual(['W', 'mainImage']);
+    expect(at(27)).toMatchObject({ kind: 'for', functionName: 'mainImage' });
+    expect(at(30)).toMatchObject({ kind: 'if', parentId: at(27)?.id });
+  });
+
+  it("gives no bound for a loop whose counter isn't an int set in its header", () => {
+    // for( s.x++; i++<4.; ... ) runs 4 times, but only an int for(int i = a; i < b; i++) is read.
+    expect(at(27)?.maxPerParent).toBeNull();
+  });
+});
+
 describe('the counting copy', () => {
   it('adds one counter just inside each counted brace and changes nothing else', () => {
     const loop = blockAt(28)!;
