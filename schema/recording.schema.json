@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "shader-pipeline-city/recording-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "recordedAt", "environment", "capture",
+               "shader", "hardwareMap", "stops", "imports"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "recordedAt": { "type": "string", "format": "date-time" },
+    "environment": { "$ref": "#/$defs/environment" },
+    "capture": { "$ref": "#/$defs/capture" },
+    "shader": { "$ref": "#/$defs/shader" },
+    "hardwareMap": { "$ref": "#/$defs/hardwareMap" },
+    "stops": {
+      "type": "array", "minItems": 8, "maxItems": 8,
+      "items": { "$ref": "#/$defs/stop" }
+    },
+    "imports": { "type": "array", "items": { "$ref": "#/$defs/import" } }
+  },
+  "$defs": {
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["browserMajor", "glRenderer", "timerQueryExposed",
+                   "parallelCompileExposed", "timeElapsedBits", "timestampBits"],
+      "properties": {
+        "browserMajor": { "type": "integer" },
+        "glRenderer": { "type": "string" },
+        "timerQueryExposed": { "type": "boolean" },
+        "parallelCompileExposed": { "type": "boolean" },
+        "timeElapsedBits": { "type": "integer" },
+        "timestampBits": { "type": "integer" }
+      }
+    },
+    "capture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cacheState", "drawingBuffer", "devicePixelRatio", "display",
+                   "warmupFrames", "sampledFrames", "crossOriginIsolated"],
+      "properties": {
+        "cacheState": { "enum": ["cold", "warm", "unknown"] },
+        "drawingBuffer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["width", "height"],
+          "properties": {
+            "width": { "type": "integer", "minimum": 1 },
+            "height": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "devicePixelRatio": { "type": "number" },
+        "display": { "enum": ["built-in", "lg", "unknown"] },
+        "warmupFrames": { "type": "integer", "minimum": 0 },
+        "sampledFrames": { "type": "integer", "minimum": 1 },
+        "crossOriginIsolated": { "type": "boolean" }
+      }
+    },
+    "shader": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "bytes", "sha256"],
+      "properties": {
+        "file": { "type": "string", "pattern": "^shaders/[^/]+\\.glsl$" },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "hardwareMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "schematic", "blocks"],
+      "properties": {
+        "id": { "type": "string" },
+        "schematic": { "const": true },
+        "blocks": { "type": "array", "items": { "$ref": "#/$defs/block" } }
+      }
+    },
+    "block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "offChip", "numbers"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "parentId": { "type": "string" },
+        "offChip": { "type": "boolean" },
+        "numbers": { "type": "array", "items": { "$ref": "#/$defs/specNumber" } }
+      }
+    },
+    "specNumber": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value", "unit", "basis", "source"],
+      "properties": {
+        "name": { "type": "string" },
+        "value": { "type": "number" },
+        "unit": { "type": "string" },
+        "basis": { "enum": ["published", "community", "this-machine", "modeled"] },
+        "source": { "type": "string", "minLength": 1 }
+      }
+    },
+    "stop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stop", "name", "blockId", "status", "metrics", "floors"],
+      "properties": {
+        "stop": { "type": "integer", "minimum": 1, "maximum": 8 },
+        "name": { "type": "string" },
+        "blockId": { "type": "string" },
+        "status": { "$ref": "#/$defs/status" },
+        "metrics": { "type": "array", "items": { "$ref": "#/$defs/metric" } },
+        "floors": {
+          "description": "Metric ids stacked as building floors. Must be ms metrics.",
+          "type": "array", "items": { "type": "string" }
+        }
+      }
+    },
+    "status": { "enum": ["measured", "partial", "modeled"] },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "value", "unit", "status", "source"],
+      "properties": {
+        "id": { "type": "string" },
+        "value": { "type": ["number", "null"] },
+        "unit": { "enum": ["ms", "Hz", "count", "bytes", "percent"] },
+        "status": { "$ref": "#/$defs/status" },
+        "source": { "type": "string", "minLength": 1 },
+        "stats": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["n", "min", "median", "p95", "max"],
+          "properties": {
+            "n": { "type": "integer", "minimum": 1 },
+            "min": { "type": "number" },
+            "median": { "type": "number" },
+            "p95": { "type": "number" },
+            "max": { "type": "number" }
+          }
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "import": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "stop", "metrics"],
+      "properties": {
+        "tool": { "enum": ["instruments", "tshark", "other"] },
+        "stop": { "type": "integer", "minimum": 1, "maximum": 8 },
+        "metrics": { "type": "array", "items": { "$ref": "#/$defs/metric" } }
+      }
+    }
+  }
+}

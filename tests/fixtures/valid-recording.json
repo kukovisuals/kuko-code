@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-05T12:00:00.000Z",
+  "environment": {
+    "browserMajor": 156,
+    "glRenderer": "ANGLE Metal Renderer: Apple M2",
+    "timerQueryExposed": true,
+    "parallelCompileExposed": true,
+    "timeElapsedBits": 64,
+    "timestampBits": 0
+  },
+  "capture": {
+    "cacheState": "unknown",
+    "drawingBuffer": { "width": 1280, "height": 800 },
+    "devicePixelRatio": 2,
+    "display": "built-in",
+    "warmupFrames": 60,
+    "sampledFrames": 300,
+    "crossOriginIsolated": true
+  },
+  "shader": {
+    "file": "shaders/test-fixture.glsl",
+    "bytes": 100,
+    "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "hardwareMap": {
+    "id": "test-map",
+    "schematic": true,
+    "blocks": [
+      {
+        "id": "gpu",
+        "label": "GPU",
+        "offChip": false,
+        "numbers": [
+          { "name": "Cores", "value": 10, "unit": "cores", "basis": "published", "source": "Test fixture" }
+        ]
+      }
+    ]
+  },
+  "stops": [
+    {
+      "stop": 1, "name": "Network", "blockId": "network-road", "status": "measured", "floors": ["fetchMs"],
+      "metrics": [{ "id": "fetchMs", "value": 1, "unit": "ms", "status": "measured", "source": "Test fixture" }]
+    },
+    {
+      "stop": 2, "name": "Renderer", "blockId": "cpu", "status": "measured", "floors": ["buildCallsMs", "frameCallsMs"],
+      "metrics": [
+        { "id": "buildCallsMs", "value": 1, "unit": "ms", "status": "measured", "source": "Test fixture" },
+        { "id": "frameCallsMs", "value": 1, "unit": "ms", "status": "measured", "source": "Test fixture" }
+      ]
+    },
+    {
+      "stop": 3, "name": "GPU process", "blockId": "cpu", "status": "partial", "floors": ["roundTripMs"],
+      "metrics": [{ "id": "roundTripMs", "value": 1, "unit": "ms", "status": "partial", "source": "Test fixture" }]
+    },
+    {
+      "stop": 4, "name": "ANGLE", "blockId": "cpu", "status": "partial", "floors": ["compileMs"],
+      "metrics": [{ "id": "compileMs", "value": 1, "unit": "ms", "status": "partial", "source": "Test fixture" }]
+    },
+    {
+      "stop": 5, "name": "Metal compiler", "blockId": "cpu", "status": "partial", "floors": ["linkMs", "firstDrawMs"],
+      "metrics": [
+        { "id": "linkMs", "value": 1, "unit": "ms", "status": "partial", "source": "Test fixture" },
+        { "id": "firstDrawMs", "value": 1, "unit": "ms", "status": "partial", "source": "Test fixture" },
+        { "id": "stepCount", "value": 1, "unit": "count", "status": "partial", "source": "Test fixture" }
+      ]
+    },
+    {
+      "stop": 6, "name": "GPU tiles", "blockId": "gpu", "status": "partial", "floors": ["gpuMs"],
+      "metrics": [{ "id": "gpuMs", "value": 1, "unit": "ms", "status": "partial", "source": "Test fixture" }]
+    },
+    {
+      "stop": 7, "name": "SIMD groups", "blockId": "gpu-core", "status": "modeled", "floors": [],
+      "metrics": [{ "id": "simdGroups", "value": 32000, "unit": "count", "status": "modeled", "source": "Test fixture" }]
+    },
+    {
+      "stop": 8, "name": "Compositor + display", "blockId": "display-engines", "status": "partial", "floors": [],
+      "metrics": [{ "id": "refreshHz", "value": 60, "unit": "Hz", "status": "partial", "source": "Test fixture" }]
+    }
+  ],
+  "imports": []
+}

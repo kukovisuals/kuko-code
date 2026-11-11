@@ -4,10 +4,97 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shader Pipeline City</title>
+    <link rel="stylesheet" href="/src/city/city.css" />
   </head>
-  <body>
-    <h1>City</h1>
-    <p id="isolation"></p>
+  <body class="panel-open">
+    <div id="city"></div>
+
+    <div id="invented-banner" role="alert" hidden>
+      Preview: every timing here is <strong>invented</strong>, not measured. No recording exists yet.
+    </div>
+
+    <section class="panel" id="controls">
+      <h1>Shader Pipeline City</h1>
+      <div class="buttons">
+        <button id="load">Load recordings</button>
+        <button id="preview">Preview with invented numbers</button>
+        <button id="swap" disabled>Swap display</button>
+        <button id="replay" disabled>Replay trips</button>
+        <button id="zoom">Open stop 7 view</button>
+      </div>
+      <p class="muted" id="recording-info"></p>
+      <input id="file-input" type="file" accept=".json,application/json" multiple hidden />
+      <ul class="messages" id="errors" hidden></ul>
+      <ul class="messages" id="warnings" hidden></ul>
+    </section>
+
+    <div id="right-rail">
+      <section class="panel" id="program-panel">
+        <header class="program-head">
+          <strong>Program: Day 442</strong>
+          <span class="program-buttons">
+            <button id="program-toggle">Stop</button>
+            <button id="program-restart" title="Fetch and compile again, so the whole build trip runs">Restart</button>
+          </span>
+        </header>
+        <iframe id="program-frame" title="Day 442 running on the GPU"></iframe>
+        <p class="muted" id="program-status"></p>
+      </section>
+
+      <section class="panel" id="legend">
+        <p class="legend-warning">Schematic, not die-accurate. The compositor's placement is schematic too.</p>
+        <div class="legend-row"><i class="swatch one-shot"></i>One-shot, build trip</div>
+        <div class="legend-row"><i class="swatch per-frame"></i>Per-frame, frame loop</div>
+        <div class="legend-row"><i class="swatch request"></i>Other HTTP, this page's feed</div>
+        <div class="legend-row"><i class="swatch solid"></i>Measured: solid</div>
+        <div class="legend-row"><i class="swatch hatched"></i>Partial: hatched band</div>
+        <div class="legend-row"><i class="swatch wire"></i>Modeled: wireframe, tagged</div>
+        <p class="muted">Each dot is one real event. Its wait at a stop is that event's measured time, slowed: build x3, frame x40. 1 in 12 frames gets a dot. Road speed means nothing.</p>
+        <p class="muted">Height is log scale: 3 units per tenfold, so read the exact ms in the panel.</p>
+      </section>
+    </div>
+
+    <section class="panel" id="wire-panel" aria-label="Live capture">
+      <header class="wire-head">
+        <strong>Live capture</strong>
+        <span class="wire-filters">
+          <button data-wire-filter="http" aria-pressed="true">HTTP</button>
+          <button data-wire-filter="tcp" aria-pressed="true">TCP</button>
+          <button data-wire-filter="feed" aria-pressed="false" title="The connection carrying this data to the page">Feed</button>
+          <button data-wire-filter="build" aria-pressed="true">Build</button>
+          <button data-wire-filter="frame" aria-pressed="true">Frames</button>
+          <button data-wire-filter="net" aria-pressed="true">Interfaces</button>
+        </span>
+        <span class="muted" id="wire-count"></span>
+        <span class="muted" id="wire-feed">Connecting to the live feed</span>
+        <span class="muted wire-note" id="wire-note">Not packets: capturing those needs root. Hover a row for its source.</span>
+      </header>
+      <div class="wire-row wire-columns">
+        <span>Time (s)</span><span>From</span><span>To</span><span>Proto</span><span>Length</span><span>Info</span><span>Status</span>
+      </div>
+      <div id="wire-rows"></div>
+    </section>
+
+    <div id="left-rail">
+      <button id="panel-open" aria-controls="numbers-panel">Show numbers</button>
+      <aside class="panel" id="numbers-panel" aria-label="Numbers">
+        <header class="panel-head">
+          <strong>Numbers</strong>
+          <button id="panel-close" aria-controls="numbers-panel">Hide</button>
+        </header>
+        <div id="panel-groups"></div>
+      </aside>
+      <section class="panel" id="source-panel">
+        <div class="source-empty">Hover a number to see its source</div>
+        <div class="source-filled">
+          <div class="source-head"><strong id="source-title"></strong> <span id="source-tag" class="tag"></span></div>
+          <p id="source-text"></p>
+        </div>
+      </section>
+    </div>
+
+    <div id="replay-status" hidden></div>
+
     <script type="module" src="/src/city/main.ts"></script>
   </body>
 </html>

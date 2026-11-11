@@ -1,4 +1,5 @@
 import { defineConfig, type Plugin } from 'vite';
+import { liveFeedPlugin } from './server/liveFeedPlugin';
 
 // Stop 1 times the shader fetch, so a cached response would time the wrong thing.
 function noStoreShaders(): Plugin {
@@ -14,7 +15,7 @@ function noStoreShaders(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [noStoreShaders()],
+  plugins: [noStoreShaders(), liveFeedPlugin()],
   server: {
     // Cross-origin isolation improves performance.now() from 100 µs to 5 µs.
     headers: {
@@ -27,6 +28,8 @@ export default defineConfig({
       input: {
         city: 'index.html',
         record: 'record.html',
+        shader: 'shader.html',
+        program: 'program.html',
       },
     },
   },

@@ -1,0 +1,143 @@
+{
+  "id": "apple-m2-macbook-pro-13",
+  "schematic": true,
+  "blocks": [
+    {
+      "id": "wifi",
+      "label": "Wi-Fi 6 radio",
+      "offChip": true,
+      "numbers": []
+    },
+    {
+      "id": "dev-server",
+      "label": "Vite dev server (this Mac)",
+      "offChip": true,
+      "numbers": []
+    },
+    {
+      "id": "network-road",
+      "label": "Network",
+      "offChip": true,
+      "numbers": []
+    },
+    {
+      "id": "memory-ring",
+      "label": "Unified memory",
+      "offChip": false,
+      "numbers": [
+        { "name": "Capacity", "value": 8, "unit": "GB", "basis": "published", "source": "Apple Support M2 specs (support.apple.com/en-us/111869)" },
+        { "name": "Bandwidth", "value": 100, "unit": "GB/s", "basis": "published", "source": "Apple Support M2 specs (support.apple.com/en-us/111869)" }
+      ]
+    },
+    {
+      "id": "cpu",
+      "label": "CPU district",
+      "offChip": false,
+      "numbers": []
+    },
+    {
+      "id": "p-cluster",
+      "label": "P cluster",
+      "parentId": "cpu",
+      "offChip": false,
+      "numbers": [
+        { "name": "Cores", "value": 4, "unit": "cores", "basis": "published", "source": "Apple Support M2 specs (support.apple.com/en-us/111869)" },
+        { "name": "L2", "value": 16, "unit": "MB", "basis": "community", "source": "Wikipedia: Apple M2, citing AnandTech" }
+      ]
+    },
+    {
+      "id": "e-cluster",
+      "label": "E cluster",
+      "parentId": "cpu",
+      "offChip": false,
+      "numbers": [
+        { "name": "Cores", "value": 4, "unit": "cores", "basis": "published", "source": "Apple Support M2 specs (support.apple.com/en-us/111869)" },
+        { "name": "L2", "value": 4, "unit": "MB", "basis": "community", "source": "Wikipedia: Apple M2, citing AnandTech" }
+      ]
+    },
+    {
+      "id": "gpu",
+      "label": "GPU district",
+      "offChip": false,
+      "numbers": [
+        { "name": "Cores", "value": 10, "unit": "cores", "basis": "published", "source": "Apple Support M2 specs (support.apple.com/en-us/111869)" }
+      ]
+    },
+    {
+      "id": "gpu-core",
+      "label": "GPU cores",
+      "parentId": "gpu",
+      "offChip": false,
+      "numbers": [
+        { "name": "ALUs per core", "value": 128, "unit": "ALUs", "basis": "community", "source": "metal-benchmarks, reporting Apple's description" },
+        { "name": "Dispatch lanes", "value": 4, "unit": "per cycle", "basis": "community", "source": "metal-benchmarks: 4 schedulers, each dispatching from one SIMD group" },
+        { "name": "SIMD group", "value": 32, "unit": "threads", "basis": "community", "source": "metal-benchmarks: 4 schedulers, each dispatching from one 32-thread SIMD group" },
+        { "name": "EUs (alt. layout)", "value": 16, "unit": "EUs", "basis": "community", "source": "Wikipedia: Apple M2. Alternate 16 x 8 description, not the one drawn" },
+        { "name": "ALUs per EU (alt.)", "value": 8, "unit": "ALUs", "basis": "community", "source": "Wikipedia: Apple M2. Alternate 16 x 8 description, not the one drawn" }
+      ]
+    },
+    {
+      "id": "slc",
+      "label": "System-level cache",
+      "offChip": false,
+      "numbers": [
+        { "name": "Size", "value": 8, "unit": "MB", "basis": "community", "source": "metal-benchmarks and Wikipedia: Apple M2. Not in Apple's press release" }
+      ]
+    },
+    {
+      "id": "neural-engine",
+      "label": "Neural Engine (not on route)",
+      "offChip": false,
+      "numbers": [
+        { "name": "Cores", "value": 16, "unit": "cores", "basis": "published", "source": "Apple Support M2 specs (support.apple.com/en-us/111869)" }
+      ]
+    },
+    {
+      "id": "media-engine",
+      "label": "Media engine (not on route)",
+      "offChip": false,
+      "numbers": []
+    },
+    {
+      "id": "display-engines",
+      "label": "Display engines + compositor (schematic)",
+      "offChip": false,
+      "numbers": [
+        { "name": "dcp", "value": 1, "unit": "engine", "basis": "community", "source": "Asahi Linux docs: display controllers" },
+        { "name": "dcpext", "value": 1, "unit": "engine", "basis": "community", "source": "Asahi Linux docs: display controllers" }
+      ]
+    },
+    {
+      "id": "dcp",
+      "label": "dcp",
+      "parentId": "display-engines",
+      "offChip": false,
+      "numbers": []
+    },
+    {
+      "id": "dcpext",
+      "label": "dcpext",
+      "parentId": "display-engines",
+      "offChip": false,
+      "numbers": []
+    },
+    {
+      "id": "exit-built-in",
+      "label": "Built-in display",
+      "offChip": true,
+      "numbers": [
+        { "name": "Refresh", "value": 60, "unit": "Hz", "basis": "this-machine", "source": "User's confirmed setup. Each recording's rAF cadence cross-checks it" },
+        { "name": "Frame budget", "value": 16.67, "unit": "ms", "basis": "this-machine", "source": "Calculated: 1000 / 60 Hz, from the user's confirmed setup" }
+      ]
+    },
+    {
+      "id": "exit-lg",
+      "label": "LG ultrawide",
+      "offChip": true,
+      "numbers": [
+        { "name": "Refresh", "value": 50, "unit": "Hz", "basis": "this-machine", "source": "User's confirmed setup. Each recording's rAF cadence cross-checks it" },
+        { "name": "Frame budget", "value": 20, "unit": "ms", "basis": "this-machine", "source": "Calculated: 1000 / 50 Hz, from the user's confirmed setup" }
+      ]
+    }
+  ]
+}

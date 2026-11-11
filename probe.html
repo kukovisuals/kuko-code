@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shader Pipeline Probe</title>
+    <style>
+      body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; }
+      canvas { display: block; width: 320px; height: 200px; background: #000; }
+      pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+    </style>
+  </head>
+  <body>
+    <h1>Probe (temporary: T04 to T06)</h1>
+    <p>Keep this tab visible and close the city tab and other GPU-heavy apps during a run.</p>
+    <button id="run" disabled>Run GPU timing experiment (about 1 minute)</button>
+    <p id="status">Starting…</p>
+    <canvas id="canvas"></canvas>
+    <pre id="results"></pre>
+    <script type="module" src="/src/probe/main.ts"></script>
+  </body>
+</html>

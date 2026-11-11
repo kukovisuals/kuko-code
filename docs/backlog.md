@@ -30,16 +30,16 @@ before starting any ticket.
 **Foundation**
 - [x] T01 Write CLAUDE.md
 - [x] T02 Scaffold the project
-- [ ] T03 Add reference shaders
+- [x] T03 Add reference shaders
 
 **Prove the timers (T05 is a gate)**
-- [ ] T04 Probe the environment
-- [ ] T05 Prove GPU timing works
+- [x] T04 Probe the environment
+- [x] T05 Prove GPU timing works (passed: see `docs/probe-results.md`)
 - [ ] T06 Test the shader caches
 
 **Data contract**
-- [ ] T07 Schema, types and validator
-- [ ] T08 Hardware map JSON
+- [x] T07 Schema, types and validator
+- [x] T08 Hardware map JSON
 
 **Recorder**
 - [ ] T09 Stop 1: fetch the shader
@@ -52,12 +52,22 @@ before starting any ticket.
 - [ ] T16 Run protocol and save
 
 **City**
-- [ ] T17 Ground blocks
-- [ ] T18 Labels with sources
-- [ ] T19 Stop buildings from a recording
-- [ ] T20 Roads for both trips
-- [ ] T21 GPU district and stop 7 zoom
-- [ ] T22 Replay and display comparison
+- [x] T17 Ground blocks
+- [x] T18 Labels with sources
+- [x] T19 Stop buildings from a recording (re-check with a real recording after T16)
+- [x] T20 Roads for both trips
+- [x] T21 GPU district and stop 7 zoom (re-check with a real recording after T16)
+- [x] T22 Replay and display comparison (re-check with real recordings after T16)
+
+The city was built ahead of T03 to T06 and T09 to T16, at the user's request, to check the
+direction. No real recording exists yet, so T19, T21 and T22 were only checked with invented
+placeholder numbers and a test fixture.
+
+**Added at the user's request**
+- [x] T23 Live view of the user's shader (Day 560)
+- [x] T24 Live view inside the city: real traffic, real hardware readings, Day 560 embedded
+- [x] T25 Day 442 as the live program (one pass, one draw per frame)
+- [ ] T26 Show where the shader executes, in levels you can click into
 
 ## 3. Open decisions
 
@@ -68,7 +78,7 @@ Update this table when they answer.
 |---|---|---|---|
 | D1 | How does the GPU district show a heavier shader? | All 10 cores light together. Fill = `min(gpuMs / frameBudgetMs, 1)`, tagged modeled. Replaces the brief's "lights more of each core". | T21 |
 | D2 | What does the network road show? | Lit loopback road, plus a dimmed Wi-Fi road labeled "unused by local files". Keeps the local-files rule. Measuring real Wi-Fi would mean serving the files from another machine. | T17, T20 |
-| D3 | What format are shaders in, and which will the user supply? | Plain `#version 300 es` fragment shader with `u_time` and `u_resolution`. Shadertoy-style `mainImage` would need a wrapper that becomes part of what is compiled. | T03, T09 |
+| D3 | What format are shaders in, and which will the user supply? | **Answered 2026-11-05: the default.** Plain `#version 300 es` fragment shader with `u_time` and `u_resolution`. Shadertoy-style `mainImage` would need a wrapper that becomes part of what is compiled. **Update 2026-11-06:** the user supplied Day 560, a Shadertoy-style export with `mainImage` and `mainVolume`, so T23 uses a wrapper. T09 to T16 still assume one plain fragment shader and don't yet handle a two-pass shader. | T03, T09, T23 |
 
 ## 4. Tickets
 
@@ -484,6 +494,95 @@ That's what the comparison shows.
 - Swapping recordings updates the speed limit highlight and GPU fill.
 - `imports[]` values, if present, are shown beside browser values and never replace them.
 
+---
+
+### T23 Live view of the user's shader (Day 560)
+**Depends on:** T05.
+**Goal:** see the user's own shader running on the GPU, with what a page can really measure, before
+the recorder exists. This is a third page. It doesn't save a recording or feed the city.
+**Files:** `shader.html`, `shaders/day560-common.glsl`, `shaders/day560-volume.glsl`,
+`shaders/day560-image.glsl`, `src/shaderView/*`, `tests/shaderViewWorkload.test.ts`,
+`vite.config.ts`.
+**Build:**
+- Pass code taken unchanged from the user's export, with a wrapper for `mainImage` and `mainVolume`.
+- A 128-cube feedback volume, drawn one layer at a time, then the Image pass at 1280 x 800.
+- GPU time per pass against the 60 Hz and 50 Hz budgets, and the last 300 frames.
+- A cost map: scissored regions timed for this shader and for a uniform-cost control.
+**Teach:** why a time range isn't busy time, and why a control is needed before reading a pattern.
+**Done when:**
+- The shader runs in the user's Chrome on the M2 with no console errors.
+- Every number shows a status and a source.
+- The cost map reports its own checks, and the page says plainly when they fail.
+
+### T24 Live view inside the city
+**Depends on:** T22, T23.
+**Goal:** the user's words on 2026-11-06: "i at least wanna be able to see some wireshark going on" and "some
+program something going through this diagram in a way that is interacting with the hardware". Opening `/`
+shows it with no clicks and no second page.
+**Files:** `server/*`, `program.html`, `src/program/*`, `src/city/live/*`, `src/shared/liveEvents.ts`,
+`tests/parseNative.test.ts`, `tests/liveMode.test.ts`, plus wiring in `src/city/main.ts`, `hud.ts`, `stage.ts`,
+`numbersPanel.ts`, `buildBlocks.ts`, `buildGpuDistrict.ts`, `palette.ts`, `city.css`, `index.html`, `vite.config.ts`,
+`tsconfig.json`, and `dayRenderer.ts` (the control program is now optional). New dev dependency: `@types/node`.
+**Build:**
+- A Vite plugin streams `/__live/events`: each HTTP request the server handles, plus a sample every 500 ms
+  from `os.cpus()`, `ioreg`, `netstat -ib` and `nettop`. None need root. Parsers keep named numbers only.
+- `program.html` runs Day 560 in an iframe on the city page and posts each fetch, compile, link, first draw and
+  frame to the page. The city draws those events and measures nothing itself.
+- One dot per real event. A dot waits at a stop for that event's own ms, slowed x3 (build) or x40 (frame).
+- A capture table with filters, where every row has a status and a source.
+**Teach:** a browser tab can't read hardware counters but the Node dev server can, so it streams them over SSE.
+These readings are the whole Mac, so they are partial, and one number covers all 10 GPU cores.
+**Done when:**
+- `/` animates with real data on load, with no clicks: yes, no console errors.
+- Stopping the program visibly drops the GPU reading: yes, 83% to 8%, and 74% after Restart.
+- No device identifier reaches the page: the parsers drop netstat's address column, with a test for it.
+- Replay and the invented preview still work: yes, in the browser.
+
+### T25 Day 442 as the live program
+**Depends on:** T24.
+**Goal:** the user's words on 2026-11-11: "lets start with this simpler shader". The city's live program becomes
+Day 442, a one-pass shader, so the trip is one fetch, one compile and one draw call per frame.
+**Files:** `shaders/day442-common.glsl`, `shaders/day442-image.glsl`, `src/shared/liveProgram.ts`,
+`src/program/imageRenderer.ts`, `src/program/buildPasses.ts`, `src/program/main.ts`, `src/shared/liveEvents.ts`,
+`src/city/live/liveRecorder.ts`, `wireRows.ts`, `liveMode.ts`, `src/city/main.ts`, `index.html`, `program.html`,
+`tests/liveMode.test.ts`.
+**Build:**
+- Pass code unchanged from the user's export. Common is pasted in front of Image, with our wrapper around both.
+- One program, one timer query per frame. The frame event carries one `gpuMs`.
+- The shader's name and files live in `src/shared/liveProgram.ts`, so the page text can't disagree with the program.
+**Teach:** simpler to follow isn't cheaper to run. Common isn't a second program. One pass means one draw call.
+**Done when:**
+- Day 442 runs in the city in the user's Chrome with no console errors: yes.
+- Every stop still shows a value with a status and a source: yes.
+- Tests and type-check pass: yes, 92 tests.
+
+### T26 Show where the shader executes, in levels
+**Depends on:** T25.
+**Goal:** the user's words on 2026-11-11: "understand how the code executes and how it travels through the hardware
+of my computer", "very clear", "keep using the toggles so we see more information on the left", and "levels so we
+show for example the simd and then we can click and go deeper there".
+**Files:** to be listed when the ticket starts. Expect `src/city/levels.ts` (new), `buildGpuDistrict.ts`,
+`buildRoads.ts`, `routePlan.ts`, `live/trafficPlan.ts`, `numbersPanel.ts`, `hud.ts`, `main.ts`, `index.html`, `city.css`.
+**Build:**
+- **Three roles, visibly different.** Translate (stops 1, 4, 5: text to Metal code to machine code, once), Command
+  (stops 2, 3: the draw call, a thin road), Execute (stops 6, 7: the only place the GLSL runs, the visual centre).
+  Each stop's panel section says what form the shader is in there.
+- **Levels with a breadcrumb.** Clicking goes one level deeper, and the left panel shows that level's numbers.
+  1. Chip: the whole trip.
+  2. GPU district: one draw fans out into pixel jobs across the cores for the measured GPU time, then one image leaves.
+  3. One core: the SIMD lanes, 32 pixels per group. Replaces the "Open stop 7 view" button.
+  4. One SIMD group: one line of Day 442 (for example `p = abs(p) - 0.45`) applied to 32 pixels at once.
+- **Stop 7 nested in stop 6:** no road between them, because it is a zoom and not a later step.
+- **A linear "one frame" bar:** JS call, hand-off and GPU time to true scale, from the measured numbers.
+- Levels 2 to 4 are modeled and tagged so. A page can't see inside the GPU.
+**Teach:** command versus execute. Why one draw call becomes a million pixel jobs. Why 32 pixels share one instruction,
+and what that means for `if` and `break` in the ray march.
+**Done when:**
+- Each level can be reached by clicking and left by the breadcrumb, and the panel follows.
+- The fan-out lasts the frame's measured GPU time, slowed by the printed factor, and is tagged modeled.
+- The frame bar's three parts match the panel's numbers.
+- Stop 7 has no road and no time of its own.
+
 ## 5. Parking lot
 
 New ideas or out-of-scope findings go here, not into the current ticket.
@@ -500,6 +599,159 @@ New ideas or out-of-scope findings go here, not into the current ticket.
 - `.glsl` files are served with an empty `Content-Type`. `fetch().text()` still returned the raw
   body in a `curl` check. T03 should confirm this in the browser.
 - The `no-store` middleware is on the dev server only, so run the recorder under `npm run dev`.
+
+**Findings from T07, T08 and the city (T17 to T22):**
+
+- Pinned versions: `ajv` 8.20.0, `ajv-formats` 3.0.1, Vitest 5.1.0. `npm test` runs Vitest.
+- `src/city/placeholderRecording.ts` holds invented numbers for previewing the city. Open it with
+  the "Preview with invented numbers" button or `/?preview`. Each status is the one R4 plans for
+  that stop, so the preview shows the final drawing style. Every source says INVENTED, each card
+  has an "invented" tag, and a fixed banner shows while it is on screen. The all-zero `sha256`
+  marks it. Delete it, or keep it as a demo, once real recordings exist.
+- `roundTripMs` is one metric but both trips cross it. The shared 2 + 3 building has one lane per
+  trip and draws this metric on both, with a note. T10 says the data must keep the trips apart, so
+  decide there whether to split it into two metrics. If so, update `floorBelongsToTrip`.
+- Trip membership for shared floors comes from metric id prefixes in `planBuildings.ts`, and T10
+  must keep the `build` and `frame` prefixes. Applying that check beyond stops 2 and 3 dropped
+  stop 6 from replay, so it now applies only to those two stops.
+- Layout differs from the R2 drawing in two ways. GPU cores sit in front of stops 6 and 7, because
+  the towers hid them otherwise. The map is wider than R2 suggests, to fit a wide window and give
+  the labels room. It is still schematic.
+- `dcp` and `dcpext` were added as map blocks, beyond the suggested ids, because R2 draws them.
+- D1 and D2 are built with their defaults. Both are still open for the user to answer.
+- Replay scales each trip separately, so the build trip and the frame loop have different "slowed"
+  factors, both shown on screen. Road time is a fixed, unmeasured 0.45 s per leg.
+- Hardware numbers hide automatically while a recording is showing, except on the two exits. A
+  toolbar button brings them back. Non-floor metrics such as `steadyDrawMs` appear on card hover.
+- Not checked: final layout in the user's real Chrome (the extension disconnected partway, so the
+  final checks used headless Chrome with a software GPU), orbit by mouse, and hover-to-reveal with
+  a real pointer. One early real-Chrome screenshot showed a rotated camera. It did not recur, the
+  cause is unknown, and no code rotates the camera.
+- `npm run build` warns about a chunk over 500 kB (Three.js). Harmless for a local tool.
+
+**Findings from the clean map change (user request, 2026-11-05, not a ticket):**
+
+- The map now shows names only. All numbers, tags, sources and notes moved to a left panel
+  (`src/city/numbersPanel.ts`). Clicking a building, block or name selects it, then opens,
+  highlights and scrolls to its panel section. Picking is in `src/city/picking.ts`.
+- **Written rules this changes.** "Exact ms printed on every building" (CLAUDE.md, R6, T19), "both
+  exits always show their speed limit" (T22) and "the modeled tag is always visible" (T21) now hold
+  through the panel, which can be hidden. The panel starts open, except below 900 px wide. Wireframes
+  and the GPU fill keep a small modeled chip on the map. The rule text has not been edited yet: the
+  user decides the wording.
+- The black lines had three causes. The band's roof shared a plane with the floor's roof, and black
+  outlines were drawn exactly on the faces (z-fighting). The hatch texture was on all six faces at a
+  fixed repeat, so it squashed into dense lines on narrow walls. The band was also a slightly larger
+  box, which left small steps. Now a floor is a plain segment with a same-size hatched segment on
+  top, hatched on its walls only, with stripes in world-size units and in a dark shade of the floor
+  color. Floors are told apart by tone, not lines. Block surfaces use `polygonOffset` under outlines.
+- The stop 7 view is still a 3D card with its own numbers, because it only shows when opened.
+- Headless Chrome with `--use-angle=metal` renders on the real M2 GPU, which is a better check than
+  the software GPU used earlier. The Chrome extension was not connected, so nothing here has been
+  checked in the user's own browser window.
+- Not fixed: inactive exit roads are see-through, so their corners overlap and look slightly brighter.
+
+**Findings from T03, T04 and T05 (numbers and sources are in `docs/probe-results.md`):**
+
+- The gate passed in the user's Chrome 156: 64 elapsed bits, 0 timestamp bits, and GPU time rises with
+  cost and pixel count. Stop 6 stays on the timer query, labeled partial.
+- **GPU time is not proportional to work.** 4x the loops gave 1.6x to 2.1x the time from `cost-mid` to
+  `cost-high`. A GPU clock rising under load is a likely cause, but that is modeled. The city's wording
+  must not imply that height means work.
+- **Run-to-run noise is large.** `cost-mid` moved 38% across 3 runs, and its readings form several
+  clusters. T13 and T16 should keep the spread visible and compare repeats.
+- GLSL requires `#version` on the first line, so a shader's header comment goes after it.
+- A missing shader can come back as Vite's HTML fallback with status 200, so T09 should check the text,
+  not only `response.ok`.
+- Beyond the ticket file lists: `src/record/fullscreenTriangle.ts`, `src/probe/shaderProgram.ts` and
+  `src/probe/gpuTimingRuns.ts`, split to keep files small. The two `src/probe` files go when T06 deletes
+  `src/probe/`. `fullscreenTriangle.ts` stays for the recorder.
+- `probe.html` is not a Vite build input, because it is temporary and `no-store` only exists under
+  `npm run dev`. Run it with the dev server.
+- Not checked: the probe on the LG display, and whether other GPU work was running during these runs.
+
+**Findings from T23 (Day 560 live view, 2026-11-05 and 06, in the user's Chrome on the M2):**
+
+Open it with `npm run dev`, then `/shader.html`. The shaders are only served by the dev server. None of
+these runs controlled for other GPU work, and the Chrome extension was attached throughout.
+
+- **Live GPU time, 6 page loads (partial):** Image was steady, with medians of 6.5 to 7.4 ms. Volume A
+  moved widely, with medians from about 6.5 to 21 ms. The cause is unknown.
+- **Volume A is the unstable, often larger part.** It does far fewer reads (11.9 million modeled, against
+  212 million march steps for Image) in as much time or more. Switching render targets 128 times a frame
+  could explain that, but this is inferred. Nothing here isolates it.
+- **The shader sits at the edge of the 60 Hz budget.** Median time between frames (measured) was about
+  16.67 ms on 3 loads, 33.33 ms on 2, and 25.19 ms on 1.
+- **Timer readings can exceed the frame time.** On the first load, both passes had a p95 of about 40 ms
+  while frames had a p95 of about 17.6 ms. This fits F2: a time range, not busy time.
+- **Timing small regions shows the GPU's pattern more than the shader's.**
+  - With no sync, the 160 draws each read about 5.8 ms and added up to 102x the whole pass, in one run.
+    Each draw seeming to report its whole batch's time is an inference. `readPixels` after each draw
+    brought it down to 3.4x to 5.5x, which still fails the page's check.
+  - A uniform-cost control (`cost-mid`) shows the same stripes at 16 x 10: columns 0, 3, 4, 7, 8, 11, 12
+    and 15 read higher, repeating every 320 px. The grids' left-right patterns correlate at r = 0.76 to
+    0.88 across 5 runs. The cause isn't known, so don't call them tiles or cores.
+  - Coarser grids add up better in a throwaway test with an empty volume: 16 x 10 was 6.79x, 8 x 5 was
+    2.74x and 4 x 3 was 1.38x. A 4 x 3 map is too coarse to be useful.
+- **Measured columns loosely follow the modeled march steps.** Rank correlation over the 3 runs saved
+  for this comparison was 0.48, 0.47 and 0.72, and the control was -0.35, -0.03 and -0.13. A later run
+  with the final code gave 0.44 and -0.04. Plain correlation was lower, at 0.02 to 0.43, with spikes as the likely reason.
+  Rank correlation was chosen after seeing that, so treat it as support, not proof. Top to bottom has no
+  measured check.
+- **`T` never changes in the Image loop,** so `T > .01` never ends a ray early, despite the shader's
+  "stop at the fog" comment. Fixing it would change how the shader looks, so the code is untouched.
+- **The wrapper is inferred.** The export doesn't say how the volume pass is driven, and the 128 size comes
+  from the code. The picture was not compared with Shadertoy's, because that would mean using the site.
+- **T09 will list these files.** Its `/shaders/*.glsl` glob will pick up the three `day560-*` files, which
+  can't compile alone, so T09 needs a filter or a way to describe multi-pass shaders. T09 to T16 and the
+  city also assume one fragment shader. To get Day 560 into the city, decide how a two-pass shader maps
+  onto the 8 stops.
+- **Written rule stretched.** CLAUDE.md says `record.html` measures and `index.html` draws. This third page
+  does both, live, with its panels repainting twice a second. It saves nothing and the city doesn't import
+  it, but its numbers are not recording quality. The user should decide whether that wording needs a change.
+
+**Findings from T24 (2026-11-06, in the user's Chrome on the M2, on the LG):**
+
+Open it with `npm run dev`, then `/`. The feed doesn't exist in a production build. None of this is recording
+quality, because the city draws at the same time, and the page says so.
+
+- **Decision for the user: CLAUDE.md now disagrees with the app.** It says native tools are out of scope for v0 and
+  to "only measure what a page can really measure". The user asked for this view, so it was built, but the
+  dev server now reads native counters. The wording should change or the feature should. Not edited yet.
+- **Still not real packets.** The table shows HTTP requests, per-connection bytes and per-interface counts.
+  `tcpdump` needs root (`/dev/bpf*` is root-only), and so does `powermetrics` for power and cluster clocks.
+- **T09 to T16 are still not built.** This view doesn't replace them: a clean recording still needs the city closed.
+- **Core numbering is verified, not assumed.** Four background-QoS burns put cpu0-3 at 99% and cpu4-7 at 1 to 18%.
+- **Byte direction is verified.** A 45,370-byte download showed `bytes_out` 45,713 and `bytes_in` 92 on the server's row.
+- **Compile and link read very low:** about 4.3 ms and 0.5 to 1.5 ms for both passes, on repeat loads. Chrome's program
+  cache or deferred work could explain it, which is inferred. T06 hasn't tested it, so `cacheState` stays `unknown`.
+- **GPU time here:** about 12 to 16 ms a frame at 20 ms cadence, which fits the LG's 50 Hz. The frame budget holds on this run.
+- **Display is inferred from `screen.width`** (2560 or wider means the LG). The 20 ms cadence agreed with it on this run.
+- **Page-load connections sent up to 180 KB from Chrome and got about 8 KB back.** Most responses were 304s. Large
+  request headers, such as localhost cookies, could explain it, but this wasn't checked.
+- **E-core bars can sit behind towers 4 and 5** from the home camera. The E reading stays visible, and orbiting shows them.
+- **`/shader.html` still exists** for its cost map. It can go if the user doesn't want it.
+
+**Findings from T25 (2026-11-11, in the user's Chrome on the M2, built-in display, one page load):**
+
+Not recording quality: the city was drawing beside it. Whether another tab was also using the GPU wasn't checked.
+
+- **Day 442 costs more than Day 560 did.** `gpuMs` median was about 39 ms (partial), against 12 to 16 ms for Day 560
+  in T24. The whole-Mac GPU reading was 100%. Frames arrived every 34 ms, so about 29 fps on a 60 Hz display.
+- **Why, from the code (modeled):** `AA 2` is 4 rays per pixel, each up to 60 steps, each step 5 folds with a
+  `cos` and `sin` pair, plus 6 more `map` calls for the normal. At 1280 x 800 that is up to about 270 million `map`
+  calls a frame. Changing `AA` to 1 would cut it to about a quarter, but the code is the user's, so it is untouched.
+- **The command is tiny next to the work.** `frameCallsMs` was 0.01 ms and `roundTripMs` 0.09 ms, against 39 ms on the
+  GPU: a gap of about 4,000x for the call. This is the contrast T26's frame bar should show.
+- **Build trip:** fetch 8.1 ms for 2 files (measured), compile 85.6 ms, link 6.2 ms, first draw 2.5 ms (all partial).
+  Compile is far above Day 560's 4.3 ms, which fits that being a cache hit, but T06 still hasn't tested the cache.
+- **`steadyDrawMs` read 124.6 ms.** It forces a wait for the GPU, which already had frames queued, so it is about
+  3 frames of work. It isn't a baseline for this shader. Decide in T12 whether to keep it.
+- **Day 560 is no longer in the city.** `/shader.html` still runs it. `dayRenderer.ts`, `loadPasses.ts` and
+  `wrapVolumePass` are now used only by that page.
+- **The wrapper still declares `iChannel0` and `uSlice`,** which Day 442 doesn't use. Harmless, but they are part of
+  the text that gets compiled.
+- Not checked: the LG display, and a run with the city tab closed.
 
 ---
 
@@ -968,8 +1220,8 @@ key, a bad status and an absolute shader path were all rejected.
   [M2 13" Wi-Fi driver commit](https://github.com/AsahiLinux/linux/commit/fc9ce1571a61ab3b35402037812758f0380f1593).
 
 **Not verified:**
-- Whether Chrome 156 exposes the WebGL2 timer extension on this Mac, and how accurate it is (T04, T05).
 - How the macOS Metal cache behaves.
 - Which process and hardware the compositor uses.
 - The user's machine details, including Metal 4, which were taken as confirmed.
-- No probe has been run in the user's Chrome yet.
+
+**Checked since:** T04 and T05 ran in the user's Chrome 156. Results are in `docs/probe-results.md`.

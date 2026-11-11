@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day 560 on M2</title>
+    <link rel="stylesheet" href="/src/shaderView/shaderView.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Day 560 on this Mac's GPU</h1>
+      <p id="renderer" class="muted"></p>
+      <p class="muted">
+        Live view, not a saved recording. Shadertoy id sXVSWy, run from your exported code with this
+        project's own wrapper, so it may not match the site exactly.
+      </p>
+    </header>
+
+    <main>
+      <section class="stage-column">
+        <div id="stage" class="stage">
+          <canvas id="canvas" width="1280" height="800"></canvas>
+          <canvas id="overlay"></canvas>
+        </div>
+
+        <div class="controls">
+          <button id="pause" type="button">Pause</button>
+          <button id="map" type="button">Measure cost map</button>
+          <div class="view-toggle" role="group" aria-label="What to show over the picture">
+            <button type="button" data-view="picture" aria-pressed="true">Picture</button>
+            <button type="button" data-view="gpu" aria-pressed="false" disabled>GPU time: Day 560</button>
+            <button type="button" data-view="control" aria-pressed="false" disabled>GPU time: control</button>
+            <button type="button" data-view="steps" aria-pressed="false" disabled>March steps</button>
+          </div>
+          <span id="hint" class="muted">Drag the picture to look around.</span>
+        </div>
+
+        <div id="legend" class="legend" hidden>
+          <span id="legend-low"></span>
+          <span id="legend-ramp" class="legend-ramp"></span>
+          <span id="legend-high"></span>
+          <span id="legend-status" class="status"></span>
+          <span id="legend-note" class="muted"></span>
+        </div>
+        <p id="readout" class="readout muted"></p>
+
+        <div id="profile-section" hidden>
+          <h2>GPU time by screen column</h2>
+          <div class="series-key">
+            <span><i class="swatch swatch-image"></i>Day 560 Image pass</span>
+            <span><i class="swatch swatch-volume"></i>Control, the same cost at every pixel</span>
+            <span class="status status-partial">partial</span>
+            <span class="muted">Median per 40 x 800 px column, from the GPU timer, with each draw run alone. Compare shapes, not exact ms.</span>
+          </div>
+          <canvas id="profile" class="chart profile"></canvas>
+          <p id="profile-readout" class="readout muted"></p>
+        </div>
+
+        <h2>One frame against the display's budget</h2>
+        <div class="series-key">
+          <span><i class="swatch swatch-volume"></i>Volume A</span>
+          <span><i class="swatch swatch-image"></i>Image</span>
+          <span class="status status-partial">partial</span>
+          <span class="muted">Median of recent frames, from the GPU timer. Budgets: your 60 Hz and 50 Hz displays, from your system report.</span>
+        </div>
+        <canvas id="budget" class="chart budget"></canvas>
+
+        <h2>The last 300 frames</h2>
+        <canvas id="strip" class="chart strip"></canvas>
+        <p id="strip-readout" class="readout muted"></p>
+      </section>
+
+      <aside>
+        <h2>Measured live</h2>
+        <div id="live-rows"></div>
+        <h2>What each pass asks of the GPU</h2>
+        <div id="work-rows"></div>
+        <p class="note">
+          The march loop's stop condition, <code>T &gt; .01</code>, never fires, because <code>T</code>
+          stays at 1. Every ray walks the full way through the cube, whether or not it hits anything.
+        </p>
+        <div id="map-section" hidden>
+          <h2>What the cost map can and can't say</h2>
+          <div id="map-rows"></div>
+          <p id="map-verdict" class="note"></p>
+        </div>
+        <h2>What a page can't show</h2>
+        <p class="note">
+          Which core ran which pixel, core load, GPU clock speed, or the cost of a line of GLSL. A map
+          cell is a region of the screen, not a real GPU tile or core.
+        </p>
+      </aside>
+    </main>
+    <pre id="error" class="error" hidden></pre>
+    <script type="module" src="/src/shaderView/main.ts"></script>
+  </body>
+</html>
