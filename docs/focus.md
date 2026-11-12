@@ -169,7 +169,8 @@ partial / modeled, and at least one post explaining how it works.
 
 Shows where one fragment shader spends its time, from fetch to screen, on real hardware.
 **Done when:** recorder tickets T09–T16 in `docs/backlog.md` are finished and a real recording
-drives the city. T26, T28 and T30–T32 move to the backlog's parking lot.
+drives the city (T35), then it ships (T36). T28 and T30 were already finished and keep their
+findings. T26, T31 and T32 are in the backlog's parking lot.
 **Gives the next output:** GPU timer queries, a recording protocol, and the measured / partial /
 modeled labels. Stage 1 reuses all three.
 
@@ -287,7 +288,8 @@ Ideas that are off the vector for now.
   timing panel takes its place.
 - **Effects kit (old tool 7):** particles, animation state machines, WebXR, the Gemini API.
   Pick it up only if a creative role becomes the target.
-- **City tickets T26, T28, T30–T32.** Good ideas, but not needed for the city's "done when".
+- **City tickets T26, T31 and T32.** Good ideas, but not needed for the city's "done when".
+  Parked in the backlog on 2026-11-11. T28 and T30 were finished before the revision.
 
 ## 10. Scoreboard
 

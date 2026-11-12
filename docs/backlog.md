@@ -12,6 +12,12 @@ from this file alone, without any earlier conversation.
 Check the board below. If the gate is still open, stop and ask for approval
 before starting any ticket.
 
+**The direction.** This project is Output 0 in `docs/focus.md`. It is done when T09 to T16 are
+finished and a real recording drives the city (T35), then shipped (T36). Every open ticket on
+the board serves that. Anything that doesn't goes to section 5. Next up, in order: T06, T09 to
+T16, T35, T36. Each recorder ticket has a "Carries to Output 1" line: what the WebGPU viewer
+(focus.md, Output 1) reuses from it. Explain that line in the Teach points.
+
 **For every ticket:**
 
 1. Read the ticket and the reference sections it names.
@@ -41,7 +47,7 @@ before starting any ticket.
 - [x] T07 Schema, types and validator
 - [x] T08 Hardware map JSON
 
-**Recorder**
+**Recorder (Output 0's "Done when" in `docs/focus.md`)**
 - [ ] T09 Stop 1: fetch the shader
 - [ ] T10 Stops 2 and 3: call time and round trip
 - [ ] T11 Stop 4: compile time
@@ -50,6 +56,10 @@ before starting any ticket.
 - [ ] T14 Stop 7: SIMD group model
 - [ ] T15 Stop 8: refresh cadence
 - [ ] T16 Run protocol and save
+
+**Finish Output 0**
+- [ ] T35 A real recording drives the city (re-checks T19, T21, T22)
+- [ ] T36 Ship the city: public URL, README, launch post, hand-off to S1
 
 **City**
 - [x] T17 Ground blocks
@@ -67,19 +77,19 @@ placeholder numbers and a test fixture.
 - [x] T23 Live view of the user's shader (Day 560)
 - [x] T24 Live view inside the city: real traffic, real hardware readings, Day 560 embedded
 - [x] T25 Day 442 as the live program (one pass, one draw per frame)
-- [ ] T26 Show where the shader executes, in levels you can click into
 
 **The two questions (user, 2026-11-11).** Q1: can I follow the shader from the files on disk down to the
 hardware? Q2: can I see which code makes the GPU slow, and what hardware is sitting idle?
-Suggested order: T27, T29, T28, T30, then T26. The user hasn't confirmed the order.
+These are done or parked. They kept their findings, but no new work goes here (`docs/focus.md`).
 - [x] T27 Q1: the whole path, from disk to pixels, with the CPU cores drawn
 - [x] T28 Q1 + Q2: what the compiler turned the shader into (stop 4 is measured in live mode: see findings)
 - [x] T29 Q2: which code costs GPU time, by switching parts off and timing again (only `AA` gave a clear saving: see findings)
 - [x] T30 Q2: spare room, and whether the shader can reach it (the GPU reads 100% even with the program stopped: see findings)
-- [ ] T31 Root readings from `powermetrics`: GPU clock, power, per-core frequency (feeds T27 and T30)
-- [ ] T32 Replace T29's guessed variants: show how each line of Day 442 compiles and runs on the hardware, no suggestions
 - [x] T33 Chip-like look for the city: real material colors, same primitive shapes (user request, 2026-11-11)
 - [x] T34 Day 564 replaces Day 442 as the live program (user request, 2026-11-11)
+
+**Parked on 2026-11-11 to follow `docs/focus.md`:** T26, T31 and T32. Their ticket text was removed
+from section 4. Section 5 says what each was and what's left of it. Git history has the full text.
 
 ## 3. Open decisions
 
@@ -272,6 +282,8 @@ and why 8 MB of system-level cache is not `published`.
 - Compute `bytes` and `sha256` with `crypto.subtle`.
 - Repeat the fetch and summarize into `n`, `min`, `median`, `p95`, `max`.
 **Teach:** this measures loopback, not Wi-Fi (F5).
+**Carries to Output 1:** `summarize` (n, min, median, p95, max) becomes the stats for S1's timing panel. S1
+  loads its `.wgsl` the same way, so the fetch metric carries over unchanged.
 **Done when:**
 - The page shows a loopback `fetchMs` with stats, plus `bytes` and `sha256`, for a chosen file.
 - `summarize` is unit tested.
@@ -291,6 +303,9 @@ and why 8 MB of system-level cache is not `published`.
 **Teach:**
 - WebGL calls mostly queue work, which is why JS call time can be tiny.
 - Why `getError` is only a proxy: it doesn't time the command buffer itself.
+**Carries to Output 1:** WebGPU makes the queueing explicit: JS records commands into an encoder, then
+  `queue.submit()`. Stop 2 becomes encode-and-submit time, and `queue.onSubmittedWorkDone()` is the
+  round trip that WebGL hides inside `getError`. Keep build and frame trips apart here, so S1 can too.
 **Done when:** both stops produce metrics with stats. Stop 2 is `measured` and stop 3 is `partial`.
 
 ---
@@ -306,6 +321,8 @@ and why 8 MB of system-level cache is not `published`.
 - What ANGLE does at compile: GLSL to MSL (F1).
 - Why blocking on status is an observer effect the WebGL best practices warn about,
   and why it's accepted in a recorder.
+**Carries to Output 1:** WebGPU's `createShaderModule` plus `getCompilationInfo()` is the same step for WGSL,
+  with line-numbered messages instead of one info log. The "fail cleanly, save nothing" rule carries over.
 **Done when:**
 - `compileMs` has stats and status `partial`, with a note that it includes stops 2 and 3 overhead.
 - A deliberately broken shader gives a readable error and no recording.
@@ -325,6 +342,8 @@ and why 8 MB of system-level cache is not `published`.
 **Teach:**
 - Why compile plus link misses first-draw pipeline creation (F1).
 - Pipeline creation is CPU-side, so the GPU timer won't catch it.
+**Carries to Output 1:** the hidden first-draw cost is the reason WebGPU has explicit pipelines.
+  `createRenderPipelineAsync` is where S1 pays it, and it can be timed on its own. Name that contrast in Teach.
 **Done when:**
 - All three metrics exist with status `partial`.
 - `trivial.glsl` run alongside gives the fixed vertex shader's contribution as a reference.
@@ -345,6 +364,9 @@ and why 8 MB of system-level cache is not `published`.
 **Teach:**
 - This one number covers stops 6 and 7 together, so stop 7 gets no time of its own (F2).
 - Why a fixed buffer makes results comparable across displays.
+**Carries to Output 1:** S1's GPU time uses WebGPU timestamp queries: write timestamps in the pass,
+  resolve them into a buffer, map it a frame or more later, and handle results still pending. The same polling
+  pattern as here. Chrome rounds those timestamps by default, so S1 records the resolution it gets.
 **Done when:**
 - The results rise across `cost-low`, `cost-mid` and `cost-high`.
 - The stop's status is `partial`. If the T05 fallback applies, use its method instead.
@@ -362,6 +384,8 @@ and why 8 MB of system-level cache is not `published`.
 - `floors` stays empty, so stop 7 has no height.
 **Teach:** what a 32-thread SIMD group is, and the worked example: 1280 x 800 = 1,024,000 pixels,
 so 1,000 tiles and 32,000 groups.
+**Carries to Output 1:** the 32-thread SIMD group is why S2's compute shaders pick workgroup sizes in
+  multiples of 32. The "modeled, lower bound" label carries over as is.
 **Done when:** the test covers the worked example, and both metrics are `modeled`.
 
 ---
@@ -380,6 +404,8 @@ so 1,000 tiles and 32,000 groups.
 **Teach:**
 - rAF timestamps may have only 1 ms precision, so one delta is noisy and a median helps.
 - Cadence tells us the rate, not how long the compositor took.
+**Carries to Output 1:** the frame budget (16.67 ms at 60 Hz, 8.33 ms at 120 Hz) is the fixed budget S2 and
+  S5 must hold. The same median-of-deltas code reads it there.
 **Done when:**
 - It reads about 16.67 ms on the built-in display and about 20 ms on the LG.
 - The stop's status is `partial`.
@@ -398,6 +424,9 @@ so 1,000 tiles and 32,000 groups.
   `recordings/<shader>-<display>-<state>.json`. The user saves it by hand.
 - Show a pre-run checklist: city tab closed, other GPU-heavy apps closed, plugged in.
 **Teach:** how to read a recording, and why comparing runs matters more than one number.
+**Carries to Output 1:** the recording protocol (checklist, repeats, spread, validated JSON with
+  `imports[]`) is what S1 reuses to publish honest numbers. Keep the schema free of WebGL-only names where a
+  neutral name works, and note any that can't be.
 **Done when:**
 - A full run passes validation, with all 8 stops.
 - Separate recordings exist for each display.
@@ -567,33 +596,6 @@ Day 442, a one-pass shader, so the trip is one fetch, one compile and one draw c
 - Day 442 runs in the city in the user's Chrome with no console errors: yes.
 - Every stop still shows a value with a status and a source: yes.
 - Tests and type-check pass: yes, 92 tests.
-
-### T26 Show where the shader executes, in levels
-**Depends on:** T25.
-**Goal:** the user's words on 2026-11-11: "understand how the code executes and how it travels through the hardware
-of my computer", "very clear", "keep using the toggles so we see more information on the left", and "levels so we
-show for example the simd and then we can click and go deeper there".
-**Files:** to be listed when the ticket starts. Expect `src/city/levels.ts` (new), `buildGpuDistrict.ts`,
-`buildRoads.ts`, `routePlan.ts`, `live/trafficPlan.ts`, `numbersPanel.ts`, `hud.ts`, `main.ts`, `index.html`, `city.css`.
-**Build:**
-- **Three roles, visibly different.** Translate (stops 1, 4, 5: text to Metal code to machine code, once), Command
-  (stops 2, 3: the draw call, a thin road), Execute (stops 6, 7: the only place the GLSL runs, the visual centre).
-  Each stop's panel section says what form the shader is in there.
-- **Levels with a breadcrumb.** Clicking goes one level deeper, and the left panel shows that level's numbers.
-  1. Chip: the whole trip.
-  2. GPU district: one draw fans out into pixel jobs across the cores for the measured GPU time, then one image leaves.
-  3. One core: the SIMD lanes, 32 pixels per group. Replaces the "Open stop 7 view" button.
-  4. One SIMD group: one line of Day 442 (for example `p = abs(p) - 0.45`) applied to 32 pixels at once.
-- **Stop 7 nested in stop 6:** no road between them, because it is a zoom and not a later step.
-- **A linear "one frame" bar:** JS call, hand-off and GPU time to true scale, from the measured numbers.
-- Levels 2 to 4 are modeled and tagged so. A page can't see inside the GPU.
-**Teach:** command versus execute. Why one draw call becomes a million pixel jobs. Why 32 pixels share one instruction,
-and what that means for `if` and `break` in the ray march.
-**Done when:**
-- Each level can be reached by clicking and left by the breadcrumb, and the panel follows.
-- The fan-out lasts the frame's measured GPU time, slowed by the printed factor, and is tagged modeled.
-- The frame bar's three parts match the panel's numbers.
-- Stop 7 has no road and no time of its own.
 
 ### T27 The whole path, from disk to pixels, with the CPU cores drawn
 **Depends on:** T25.
@@ -795,72 +797,6 @@ idle cover sits on top of the blocks like the core tiles do.
   "indirectly", and T29 found no clear saving from the one thing it could take (the fold matrix).
 - The idle (under 10%) and full (90% or more) lines are ours, and the page says so.
 
-### T31 Root readings from `powermetrics`
-**Depends on:** T24. Feeds T27 and T30.
-**Goal:** the user's words on 2026-11-11: "what do we need so u can have root access?". The user added a sudo rule
-that allows one exact command with no password, and it worked.
-**Files:** to be listed when the ticket starts. Expect `server/hardwareSampler.ts`, `server/parseNative.ts`,
-`src/shared/liveEvents.ts`, `src/city/live/hardwareView.ts`, `tests/parseNative.test.ts`.
-**Build:**
-- The dev server runs `sudo -n /usr/bin/powermetrics --samplers cpu_power,gpu_power -i 500 -n 1`. The arguments
-  must match the rule exactly, or sudo asks for a password and the call fails.
-- If the call fails, the feed carries "no root reading" and everything else keeps working.
-- The parser keeps named numbers only. The header lines (machine model, OS build, boot arguments) are dropped,
-  with a test.
-- New readings, all partial and whole Mac: frequency and active share for each of the 8 CPU cores and both
-  clusters, GPU frequency and active share, and CPU, GPU and Neural Engine power in mW.
-**Teach:** a chip changes its clock speed with load, so "busy 30% of the time" at 600 MHz is far less work than at
-3,504 MHz. Power is the reading that shows which block is doing the work.
-**Done when:**
-- Each new number shows on its block and in the panel with a status and a source.
-- Removing the sudo rule leaves the city working, with "no root reading" shown.
-- No header line from `powermetrics` reaches the page, with a test for it.
-
-**First sample, 2026-11-11, city and Day 442 running (one 503 ms sample, partial):**
-- GPU: 1,398 MHz, its top step, for 100% of the sample. Idle 0%. Power about 9.3 W.
-- CPU: 1.6 W in total. No core was active for more than 31% of the sample. Neural Engine: 0 mW.
-- So the GPU drew about 6x the power of all 8 CPU cores together. It has no spare room and no faster clock step.
-- The 1,398 MHz top step matches the community number in R3.
-- `powermetrics` reports E cores as CPU 0 to 3 and P cores as CPU 4 to 7, which agrees with T24's check.
-- Decision for the user: CLAUDE.md still says native tools are out of scope for v0. This goes further than T24.
-
-### T32 How each line of Day 442 compiles and runs, with no suggestions
-**Depends on:** T29 (replaces its page), T28 (absorbs its translated-source check).
-**Goal:** the user's words on 2026-11-11: "we don't want ur guess", "point out how the code is interacting with the
-hardware, the compiler, what line of code is making it slower", "u shouldn't add suggestions... that's for the user
-to decide after it sees the visualization".
-**Rule for this page:** it never proposes a change. No variants picked by the tool, no "this saves X", no advice.
-It shows what the code did on the hardware, and the user decides what to change.
-**Files:** `experiments.html`, `src/experiments/` (rewritten), `src/shared/experimentResult.ts`,
-`server/experimentStore.ts`, `tests/experiments.test.ts`. T29's `variants.ts`, `summarize.ts`, `buildResult.ts`,
-`pictures.ts` and `resultView.ts` go away.
-**Build, three panels around the user's own source:**
-- **Compiler (measured text).** `WEBGL_debug_shaders.getTranslatedShaderSource` returns what ANGLE handed to Apple's
-  Metal compiler. Show it beside the GLSL, with sizes, and link each user function (`shape`, `map`, `rayMarch`, ...)
-  across the two texts. Everything after it (Metal IR, GPU machine code) is drawn as modeled: a page can't read it.
-- **Work per line (measured count).** The tool numbers every `{ }` block in the source and compiles a counting copy
-  that adds `_c++` at the top of one block and writes the count instead of a color. `readPixels` reads it back. So
-  every line gets: how many times it ran this frame across all 1,024,000 pixels, its maximum in one pixel, and a
-  heatmap of where on screen it ran. Control flow is unchanged by the counter, so the counts are exact. The counting
-  copy is never timed.
-- **Time by screen area (partial).** The real shader drawn under a scissor, one tile at a time, each tile around a
-  `TIME_ELAPSED_EXT` query, repeated with spread. Shown as a heatmap beside the count heatmaps, so the user can see
-  whether the slow areas are where a line ran most. A time range per tile, including the draw's fixed overhead.
-- **SIMD groups (modeled, from measured counts).** Apple's GPU runs 32 pixels in lockstep (published). Their shape on
-  screen isn't published, so the 8 x 4 grouping is modeled. Per loop: the group runs as long as its slowest pixel,
-  so show max vs mean iterations per group and the share of lanes waiting.
-**Teach:** no browser API times a line, so time per line is never shown. What a page can measure is how often each
-line ran, and where the time went on screen. Two compilers sit between the GLSL and the GPU. A SIMD group finishes
-when its slowest pixel does.
-**Check before building:** that `WEBGL_debug_shaders` is exposed in the user's Chrome and returns Metal source.
-**Done when:**
-- The page contains no suggestion or variant chosen by the tool.
-- Every line of the Image and Common pass shows a count and a max, tagged measured, with its source.
-- A self-check: the counted iterations of the 60-step loop never exceed 60 per ray, and the `mainImage` block runs
-  exactly once per pixel (1,024,000).
-- Tile times show a median, a range and the rounds, tagged partial.
-- The translated source shown is the text Chrome returned, or the page says the extension is missing.
-
 ### T33 Chip-like look for the city
 **Depends on:** T17.
 **Goal:** the map reads as a chip package on a logic board, with no change to layout, roads, stops or numbers.
@@ -923,7 +859,65 @@ before Metal sees the text. Four loop passes with a hash cost far less than a 60
 
 ---
 
+### T35 A real recording drives the city
+**Depends on:** T16.
+**Goal:** the second half of Output 0's "Done when" in `docs/focus.md`: the city shows a real recording, not
+invented numbers.
+**Files:** to be listed when the ticket starts. Expect `src/city/main.ts`, the recording loader, and the tests for
+`planBuildings` and replay.
+**Build:**
+- Load the recordings T16 saved, one per display, and pick between them in the city.
+- Re-check the items T19, T21 and T22 could only check with placeholder numbers.
+- Decide with the user whether `placeholderRecording.ts` goes or stays as a clearly marked demo.
+**Teach:** why a recording made with the city closed is the only clean number (T30: the GPU reads 96 to 100%
+with the shader stopped, because the city draws too).
+**Carries to Output 1:** the replay-a-recording pattern. S1's timing panel can show a saved run the same way.
+**Done when:**
+- The city shows a real recording for each display, and every value has a status and a source.
+- T19, T21 and T22's re-check items each have a real result, including failures.
+- No placeholder number shows unless the "invented" banner is on screen.
+
+---
+
+### T36 Ship the city
+**Depends on:** T35.
+**Goal:** focus.md's rule for every output: a public URL, a README, real numbers labeled measured, partial or
+modeled, and at least one post explaining how it works.
+**Files:** `README.md`, the build config, a draft post under `docs/posts/`.
+**Build:**
+- A static build that replays the saved recordings. Live mode needs the dev server, so the public page is
+  replay only and says so.
+- The README explains the 8 stops, the three labels, and how to make a recording.
+- A launch post: what it does, how it works, what the numbers say (focus.md section 6).
+- A hand-off note for S1: what it reuses from T09 to T16 (their "Carries to Output 1" lines), and what turned out
+  not to carry.
+- Where to host it is the user's call.
+**Teach:** what a page can and can't measure, written for someone who has never seen the project.
+**Done when:**
+- The public URL loads the city with a real recording, with no console errors.
+- No published file holds a device identifier, a path from `ps`, or a `powermetrics` header line. Checked by search.
+- The README and the post exist, and every number in them has its label and source.
+- The scoreboard in `docs/focus.md` section 10 shows Output 0 as shipped.
+
+---
+
 ## 5. Parking lot
+
+**Parked tickets (2026-11-11, to follow `docs/focus.md`).** Off the vector for now. Bring one back only if it
+passes focus.md's rule 2 question.
+
+- **T26 Levels you can click into** (chip, GPU district, one core, one SIMD group, plus a one-frame bar). Never
+  started. Its examples are from Day 442, so it would need Day 564 ones. The one-frame bar idea (JS call vs
+  hand-off vs GPU time to true scale) fits S1's timing panel better.
+- **T31 Root readings from `powermetrics`.** No code yet. CLAUDE.md says native tools are out of scope for v0.
+  First sample, 2026-11-11, city and Day 442 running (one 503 ms sample, partial): GPU at 1,398 MHz, its top step,
+  for 100% of the sample, about 9.3 W. CPU 1.6 W in total, no core active over 31%. Neural Engine 0 mW.
+  `powermetrics` reports E cores as CPU 0 to 3 and P cores as CPU 4 to 7, which agrees with T24.
+- **T32 How each line compiles and runs, no suggestions.** Most of it was built on the experiments page in
+  dc8573a (counting copy, tile timings, compiler panel) and T34 used it, but the ticket was never checked against
+  its "Done when" and never ticked. Its rule stays good: the page never proposes a change.
+
+**Other ideas and findings.**
 
 - **From T27: Metal's compiler helper process.** Apple's Metal can compile in a helper process
   (`MTLCompilerService`). None was in `ps` when checked on 2026-11-11, and this wasn't verified further. If it runs
@@ -941,15 +935,13 @@ New ideas or out-of-scope findings go here, not into the current ticket.
   so it fails. Decide which is right, the shader or the test.
 - From T28: store a SHA-256 of the translated text in the recording, so a cache run (T06) can tell if the Metal text
   changed between builds.
-- From T28: the city's compiler view and the experiments page's compiler panel are two views of one text. T32 can
-  merge them.
+- From T28: the city's compiler view and the experiments page's compiler panel are two views of one text. If T32
+  comes back, it can merge them.
 - From T30: measure how much GPU the city itself uses. Stop the program, then read the GPU with the city tab open,
   hidden and closed. That tells how much of every live GPU reading is the city's own drawing.
 - From T30: the city could stop drawing (or draw at a lower rate) while Day 442 runs, so the live readings are
   closer to the shader's own. That changes how the live view looks, so it is the user's call.
 - From T30: 10 more cards on the map. If it feels crowded, hide them unless the "Spare room" section is open.
-- From T34: T26 and T32 are written around Day 442 (its ray march, `p = abs(p) - 0.45`, `AA`). They need Day 564
-  examples before they start.
 - From T34: the tile heatmap is mostly per-draw overhead for a shader this cheap. Subtract the empty shader per
   tile, or use bigger tiles.
 - From T34: `tests/compilerText.test.ts` and the Day 442 block tests still read the Day 442 files. They test the
@@ -960,7 +952,8 @@ New ideas or out-of-scope findings go here, not into the current ticket.
 - From the two questions (2026-11-11): compile the translated Metal source with `xcrun metal` to see the
   intermediate code. Needs Xcode, and it wouldn't be the exact binary Chrome's GPU process built.
 - From the two questions: move pixel work off the GPU with WebGPU compute or a worker. Not a WebGL fragment
-  shader any more, so it is a different program, not a faster Day 442.
+  shader any more, so it is a different program, not a faster Day 442. WebGPU compute is S2 and S3's job in
+  `docs/focus.md`, not the city's.
 
 **Findings from T02:**
 
@@ -1114,7 +1107,7 @@ Not recording quality: the city was drawing beside it. Whether another tab was a
   `cos` and `sin` pair, plus 6 more `map` calls for the normal. At 1280 x 800 that is up to about 270 million `map`
   calls a frame. Changing `AA` to 1 would cut it to about a quarter, but the code is the user's, so it is untouched.
 - **The command is tiny next to the work.** `frameCallsMs` was 0.01 ms and `roundTripMs` 0.09 ms, against 39 ms on the
-  GPU: a gap of about 4,000x for the call. This is the contrast T26's frame bar should show.
+  GPU: a gap of about 4,000x for the call. T26 (parked) would have shown this contrast.
 - **Build trip:** fetch 8.1 ms for 2 files (measured), compile 85.6 ms, link 6.2 ms, first draw 2.5 ms (all partial).
   Compile is far above Day 560's 4.3 ms, which fits that being a cache hit, but T06 still hasn't tested the cache.
 - **`steadyDrawMs` read 124.6 ms.** It forces a wait for the GPU, which already had frames queued, so it is about

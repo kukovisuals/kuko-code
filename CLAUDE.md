@@ -11,6 +11,25 @@ own rendering doesn't distort the numbers.
 its section 1 before starting work, then the ticket and the reference sections it names. Don't
 copy any of that into this file.
 
+`docs/focus.md` holds the direction every ticket must point toward. Read its sections 1, 5
+(Output 0) and 9 before picking up a ticket. Don't copy it here either.
+
+## Keep every ticket on the focus
+
+- This project is Output 0 in `docs/focus.md`. It is done when that section's "Done when" is
+  met, and no sooner or later. Then work moves to the next output, not to more city features.
+- Before starting a ticket, ask the rule 2 question from focus.md section 9. If the answer is
+  no, say so, and offer to move the ticket to the parking lot instead of building it.
+- Tickets that focus.md has parked are not worked on, even if the backlog still lists them as
+  open. Point the user to the conflict and let them decide.
+- In the plan, name what the ticket gives the next output (Output 0's "Gives the next output"
+  line). If it gives nothing, say that.
+- Prefer the approach that carries over to the next output: browser APIs and patterns that
+  also exist in WebGPU over ones tied to WebGL2 or Three.js alone. Explain the carry-over in
+  the Teach points.
+- When a ticket is done, note any finding worth a daily post (focus.md section 6) in the
+  backlog's findings, with its number and source.
+
 ## How to work
 
 - Work one ticket at a time, and only that ticket. Anything else goes in the backlog's parking lot.
