@@ -14,7 +14,7 @@ before starting any ticket.
 
 **The direction.** This project is Output 0 in `docs/focus.md`. It is done when T09 to T16 are
 finished and a real recording drives the city (T35), then shipped (T36). Every open ticket on
-the board serves that. Anything that doesn't goes to section 5. Next up, in order: T06, T09 to
+the board serves that. Anything that doesn't goes to section 5. Next up, in order: T09 to
 T16, T35, T36. Each recorder ticket has a "Carries to Output 1" line: what the WebGPU viewer
 (focus.md, Output 1) reuses from it. Explain that line in the Teach points.
 
@@ -41,14 +41,14 @@ T16, T35, T36. Each recorder ticket has a "Carries to Output 1" line: what the W
 **Prove the timers (T05 is a gate)**
 - [x] T04 Probe the environment
 - [x] T05 Prove GPU timing works (passed: see `docs/probe-results.md`)
-- [ ] T06 Test the shader caches
+- ~~T06 Test the shader caches~~ removed on 2026-11-11 at the user's request. `cacheState` stays `unknown`.
 
 **Data contract**
 - [x] T07 Schema, types and validator
 - [x] T08 Hardware map JSON
 
 **Recorder (Output 0's "Done when" in `docs/focus.md`)**
-- [ ] T09 Stop 1: fetch the shader
+- [x] T09 Stop 1: fetch the shader
 - [ ] T10 Stops 2 and 3: call time and round trip
 - [ ] T11 Stop 4: compile time
 - [ ] T12 Stop 5: link and first draw
@@ -201,26 +201,6 @@ backlog as the source of truth. Don't copy the schema or tickets into it.
 - The results, including the on/off comparison, are in `docs/probe-results.md`.
 - **If it fails:** stop 6 uses `readPixels` wall time, labeled partial. Tell the user and
   update R4 before continuing.
-
----
-
-### T06 Test the shader caches
-**Depends on:** T05.
-**Goal:** learn how to get a repeatable cold or warm compile.
-**Files:** `src/probe/main.ts`, `docs/probe-results.md`, then delete `probe.html` and
-`src/probe/`.
-**Build:**
-- Compare compile, link and first-draw times for four cases: repeat in the same page,
-  reload, a comment-only change, and a change to real code.
-- Try one run with Chrome started using `--disable-gpu-shader-disk-cache`.
-**Teach:**
-- ANGLE's `LibraryCache` is keyed on translated MSL, so a comment-only change probably
-  won't force a rebuild (inference, tested here).
-- Why we never claim a truly cold driver compile: the macOS Metal cache is invisible (F9).
-**Done when:**
-- `docs/probe-results.md` states which change forces a slow path and what each cache state
-  means for T16.
-- Ask the user before deleting the probe files.
 
 ---
 
@@ -413,13 +393,13 @@ so 1,000 tiles and 32,000 groups.
 ---
 
 ### T16 Run protocol and save
-**Depends on:** T06, T08, T14, T15.
+**Depends on:** T08, T14, T15.
 **Goal:** one button produces a valid, comparable recording.
 **Files:** `src/record/saveRecording.ts`, `src/record/main.ts`, `record.html`, `recordings/.gitkeep`.
 **Build:**
 - Choose a shader and label the display (`built-in`, `lg`, `unknown`).
-- Set `cacheState` based on T06. Use `unknown` unless T06 gives evidence.
-- Default to 5 fresh programs for the build trip per recording, unless T06 suggests otherwise.
+- Set `cacheState` to `unknown`. T06, the cache test, was removed, so nothing gives evidence for `cold` or `warm`.
+- Default to 5 fresh programs for the build trip per recording.
 - Embed the hardware map, validate, then download
   `recordings/<shader>-<display>-<state>.json`. The user saves it by hand.
 - Show a pre-run checklist: city tab closed, other GPU-heavy apps closed, plugged in.
@@ -933,7 +913,7 @@ New ideas or out-of-scope findings go here, not into the current ticket.
 
 - From T28: `tests/experiments.test.ts` line 43 expects `AA 2` (maxPerParent 4), but Day 442 is `AA 1` since dc8573a,
   so it fails. Decide which is right, the shader or the test.
-- From T28: store a SHA-256 of the translated text in the recording, so a cache run (T06) can tell if the Metal text
+- From T28: store a SHA-256 of the translated text in the recording, so a cache run (T06, now removed) could tell if the Metal text
   changed between builds.
 - From T28: the city's compiler view and the experiments page's compiler panel are two views of one text. If T32
   comes back, it can merge them.
@@ -946,6 +926,13 @@ New ideas or out-of-scope findings go here, not into the current ticket.
   tile, or use bigger tiles.
 - From T34: `tests/compilerText.test.ts` and the Day 442 block tests still read the Day 442 files. They test the
   tools, not the live program, so they were left in place.
+- From T09: there are now two `summarize` functions. `src/city/live/liveRecorder.ts` has its own, with a different
+  median (it picks the upper middle, T09 averages the two middles) and p95 (floor index, T09 uses nearest rank).
+  `src/city` can't import from `src/record`, so moving T09's into `src/shared` would let both use one.
+- From T09: `probe.html` and `src/probe/` stayed when T06 was removed. Delete them or keep them: the user's call.
+- From T09: the uncommitted edit to `shaders/day564-image.glsl` breaks two Day 564 tests in
+  `tests/experiments.test.ts` (lines 65 and 71), because they find blocks by line number. With the committed file,
+  only the known line 43 failure remains.
 
 - After v0: import native summaries from Instruments or tshark through `imports[]`.
   Summaries only, never raw traces, which can contain identifiers.
@@ -1029,7 +1016,7 @@ New ideas or out-of-scope findings go here, not into the current ticket.
 - A missing shader can come back as Vite's HTML fallback with status 200, so T09 should check the text,
   not only `response.ok`.
 - Beyond the ticket file lists: `src/record/fullscreenTriangle.ts`, `src/probe/shaderProgram.ts` and
-  `src/probe/gpuTimingRuns.ts`, split to keep files small. The two `src/probe` files go when T06 deletes
+  `src/probe/gpuTimingRuns.ts`, split to keep files small. The two `src/probe` files were to go when T06 deleted
   `src/probe/`. `fullscreenTriangle.ts` stays for the recorder.
 - `probe.html` is not a Vite build input, because it is temporary and `no-store` only exists under
   `npm run dev`. Run it with the dev server.
@@ -1117,6 +1104,28 @@ Not recording quality: the city was drawing beside it. Whether another tab was a
 - **The wrapper still declares `iChannel0` and `uSlice`,** which Day 442 doesn't use. Harmless, but they are part of
   the text that gets compiled.
 - Not checked: the LG display, and a run with the city tab closed.
+
+**Findings from T09 (2026-11-11, `record.html` on `npm run dev` at localhost, in the user's Chrome on the M2,
+built-in display; `crossOriginIsolated` was true):**
+
+- **Fetching a 685-byte shader over loopback takes 0.77 ms median** (`cost-low.glsl`, n 20, p95 1.44, max 7.45 ms,
+  measured with `PerformanceResourceTiming`). A second run gave median 0.77, p95 1.22, max 2.68 ms. So the median
+  repeats while the tail doesn't, which is the same spread lesson as T05. The median is a candidate for a daily post,
+  as it's the floor of the whole pipeline, and Wi-Fi isn't in it.
+- **`day564-image.glsl` (1,230 bytes) read 1.48 ms median** (n 20, min 0.69, p95 2.51, max 2.98 ms, measured).
+  This is one run. Not enough to say size explains the gap.
+- **bytes and sha256 match the file on disk** (`wc -c` and `shasum -a 256`), for both files.
+- **A missing file really does come back as `200 text/html`** from Vite (checked with `curl`). The recorder rejects
+  it by its text and shows "Stop 1 failed".
+- **The plain `import.meta.glob('/shaders/*.glsl')` works here,** in dev and in `npm run build`. The record bundle
+  holds only the 10 path strings, with no shader text and no shader chunks.
+- **Every fetch is checked for a cache hit** (`transferSize` 0 with a body). None happened, so `no-store` worked.
+- **Day files have no `#version` line,** so the page times them but says stops 2 to 8 can't record them yet (D3).
+  Recording Day 564 means deciding at T11 whether the Shadertoy wrapper becomes part of what is recorded.
+- Beyond the ticket's file list: `src/record/metricView.ts` (draws a metric with its status and source, for every
+  later stop to reuse) and `record.html` (the picker and the stop 1 section).
+- 20 fetches per run is this ticket's choice. T16 sets the real protocol.
+- Not checked: the LG display. Stop 1 doesn't touch the display, so it shouldn't matter, but that's an inference.
 
 ---
 
@@ -1301,7 +1310,7 @@ kuko-code/
 ├─ CLAUDE.md                  under 200 lines
 ├─ docs/
 │  ├─ backlog.md              this file
-│  └─ probe-results.md        findings from T04 to T06
+│  └─ probe-results.md        findings from T04 and T05
 ├─ package.json
 ├─ tsconfig.json
 ├─ vite.config.ts             COOP/COEP headers, no-store on shaders
@@ -1344,7 +1353,8 @@ kuko-code/
 ```
 
 Dependencies beyond Vite, TypeScript and Three.js: `ajv` and `ajv-formats`, plus Vitest for tests.
-`probe.html` and `src/probe/` exist only from T04 until the end of T06.
+`probe.html` and `src/probe/` were meant to exist only from T04 until the end of T06. T06 was removed on
+2026-11-11, and deleting them is the user's call.
 
 ## R6. Honesty rules for the city
 
@@ -1529,9 +1539,9 @@ key, a bad status and an absolute shader path were all rejected.
 | **Observer effect: reading too soon** | Requesting a result early makes ANGLE wait for the GPU | Check `QUERY_RESULT_AVAILABLE` on later frames first |
 | **Observer effect: the city** | Rendering the city would use the GPU being measured | Separate pages, city tab closed during recording |
 | **Other GPU users** | `TIME_ELAPSED` uses command-buffer start and end times, so other work may inflate it (inference) | Close other apps, repeat runs, report median and p95 |
-| **Shader caches** | Repeat runs get faster; a comment change may not force a recompile | Change real code for cold runs, test in T06, otherwise label `unknown` |
+| **Shader caches** | Repeat runs get faster; a comment change may not force a recompile | Change real code for cold runs. T06 (the test) was removed, so label `unknown` |
 | **macOS Metal cache** | Its behavior isn't visible from a page | Never claim a truly cold driver compile; `--disable-gpu-shader-disk-cache` only covers Chrome's cache |
-| **Source vs the user's build** | ANGLE and Chromium `main` were read, not Chrome 156's exact code | T04 to T06 test the real behavior |
+| **Source vs the user's build** | ANGLE and Chromium `main` were read, not Chrome 156's exact code | T04 and T05 tested the real behavior |
 | **Extension exposure** | `chrome://gpu` lists the GL extension; the WebGL2 one is unconfirmed | T04 checks first |
 | **Undetected GPU interruptions** | The disjoint flag is always 0 | Warmup frames, repeat runs, outlier stats |
 | **Power and thermal state** | Clock changes can shift results, and no API reports them (inference) | Stay plugged in, space runs apart, compare repeats |

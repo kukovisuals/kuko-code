@@ -4,10 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shader Pipeline Recorder</title>
+    <style>
+      body { font: 14px/1.5 ui-monospace, monospace; margin: 16px; max-width: 900px; }
+      .metric { border-left: 4px solid #2a7; padding: 4px 8px; margin: 8px 0; }
+      .metric.partial { border-left-style: dashed; border-color: #c80; }
+      .metric.modeled { border-left-style: dotted; border-color: #888; }
+    </style>
   </head>
   <body>
     <h1>Recorder</h1>
     <p id="isolation"></p>
+    <p>
+      <label>Shader <select id="shader"></select></label>
+      <button id="run" type="button">Run stop 1</button>
+    </p>
+    <h2>Stop 1: fetch</h2>
+    <div id="stop-1"></div>
     <script type="module" src="/src/record/main.ts"></script>
   </body>
 </html>
