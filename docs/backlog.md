@@ -49,7 +49,7 @@ T16, T35, T36. Each recorder ticket has a "Carries to Output 1" line: what the W
 
 **Recorder (Output 0's "Done when" in `docs/focus.md`)**
 - [x] T09 Stop 1: fetch the shader
-- [ ] T10 Stops 2 and 3: call time and round trip
+- [x] T10 Stops 2 and 3: call time and round trip (`roundTripMs` split into `buildRoundTripMs` and `frameRoundTripMs`)
 - [ ] T11 Stop 4: compile time
 - [ ] T12 Stop 5: link and first draw
 - [ ] T13 Stop 6: GPU time per frame
@@ -933,6 +933,10 @@ New ideas or out-of-scope findings go here, not into the current ticket.
 - From T09: the uncommitted edit to `shaders/day564-image.glsl` breaks two Day 564 tests in
   `tests/experiments.test.ts` (lines 65 and 71), because they find blocks by line number. With the committed file,
   only the known line 43 failure remains.
+- From T10: the city's shared 2 + 3 building still says "roundTripMs is one proxy, shown on both"
+  (`src/city/buildStops.ts`). With a real recording each lane gets its own round trip, so T35 should change that text.
+- From T10: `tests/fixtures/valid-recording.json` and `src/city/placeholderRecording.ts` still use `roundTripMs`.
+  Move them to the split ids when T35 brings in a real recording.
 
 - After v0: import native summaries from Instruments or tshark through `imports[]`.
   Summaries only, never raw traces, which can contain identifiers.
@@ -1127,6 +1131,38 @@ built-in display; `crossOriginIsolated` was true):**
 - 20 fetches per run is this ticket's choice. T16 sets the real protocol.
 - Not checked: the LG display. Stop 1 doesn't touch the display, so it shouldn't matter, but that's an inference.
 
+**Findings from T10 (2026-11-11, `record.html` on `npm run dev` at localhost, in the user's Chrome on the M2;
+`crossOriginIsolated` was true, so `performance.now()` steps in about 5 µs):**
+
+- **The user chose to split `roundTripMs`** into `buildRoundTripMs` and `frameRoundTripMs`. `floorBelongsToTrip`
+  already sends `build*` and `frame*` to their lanes, so the city needed no change. Its `roundTripMs` case stays for
+  the live mode, which still writes the single metric.
+- **Asking is almost free.** `buildCallsMs` (10 calls: two shaders and a link, no status asked) read 0.015 ms median
+  for both `trivial.glsl` and `cost-high.glsl` (n 20, p95 0.015 and 0.025 ms, measured). `frameCallsMs` (useProgram,
+  2 uniforms, 1 draw) read 0.020 and 0.030 ms (n 60, p95 0.150 and 0.065 ms, measured). Shader size and cost don't
+  show in call time, because the calls only queue. These readings are 2 to 6 steps of the clock, so only the
+  medians mean much. Candidate daily post: "10 WebGL calls to build a shader take 15 µs of JS."
+- **One crossing to the GPU process costs about 0.1 ms.** `buildRoundTripMs` 0.093 and 0.120 ms median (n 20),
+  `frameRoundTripMs` 0.135 and 0.140 ms median (n 60), all partial. That is 5 to 9 times the cost of all of a frame's
+  calls, which is why real apps never call `getError` in a frame loop. The frame value was higher than the build
+  value in both runs. One guess (not tested): in the frame loop the GPU process is also handling the canvas swap.
+  Two runs aren't enough to call it a real gap.
+- **One build read 98.5 ms once** (`trivial.glsl`, the first run after the dev server started, max of 20; median
+  still 0.020 ms). It didn't come back on a fresh page load: 3 more runs had maxima of 0.035 to 0.075 ms. The cause
+  is unknown. The median/p95 protocol absorbs it, but T16 should look at the first run after startup separately.
+- **`frameCallsMs` max reached 0.9 to 1.4 ms** in some runs, against a 0.02 ms median. These are single readings,
+  probably the main thread being interrupted. The cause wasn't checked.
+- Each round trip is timed on a queue that was already drained: by a blocking `LINK_STATUS` read in the build, or by
+  an untimed `getError` in the frame loop. Timing `getError` straight after the trip's own calls would have pulled
+  stop 4's compile or the GPU process's draw handling into stop 3.
+- The frame loop skips frame 0 (T12's first draw) and 10 warmup frames, then keeps 60. Build repeats: 20. T16 sets
+  the real protocol. The canvas is 1280 x 800 with `antialias: false`, so later GPU timings have no MSAA resolve.
+- `day564-image.glsl` still stops after stop 1 (D3), as planned.
+- Beyond the ticket's file list: `record.html` got the stop 2 and 3 sections and the canvas.
+- `npm test`: 148 passed, 3 failed, all in `tests/experiments.test.ts`. These are the known Day 442 `AA` failure
+  (from T28) and the two Day 564 line-number failures (from T09). No T10 file is involved.
+- Not checked: the LG display, and whether the city tab was open elsewhere in Chrome during the runs.
+
 ---
 
 # Reference
@@ -1251,7 +1287,7 @@ The schema's `basis` has no "secondary" value, so Wikipedia numbers use `communi
 |---|---|---|---|---|---|
 | 1 Network | Network road | Fetching the shader over loopback | `PerformanceResourceTiming` | **Measured**, loopback only | `fetchMs` |
 | 2 Renderer | CPU district | JS time issuing WebGL calls | `performance.now()` | **Measured**; core placement modeled | `buildCallsMs`, `frameCallsMs` |
-| 3 GPU process | CPU district | Crossing into the GPU process | `getError()` flush and round trip | **Partial**: a proxy | `roundTripMs` |
+| 3 GPU process | CPU district | Crossing into the GPU process | `getError()` flush and round trip | **Partial**: a proxy | `buildRoundTripMs`, `frameRoundTripMs` (split at T10; the live mode still writes one `roundTripMs`) |
 | 4 ANGLE | CPU district | GLSL validation and translation | `compileShader`, blocking `COMPILE_STATUS` | **Partial**: includes stops 2 and 3 overhead | `compileMs` |
 | 5 Metal compiler | CPU district | Floor 1: link and `MTLLibrary`. Floor 2: first-draw pipeline | Blocking `LINK_STATUS`; first draw plus `getError()` | **Partial**: includes ANGLE link work | `linkMs`, `firstDrawMs`, `steadyDrawMs` (baseline, not a floor) |
 | 6 GPU tiles | GPU cores | GPU time for the draw | `EXT_disjoint_timer_query_webgl2`, `TIME_ELAPSED_EXT` | **Partial**: total measured; tiles and core mapping modeled | `gpuMs`, `gpuMsWarmup` |

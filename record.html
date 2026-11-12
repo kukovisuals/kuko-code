@@ -9,6 +9,7 @@
       .metric { border-left: 4px solid #2a7; padding: 4px 8px; margin: 8px 0; }
       .metric.partial { border-left-style: dashed; border-color: #c80; }
       .metric.modeled { border-left-style: dotted; border-color: #888; }
+      canvas { display: block; width: 320px; height: 200px; background: #000; }
     </style>
   </head>
   <body>
@@ -16,10 +17,16 @@
     <p id="isolation"></p>
     <p>
       <label>Shader <select id="shader"></select></label>
-      <button id="run" type="button">Run stop 1</button>
+      <button id="run" type="button">Run stops 1 to 3</button>
     </p>
     <h2>Stop 1: fetch</h2>
     <div id="stop-1"></div>
+    <h2>Stop 2: call time</h2>
+    <div id="stop-2"></div>
+    <h2>Stop 3: round trip</h2>
+    <div id="stop-3"></div>
+    <!-- The drawing buffer is fixed at 1280 x 800 (R8). CSS only shrinks how it shows. -->
+    <canvas id="canvas" width="1280" height="800"></canvas>
     <script type="module" src="/src/record/main.ts"></script>
   </body>
 </html>
