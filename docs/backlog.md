@@ -12,11 +12,9 @@ from this file alone, without any earlier conversation.
 Check the board below. If the gate is still open, stop and ask for approval
 before starting any ticket.
 
-**The direction.** This project is Output 0 in `docs/focus.md`. It is done when T09 to T16 are
-finished and a real recording drives the city (T35), then shipped (T36). Every open ticket on
-the board serves that. Anything that doesn't goes to section 5. Next up, in order: T09 to
-T16, T35, T36. Each recorder ticket has a "Carries to Output 1" line: what the WebGPU viewer
-(focus.md, Output 1) reuses from it. Explain that line in the Teach points.
+**The direction.** This project is Output 0 in `docs/focus.md`. It was closed as-is on
+2026-11-12 at the user's request: T11 to T16, T35 and T36 were removed, and work moves to
+Output 1 (the WebGPU viewer). No open tickets remain. Anything new goes to section 5.
 
 **For every ticket:**
 
@@ -50,16 +48,9 @@ T16, T35, T36. Each recorder ticket has a "Carries to Output 1" line: what the W
 **Recorder (Output 0's "Done when" in `docs/focus.md`)**
 - [x] T09 Stop 1: fetch the shader
 - [x] T10 Stops 2 and 3: call time and round trip (`roundTripMs` split into `buildRoundTripMs` and `frameRoundTripMs`)
-- [ ] T11 Stop 4: compile time
-- [ ] T12 Stop 5: link and first draw
-- [ ] T13 Stop 6: GPU time per frame
-- [ ] T14 Stop 7: SIMD group model
-- [ ] T15 Stop 8: refresh cadence
-- [ ] T16 Run protocol and save
-
-**Finish Output 0**
-- [ ] T35 A real recording drives the city (re-checks T19, T21, T22)
-- [ ] T36 Ship the city: public URL, README, launch post, hand-off to S1
+- ~~T11 to T16 (stops 4 to 8, run protocol and save)~~ removed on 2026-11-12 at the user's request.
+- ~~T35 A real recording drives the city, T36 Ship the city~~ removed on 2026-11-12 at the user's request.
+  Output 0 closes as-is. Git history has the full ticket text.
 
 **City**
 - [x] T17 Ground blocks
@@ -77,6 +68,11 @@ placeholder numbers and a test fixture.
 - [x] T23 Live view of the user's shader (Day 560)
 - [x] T24 Live view inside the city: real traffic, real hardware readings, Day 560 embedded
 - [x] T25 Day 442 as the live program (one pass, one draw per frame)
+- [x] T37 Focus view (user request, 2026-11-12, after Output 0 closed): the panel shows one section, "One frame
+  against its budget" (8 rows from `src/city/live/frameSummary.ts`), and the map shows only the card where the
+  shader runs. "All numbers" in the panel head brings back every section and card. No reading was added or removed.
+  Checked live in Chrome: 1 section and 1 card with the toggle off, 30 sections and 10 cards with it on, no console
+  errors. `npm test`: 152 pass, the same 3 known failures in `tests/experiments.test.ts`. `tsc --noEmit` is clean.
 
 **The two questions (user, 2026-11-11).** Q1: can I follow the shader from the files on disk down to the
 hardware? Q2: can I see which code makes the GPU slow, and what hardware is sitting idle?
@@ -90,6 +86,8 @@ These are done or parked. They kept their findings, but no new work goes here (`
 
 **Parked on 2026-11-11 to follow `docs/focus.md`:** T26, T31 and T32. Their ticket text was removed
 from section 4. Section 5 says what each was and what's left of it. Git history has the full text.
+- [x] T38 Native readings from Instruments (user decision, 2026-11-12, from the T37 parking-lot item): one Metal
+  System Trace of Chrome's GPU process becomes `imports[]` entries, shown beside the browser numbers in the focus panel.
 
 ## 3. Open decisions
 
@@ -287,130 +285,6 @@ and why 8 MB of system-level cache is not `published`.
   `queue.submit()`. Stop 2 becomes encode-and-submit time, and `queue.onSubmittedWorkDone()` is the
   round trip that WebGL hides inside `getError`. Keep build and frame trips apart here, so S1 can too.
 **Done when:** both stops produce metrics with stats. Stop 2 is `measured` and stop 3 is `partial`.
-
----
-
-### T11 Stop 4: compile time
-**Depends on:** T10.
-**Goal:** GLSL validation and translation time, with clean failure handling.
-**Files:** `src/record/measureCompile.ts`, `src/record/main.ts`.
-**Build:**
-- Time `compileShader` plus a blocking `getShaderParameter(COMPILE_STATUS)` (`compileMs`).
-- On failure, show the shader's info log and stop the run. Save nothing.
-**Teach:**
-- What ANGLE does at compile: GLSL to MSL (F1).
-- Why blocking on status is an observer effect the WebGL best practices warn about,
-  and why it's accepted in a recorder.
-**Carries to Output 1:** WebGPU's `createShaderModule` plus `getCompilationInfo()` is the same step for WGSL,
-  with line-numbered messages instead of one info log. The "fail cleanly, save nothing" rule carries over.
-**Done when:**
-- `compileMs` has stats and status `partial`, with a note that it includes stops 2 and 3 overhead.
-- A deliberately broken shader gives a readable error and no recording.
-
----
-
-### T12 Stop 5: link and first draw
-**Depends on:** T11.
-**Goal:** both places the driver does work.
-**Files:** `src/record/measureLink.ts`, `src/record/measureFirstDraw.ts`, `src/record/main.ts`.
-**Build:**
-- Floor 1: time `linkProgram` plus blocking `LINK_STATUS` (`linkMs`).
-- Floor 2: time the first `drawArrays` plus `getError` (`firstDrawMs`).
-- Time steady-state draws the same way (`steadyDrawMs`) as a baseline.
-- Store the raw values. Never silently subtract the baseline.
-- Set `floors` to `["linkMs", "firstDrawMs"]`.
-**Teach:**
-- Why compile plus link misses first-draw pipeline creation (F1).
-- Pipeline creation is CPU-side, so the GPU timer won't catch it.
-**Carries to Output 1:** the hidden first-draw cost is the reason WebGPU has explicit pipelines.
-  `createRenderPipelineAsync` is where S1 pays it, and it can be timed on its own. Name that contrast in Teach.
-**Done when:**
-- All three metrics exist with status `partial`.
-- `trivial.glsl` run alongside gives the fixed vertex shader's contribution as a reference.
-
----
-
-### T13 Stop 6: GPU time per frame
-**Depends on:** T05, T12.
-**Goal:** the production version of the T05 experiment.
-**Files:** `src/record/measureGpuTime.ts`, `src/record/main.ts`.
-**Build:**
-- Canvas buffer fixed at 1280 x 800 (configurable), `antialias: false`.
-- Run 60 warmup frames, then 300 sampled frames.
-- Keep warmup in its own metric (`gpuMsWarmup`) so it stays visible but out of the median.
-- Main metric: `gpuMs`.
-- Poll for results on later frames, and handle queries still pending when sampling ends.
-- Nothing else animates on the page, and the tab must stay visible.
-**Teach:**
-- This one number covers stops 6 and 7 together, so stop 7 gets no time of its own (F2).
-- Why a fixed buffer makes results comparable across displays.
-**Carries to Output 1:** S1's GPU time uses WebGPU timestamp queries: write timestamps in the pass,
-  resolve them into a buffer, map it a frame or more later, and handle results still pending. The same polling
-  pattern as here. Chrome rounds those timestamps by default, so S1 records the resolution it gets.
-**Done when:**
-- The results rise across `cost-low`, `cost-mid` and `cost-high`.
-- The stop's status is `partial`. If the T05 fallback applies, use its method instead.
-
----
-
-### T14 Stop 7: SIMD group model
-**Depends on:** T13.
-**Goal:** an honest model with no measurement behind it.
-**Files:** `src/record/modelSimdGroups.ts`, `tests/modelSimdGroups.test.ts`.
-**Build:**
-- Pure function of the drawing buffer's size.
-- `tileCount` at 32 x 32 tiles, and `simdGroups` = pixels / 32, rounded up. Both `modeled`.
-- Note in the metric that `simdGroups` is a lower bound and the driver picks the tile size.
-- `floors` stays empty, so stop 7 has no height.
-**Teach:** what a 32-thread SIMD group is, and the worked example: 1280 x 800 = 1,024,000 pixels,
-so 1,000 tiles and 32,000 groups.
-**Carries to Output 1:** the 32-thread SIMD group is why S2's compute shaders pick workgroup sizes in
-  multiples of 32. The "modeled, lower bound" label carries over as is.
-**Done when:** the test covers the worked example, and both metrics are `modeled`.
-
----
-
-### T15 Stop 8: refresh cadence
-**Depends on:** T13.
-**Goal:** the speed limit for the display holding the window.
-**Files:** `src/record/measureRefresh.ts`, `src/record/main.ts`, `tests/measureRefresh.test.ts`.
-**Build:**
-- Collect at least 120 `requestAnimationFrame` deltas (`frameDeltaMs`).
-- Derive `refreshHz` from the median delta, and classify it against 60 and 50 Hz.
-- Record a mismatch rather than forcing a match.
-- `floors` stays empty: compositor and scanout time can't be measured, so a time-based
-  height would be invented.
-- Keep the classification logic pure so it can be tested.
-**Teach:**
-- rAF timestamps may have only 1 ms precision, so one delta is noisy and a median helps.
-- Cadence tells us the rate, not how long the compositor took.
-**Carries to Output 1:** the frame budget (16.67 ms at 60 Hz, 8.33 ms at 120 Hz) is the fixed budget S2 and
-  S5 must hold. The same median-of-deltas code reads it there.
-**Done when:**
-- It reads about 16.67 ms on the built-in display and about 20 ms on the LG.
-- The stop's status is `partial`.
-
----
-
-### T16 Run protocol and save
-**Depends on:** T08, T14, T15.
-**Goal:** one button produces a valid, comparable recording.
-**Files:** `src/record/saveRecording.ts`, `src/record/main.ts`, `record.html`, `recordings/.gitkeep`.
-**Build:**
-- Choose a shader and label the display (`built-in`, `lg`, `unknown`).
-- Set `cacheState` to `unknown`. T06, the cache test, was removed, so nothing gives evidence for `cold` or `warm`.
-- Default to 5 fresh programs for the build trip per recording.
-- Embed the hardware map, validate, then download
-  `recordings/<shader>-<display>-<state>.json`. The user saves it by hand.
-- Show a pre-run checklist: city tab closed, other GPU-heavy apps closed, plugged in.
-**Teach:** how to read a recording, and why comparing runs matters more than one number.
-**Carries to Output 1:** the recording protocol (checklist, repeats, spread, validated JSON with
-  `imports[]`) is what S1 reuses to publish honest numbers. Keep the schema free of WebGL-only names where a
-  neutral name works, and note any that can't be.
-**Done when:**
-- A full run passes validation, with all 8 stops.
-- Separate recordings exist for each display.
-- Repeat runs are compared, and any large differences are reported to the user.
 
 ---
 
@@ -839,48 +713,6 @@ before Metal sees the text. Four loop passes with a hash cost far less than a 60
 
 ---
 
-### T35 A real recording drives the city
-**Depends on:** T16.
-**Goal:** the second half of Output 0's "Done when" in `docs/focus.md`: the city shows a real recording, not
-invented numbers.
-**Files:** to be listed when the ticket starts. Expect `src/city/main.ts`, the recording loader, and the tests for
-`planBuildings` and replay.
-**Build:**
-- Load the recordings T16 saved, one per display, and pick between them in the city.
-- Re-check the items T19, T21 and T22 could only check with placeholder numbers.
-- Decide with the user whether `placeholderRecording.ts` goes or stays as a clearly marked demo.
-**Teach:** why a recording made with the city closed is the only clean number (T30: the GPU reads 96 to 100%
-with the shader stopped, because the city draws too).
-**Carries to Output 1:** the replay-a-recording pattern. S1's timing panel can show a saved run the same way.
-**Done when:**
-- The city shows a real recording for each display, and every value has a status and a source.
-- T19, T21 and T22's re-check items each have a real result, including failures.
-- No placeholder number shows unless the "invented" banner is on screen.
-
----
-
-### T36 Ship the city
-**Depends on:** T35.
-**Goal:** focus.md's rule for every output: a public URL, a README, real numbers labeled measured, partial or
-modeled, and at least one post explaining how it works.
-**Files:** `README.md`, the build config, a draft post under `docs/posts/`.
-**Build:**
-- A static build that replays the saved recordings. Live mode needs the dev server, so the public page is
-  replay only and says so.
-- The README explains the 8 stops, the three labels, and how to make a recording.
-- A launch post: what it does, how it works, what the numbers say (focus.md section 6).
-- A hand-off note for S1: what it reuses from T09 to T16 (their "Carries to Output 1" lines), and what turned out
-  not to carry.
-- Where to host it is the user's call.
-**Teach:** what a page can and can't measure, written for someone who has never seen the project.
-**Done when:**
-- The public URL loads the city with a real recording, with no console errors.
-- No published file holds a device identifier, a path from `ps`, or a `powermetrics` header line. Checked by search.
-- The README and the post exist, and every number in them has its label and source.
-- The scoreboard in `docs/focus.md` section 10 shows Output 0 as shipped.
-
----
-
 ## 5. Parking lot
 
 **Parked tickets (2026-11-11, to follow `docs/focus.md`).** Off the vector for now. Bring one back only if it
@@ -910,6 +742,15 @@ passes focus.md's rule 2 question.
 - **From T29: the variant list is fixed in code.** Picking a line to change from the page would need a small editor.
 
 New ideas or out-of-scope findings go here, not into the current ticket.
+
+- From T37 (user idea, 2026-11-12): use Xcode for better GPU numbers. **Done as T38 on 2026-11-12**, see "Findings
+  from T38". Still open from it: stop 7's SIMD groups stay modeled (no Xcode tool counts them).
+- From T38: the Metal compile reading is one warm reload (n=1). A cold one needs a real code change to the shader
+  and a trace across that reload. Not done, because the shader file is the user's.
+- From T38: trace the city tab itself (`index.html`) the same way, to split its GPU time into the city's passes and
+  the shader's pass. That would answer T30's "how much GPU does the city use" with a native number.
+- From T38: `nativePassHz` and `nativeGpuProcessBusy` only show under "All numbers". Decide if either belongs in the
+  focus view.
 
 - From T28: `tests/experiments.test.ts` line 43 expects `AA 2` (maxPerParent 4), but Day 442 is `AA 1` since dc8573a,
   so it fails. Decide which is right, the shader or the test.
@@ -1166,6 +1007,46 @@ built-in display; `crossOriginIsolated` was true):**
 ---
 
 # Reference
+
+**Findings from T38 (2026-11-12, Xcode 27.2 `xctrace`, Metal System Trace attached to Chrome's GPU process, Chrome
+157 on the M2, built-in display, `program.html` alone in its tab at 1280 x 800, city tab closed):**
+
+- **The trace does give GPU time for Chrome's GPU process alone.** Table `metal-gpu-intervals` has one row per
+  render pass per channel (Vertex, Fragment, Compute), each with its process. In 6.7 s, Chrome's GPU process had
+  432 command buffers. 404 of them were a single render pass with one vertex and one fragment interval, at 60.1 per
+  second: one per frame. Source: `data/imports/instruments.json`, written by `scripts/importTrace.ts`.
+- **Native and browser agree within 5%.** Fragment time of that pass: median 0.672 ms, p95 0.677 ms, n=404
+  (Instruments). The page's own `TIME_ELAPSED` query over the same seconds: median 0.705 ms, p95 0.721 ms, n=541.
+  The browser reads 0.033 ms higher. The vertex (tiler) share of the pass is 0.011 ms. Candidate daily post:
+  "WebGL's timer query and Instruments agree within 5% on one fragment shader: 0.705 ms vs 0.672 ms."
+- **The earlier 1.45 ms median was mostly the city, not the shader.** With the city drawing on the same GPU, the
+  live `gpuMs` median read 1.45 ms earlier on 2026-11-12 and 4.1 ms during this check. The same shader alone is
+  0.67 to 0.71 ms by both tools. So `TIME_ELAPSED` inside the city page counts other work on the GPU (R8's "other GPU
+  users" risk, now with a number). Candidate daily post: "The same shader measures 0.7 ms alone and 1.4 to 4 ms
+  beside a Three.js scene."
+- **Which pass is the shader is inferred, so the readings are partial.** ANGLE gives its Metal command buffers and
+  encoders no labels (every one is "Command Buffer 0", "Render Command 0"). The script picks the pass by shape. In
+  the steady trace all 404 single-pass buffers were the shader's. In the reload trace 686 were single-pass with
+  mixed times, so the rule only holds for a steady page. The script must be given a steady trace.
+- **Metal compile times do show up, for stop 5.** Table `graphics-compiler-activity-intervals`, across one reload:
+  fragment 2.50 ms, vertex 0.21 ms, n=1 each. Cache state unknown; the same source had been built before, so a
+  cache hit is likely (inferred). The browser's compile + link + first draw sum was 3.54 ms on the next load.
+  The first trace had 0 compiler rows because nothing compiled in those 5 s.
+- **Chrome's GPU process kept the GPU busy 4.7% of the traced time** (46.5 ms of GPU intervals per second, which
+  includes Chrome drawing its own page). In the same trace another app on this Mac used more (62 ms per second), so
+  whole-GPU readings like ioreg's device percent are not the shader's.
+- **Traces carry process names, pids, thread ids and paths.** The `.trace` files stay in a temp folder outside the
+  repo. The import keeps numbers only, and refuses to write if its output matches the shape of a UUID, UDID, serial,
+  MAC address, pid or home path (`findIdentifiers`, tested).
+- **An export can come back empty if it runs while the trace is still saving.** The first compiler-table export
+  returned 0 bytes; the same command a few seconds later returned 201 rows.
+- **Carries over to Output 1:** the script reads Metal calls, so it should work unchanged on a WebGPU page, since Dawn
+  also runs on Metal (not tried yet). WebGPU passes can carry labels; if they reach Metal, a name match could replace
+  the shape rule.
+- **Not checked:** the LG display, a cold compile, and more than one steady run (one 6.7 s trace).
+- **Tests:** `tests/traceSummary.test.ts` (6) and two new cases in `tests/frameSummary.test.ts` pass. The 3 older
+  `tests/experiments.test.ts` failures are unchanged. `tsc --noEmit` is clean. `tsconfig.json` gained
+  `allowImportingTsExtensions` so Node can run the script without a build step.
 
 ## R1. Project brief
 

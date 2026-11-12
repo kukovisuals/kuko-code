@@ -3,6 +3,7 @@
 import type { ProgramEvent } from '../../shared/liveEvents';
 import { LIVE_FILES, LIVE_PROGRAM } from '../../shared/liveProgram';
 import type { DisplayLabel, HardwareMap, Metric, MetricUnit, Recording, Stats, Status, Stop } from '../../shared/types';
+import { NATIVE_IMPORTS } from './nativeImports';
 
 const FETCH_SOURCE = `PerformanceResourceTiming: ${LIVE_FILES.length} GLSL file${LIVE_FILES.length === 1 ? '' : 's'} (${LIVE_FILES.map((name) => `${name}.glsl`).join(', ')}) over loopback, one after another`;
 
@@ -137,7 +138,7 @@ export class LiveRecorder {
       shader: { file: `shaders/${LIVE_PROGRAM.imageFile}.glsl`, bytes: source.bytes, sha256: source.sha256 },
       hardwareMap,
       stops,
-      imports: [],
+      imports: NATIVE_IMPORTS,
     };
   }
 }

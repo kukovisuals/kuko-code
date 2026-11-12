@@ -9,6 +9,9 @@ export interface PanelSection {
   chip?: string;
 }
 
+// The section that stays visible when "All numbers" is off.
+export const KEY_SECTION = 'live-key';
+
 export type PanelGroup = 'live' | 'stops' | 'displays' | 'hardware' | 'roads';
 
 const GROUP_TITLES: Record<PanelGroup, string> = {
@@ -59,6 +62,15 @@ export function createNumbersPanel(onSelect: (id: string) => void): NumbersPanel
   closeButton.addEventListener('click', () => setOpen(false));
   setOpen(!window.matchMedia(NARROW_WINDOW).matches);
 
+  // Off by default: the panel shows only the key section, and the map hides the cards on blocks the shader can't use.
+  const allButton = document.getElementById('panel-all') as HTMLElement;
+  const setAll = (all: boolean) => {
+    document.body.classList.toggle('all-numbers', all);
+    allButton.setAttribute('aria-pressed', String(all));
+  };
+  allButton.addEventListener('click', () => setAll(!document.body.classList.contains('all-numbers')));
+  setAll(false);
+
   const holders = new Map<PanelGroup, HTMLElement>();
   (Object.keys(GROUP_TITLES) as PanelGroup[]).forEach((group) => {
     const heading = document.createElement('h2');
@@ -89,6 +101,10 @@ export function createNumbersPanel(onSelect: (id: string) => void): NumbersPanel
       }
       const node = groups.querySelector<HTMLDetailsElement>(`.panel-section[data-component="${id}"]`);
       if (node) {
+        // A section picked on the map has to be visible, so picking anything but the key section shows them all.
+        if (id !== KEY_SECTION) {
+          setAll(true);
+        }
         setOpen(true);
         node.open = true;
         node.scrollIntoView({ block: 'nearest' });

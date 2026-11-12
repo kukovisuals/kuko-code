@@ -922,3 +922,23 @@ body.zoom-open .name-label {
 .row.spare-verdict .row-name {
   white-space: normal;
 }
+
+/* Focus view: with "All numbers" off, the panel shows only the key section and the map only the card where the shader runs. */
+.panel-head-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+#panel-all[aria-pressed='true'] {
+  border-color: var(--per-frame);
+}
+
+body:not(.all-numbers) #panel-groups h2,
+body:not(.all-numbers) .panel-section:not([data-component='live-key']),
+body:not(.all-numbers) .spare-card:not(.reach-yes) {
+  display: none;
+}
+
+body:not(.all-numbers) .panel-section[data-component='live-key'] {
+  margin-top: 8px;
+}

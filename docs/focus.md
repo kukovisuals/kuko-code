@@ -165,14 +165,14 @@ starting the next, and inside an output I finish one stage before starting the n
 **Rule for every stage:** it ships with a public URL, a README, real numbers labeled measured /
 partial / modeled, and at least one post explaining how it works.
 
-### Output 0: finish Shader Pipeline City (in progress)
+### Output 0: Shader Pipeline City (closed as-is, 2026-11-12)
 
 Shows where one fragment shader spends its time, from fetch to screen, on real hardware.
-**Done when:** recorder tickets T09–T16 in `docs/backlog.md` are finished and a real recording
-drives the city (T35), then it ships (T36). T28 and T30 were already finished and keep their
-findings. T26, T31 and T32 are in the backlog's parking lot.
-**Gives the next output:** GPU timer queries, a recording protocol, and the measured / partial /
-modeled labels. Stage 1 reuses all three.
+**Done when:** closed as-is on 2026-11-12 at the user's request. T11–T16, T35 and T36 were
+removed from `docs/backlog.md`, so the city never shows a real recording and has no public
+release. T28 and T30 keep their findings. T26, T31 and T32 are in the backlog's parking lot.
+**Gives the next output:** GPU timer queries (T05) and the measured / partial / modeled labels.
+The recording protocol (old T16) was never built, so Stage 1 has to design its own.
 
 ### Output 1: WebGPU viewer for large scenes (the major output)
 

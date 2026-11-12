@@ -5,6 +5,7 @@ import { validateRecording } from '../../shared/validateRecording';
 import { gpuFill } from '../gpuFill';
 import { compileEffect, type LoadSample } from './compileEffect';
 import { createHardwareView } from './hardwareView';
+import { createKeyNumbersView } from './keyNumbersView';
 import { LiveRecorder, needsRedraw } from './liveRecorder';
 import { createTraffic } from './traffic';
 import { compileTrip, dotsForBytes, fetchTrip, firstDrawTrip, frameTrip, httpTrip, linkTrip, wifiTrip } from './trafficPlan';
@@ -51,6 +52,8 @@ export function createLiveMode(handlers: LiveHandlers) {
   const traffic = createTraffic(handlers.onStop);
   const hardware = createHardwareView((stats) => handlers.onGpu(stats?.devicePercent ?? null));
 
+  const keyNumbers = createKeyNumbersView();
+
   let running = false;
   let drawn: Recording | null = null;
   let netSamples = 0;
@@ -87,6 +90,7 @@ export function createLiveMode(handlers: LiveHandlers) {
     }
     drawn = recording;
     hardware.setProgram(true, gpuFill(result.value));
+    keyNumbers.update(result.value);
     handlers.onRecording(result.value);
   };
 
@@ -203,7 +207,7 @@ export function createLiveMode(handlers: LiveHandlers) {
   return {
     trafficMesh: traffic.mesh,
     hardwareGroup: hardware.group,
-    hardwareSections: hardware.sections,
+    hardwareSections: [keyNumbers.section, ...hardware.sections],
     get running() {
       return running;
     },
@@ -214,6 +218,7 @@ export function createLiveMode(handlers: LiveHandlers) {
       build = { from: null, to: null, settled: false };
       hardware.setCompileEffect(null);
       hardware.setProgram(true, null);
+      keyNumbers.clear('Waiting for the program to report its first frames.');
       running = true;
       handlers.onProgramState(true, 'Starting: fetching and compiling');
       handlers.frame.src = `/program.html?run=${Date.now()}`;
@@ -221,6 +226,7 @@ export function createLiveMode(handlers: LiveHandlers) {
     stopProgram(text = 'Stopped. Its GPU work has ended, so watch the GPU reading fall.') {
       running = false;
       hardware.setProgram(false, null);
+      keyNumbers.clear('The program is stopped, so there is no frame to judge.');
       handlers.frame.src = 'about:blank';
       handlers.onProgramState(false, text);
     },

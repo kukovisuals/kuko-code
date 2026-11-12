@@ -1,0 +1,88 @@
+[
+  {
+    "tool": "instruments",
+    "stop": 6,
+    "metrics": [
+      {
+        "id": "nativeFragmentMs",
+        "value": 0.6716664999999999,
+        "unit": "ms",
+        "status": "partial",
+        "source": "Instruments Metal System Trace, table metal-gpu-intervals, Chrome's GPU process, program.html alone in its tab, 2026-11-12. Fragment channel time of the shader's pass",
+        "stats": {
+          "n": 404,
+          "min": 0.658083,
+          "median": 0.6716664999999999,
+          "p95": 0.677291,
+          "max": 0.748208
+        },
+        "note": "Which pass is the shader is inferred: ANGLE labels nothing, so it is the command buffer with a single render pass."
+      },
+      {
+        "id": "nativeVertexMs",
+        "value": 0.011417,
+        "unit": "ms",
+        "status": "partial",
+        "source": "Instruments Metal System Trace, table metal-gpu-intervals, Chrome's GPU process, program.html alone in its tab, 2026-11-12. Vertex channel time of the same pass (the tiler's share)",
+        "stats": {
+          "n": 404,
+          "min": 0.009541,
+          "median": 0.011417,
+          "p95": 0.012791,
+          "max": 0.015916
+        },
+        "note": "Which pass is the shader is inferred: ANGLE labels nothing, so it is the command buffer with a single render pass."
+      },
+      {
+        "id": "nativePassHz",
+        "value": 60.143404803001694,
+        "unit": "Hz",
+        "status": "partial",
+        "source": "Instruments Metal System Trace, table metal-gpu-intervals, Chrome's GPU process, program.html alone in its tab, 2026-11-12. Shader passes found, divided by the seconds traced"
+      },
+      {
+        "id": "nativeGpuProcessBusy",
+        "value": 4.654055626843529,
+        "unit": "percent",
+        "status": "partial",
+        "source": "Instruments Metal System Trace, table metal-gpu-intervals, Chrome's GPU process, program.html alone in its tab, 2026-11-12. All of that process's GPU intervals added up, over the seconds traced. Includes Chrome drawing its own page"
+      }
+    ]
+  },
+  {
+    "tool": "instruments",
+    "stop": 5,
+    "metrics": [
+      {
+        "id": "nativeFragmentCompileMs",
+        "value": 2.502542,
+        "unit": "ms",
+        "status": "partial",
+        "source": "Instruments Metal System Trace, table graphics-compiler-activity-intervals, Chrome's GPU process, program.html alone in its tab, across one page reload, 2026-11-12. Metal Shader Compiler, fragment stage",
+        "stats": {
+          "n": 1,
+          "min": 2.502542,
+          "median": 2.502542,
+          "p95": 2.502542,
+          "max": 2.502542
+        },
+        "note": "Cache state unknown. The trace can not say which program a compile belongs to, so every compile in the trace is counted."
+      },
+      {
+        "id": "nativeVertexCompileMs",
+        "value": 0.207333,
+        "unit": "ms",
+        "status": "partial",
+        "source": "Instruments Metal System Trace, table graphics-compiler-activity-intervals, Chrome's GPU process, program.html alone in its tab, across one page reload, 2026-11-12. Metal Shader Compiler, vertex stage",
+        "stats": {
+          "n": 1,
+          "min": 0.207333,
+          "median": 0.207333,
+          "p95": 0.207333,
+          "max": 0.207333
+        },
+        "note": "Cache state unknown. The trace can not say which program a compile belongs to, so every compile in the trace is counted."
+      }
+    ]
+  }
+]
