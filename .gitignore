@@ -1,3 +1,9 @@
 node_modules
 dist
 .DS_Store
+*.trace
+*.pcap
+*.pcapng
+.env*
+*.log
+coverage
